@@ -5,5 +5,11 @@
   "main": "index.ts",
   "author": "Jay Harris <jay@sourware.com>",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "peerDependencies": {
+    "react": "^16.8.6"
+  },
+  "devDependencies": {
+    "typescript": "^3.5.2"
+  }
 }
