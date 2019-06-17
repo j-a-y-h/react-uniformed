@@ -322,6 +322,17 @@
   dependencies:
     "@types/jest-diff" "*"
 
+"@types/prop-types@*":
+  version "15.7.1"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.1.tgz#f1a11e7babb0c3cad68100be381d1e064c68f1f6"
+
+"@types/react@^16.8.20":
+  version "16.8.20"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.8.20.tgz#4f633ecbd0a4d56d0ccc50fff6f9321bbcd7d583"
+  dependencies:
+    "@types/prop-types" "*"
+    csstype "^2.2.0"
+
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
@@ -792,6 +803,10 @@ cssstyle@^1.0.0:
   resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-1.2.2.tgz#427ea4d585b18624f6fdbf9de7a2a1a3ba713077"
   dependencies:
     cssom "0.3.x"
+
+csstype@^2.2.0:
+  version "2.6.5"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.5.tgz#1cd1dff742ebf4d7c991470ae71e12bb6751e034"
 
 damerau-levenshtein@^1.0.4:
   version "1.0.5"
@@ -2875,6 +2890,15 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-dom@^16.8.6:
+  version "16.8.6"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.8.6.tgz#71d6303f631e8b0097f56165ef608f051ff6e10f"
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.13.6"
+
 react-hooks-testing-library@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/react-hooks-testing-library/-/react-hooks-testing-library-0.5.1.tgz#bb5e725fe8d35f3d682212039824dd2f6c7ff4c3"
@@ -2893,6 +2917,15 @@ react-test-renderer@16.8.0:
     prop-types "^15.6.2"
     react-is "^16.8.0"
     scheduler "^0.13.0"
+
+react@^16.8.6:
+  version "16.8.6"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.13.6"
 
 read-pkg-up@^2.0.0:
   version "2.0.0"
@@ -3113,7 +3146,7 @@ sax@^1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
 
-scheduler@^0.13.0:
+scheduler@^0.13.0, scheduler@^0.13.6:
   version "0.13.6"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.13.6.tgz#466a4ec332467b31a91b9bf74e5347072e4cd889"
   dependencies:
