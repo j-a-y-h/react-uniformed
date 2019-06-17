@@ -1,21 +1,43 @@
-import { renderHook } from 'react-hooks-testing-library'
-import { useFields, Fields } from "../src/useFields"
+import { renderHook, act } from 'react-hooks-testing-library'
+import { useFields, Fields, useFieldsHook } from "../src/useFields"
 
 describe("useFields", () => {
-  test("should accept initial values as the only argument", () => {
+  it("should accept initial values as the only argument", () => {
     const fields = {
       name: "hello"
     };
-    const { result } = renderHook<Fields, any>(() => useFields(fields));
+    const { result } = renderHook<Fields, useFieldsHook>(() => useFields(fields));
     expect(result.current.values).toEqual(fields);
   });
   
-  test('should return values, setValue, resetValues', () => {
-    const { result } = renderHook<Fields, any>(() => useFields());
-  
+  it('should return values, setValue, resetValues', () => {
+    const { result } = renderHook<Fields, useFieldsHook>(() => useFields());
+
     // values, setValue, resetValues
     expect(result.current.values).toEqual({});
     expect(result.current.setValue).toBeInstanceOf(Function);
     expect(result.current.resetValues).toBeInstanceOf(Function);
+  });
+  
+  it('can set values', () => {
+    const { result } = renderHook<Fields, useFieldsHook>(() => useFields());
+  
+    act(() => result.current.setValue("email", "test@example.com"));
+    expect(result.current.values.email).toEqual("test@example.com");
+  });
+  it('can reset values', () => {
+    const fields = {
+      name: "hello",
+      message: "five dollar footlong"
+    };
+    const { result } = renderHook<Fields, useFieldsHook>(() => useFields(fields));
+
+    act(() => {
+      result.current.setValue("name", "hello world");
+      result.current.setValue("message", "walking across the street is dangerous");
+      result.current.resetValues();
+    });
+    
+    expect(result.current.values).toEqual(fields);
   });
 });

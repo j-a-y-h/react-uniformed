@@ -7,16 +7,16 @@ export interface Fields {
     [name: string]: string;
 }
 
-export interface Values {
+interface Values {
     [name: string]: any;
 }
 enum ActionTypes { update, reset }
-export interface Action {
+interface Action {
     type: ActionTypes;
     payload: Values;
 }
 
-export interface Hook {
+export interface useFieldsHook {
     values: Values,
     setValue: (name: string, value: any) => void,
     resetValues: () => void
@@ -32,7 +32,7 @@ function reducer(state: Values, action: Action) {
     }
 }
 
-export function useFields(initialValues: Fields = {}): Hook {
+export function useFields(initialValues: Fields = {}): useFieldsHook {
     const [values, dispatch] = React.useReducer(reducer, initialValues);
     const setValue = (name: string, value: any) => {
         dispatch({ type: ActionTypes.update, payload: {[name]: value}});
