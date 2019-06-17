@@ -16,6 +16,11 @@ export interface Action {
     payload: Values;
 }
 
+export interface Hook {
+    values: Values,
+    setValue: (name: string, value: any) => void,
+    resetValues: () => void
+}
 function reducer(state: Values, action: Action) {
     switch (action.type) {
     case ActionTypes.update:
@@ -27,8 +32,13 @@ function reducer(state: Values, action: Action) {
     }
 }
 
-export function useFields(initialValues?: Fields) {
-    const [values, dispatch] = React.useReducer(reducer, initialValues || {});
-    dispatch;
-    return {values};
+export function useFields(initialValues: Fields = {}): Hook {
+    const [values, dispatch] = React.useReducer(reducer, initialValues);
+    const setValue = (name: string, value: any) => {
+        dispatch({ type: ActionTypes.update, payload: {[name]: value}});
+    };
+    const resetValues = () => {
+        dispatch({ type: ActionTypes.reset, payload: initialValues});
+    };
+    return {values, setValue, resetValues};
 }
