@@ -1,15 +1,13 @@
-import { useResetableValues } from "./useResetableValues";
+import { useResetableValues, Values } from "./useResetableValues";
 
-export interface Values {
-    readonly [name: string]: any;
-}
-
+export type Fields = Values<any>;
+export type fieldHandler = (name: string, value: any) => void;
 export interface useFieldsHook {
-    readonly values: Values,
-    setValue(name: string, value: any): void,
-    resetValues(): void
+    readonly values: Fields;
+    readonly setValue: fieldHandler;
+    resetValues(): void;
 }
 
-export function useFields(initialValues: Values = {}): useFieldsHook {
+export function useFields(initialValues: Fields = {}): useFieldsHook {
     return useResetableValues(initialValues);
 }

@@ -1,12 +1,12 @@
 import React, {Reducer} from "react";
+import { validErrorValues } from "./useErrors";
 
 enum ActionTypes {
     validating, none, resetAll, waitingForValidator
 }
-type validValidationValues = string | false | null | undefined;
-type validValidorReturnTypes = validValidationValues | Promise<validValidationValues>;
-type validationCallback = (name: string, value: validValidationValues) => void;
-type validator = (value: string) => validValidorReturnTypes;
+type validValidorReturnTypes = validErrorValues | Promise<validErrorValues>;
+type validationCallback = (name: string, value: validErrorValues) => void;
+export type validator = (value: string) => validValidorReturnTypes;
 interface InternalValidationState {
     readonly state: ActionTypes;
     readonly results?: validValidorReturnTypes;
@@ -28,17 +28,20 @@ interface Action {
     readonly payload?: ActionPayload;
 }
 
-interface Validators {
+export interface Validators {
     readonly [name: string]: validator;
 }
 interface Values {
     readonly [name: string]: any;
 }
+
+export type validateHandler = (name: string, value: any) => void; 
+export type validateAllHandler = (valuesMap: Values) => void;
 interface useValidationHook {
     readonly isValidating: boolean; 
     readonly validationState: ValidationStateMap;
-    validate(name: string, value: any): void; 
-    validateAll(valuesMap: Values): void; 
+    readonly validate: validateHandler;
+    readonly validateAll: validateAllHandler; 
     stopValidating(): void;
 }
 type ValidationReducer = Reducer<InternalValidationStateMap, Action>;
@@ -113,10 +116,10 @@ export function useValidation(
             const {results, state} = validating[name];
             if (state === ActionTypes.validating) {
                 // after validation
-                const errorCallback = (error: validValidationValues) => {
+                const errorCallback = (error: validErrorValues) => {
                     onValidate(name, error);
                 };
-                Promise.resolve(results)
+                Promise.resolve(results as validErrorValues)
                 .then(errorCallback, (error: string = "Unexpected error") => {
                     errorCallback(String(error));
                 })

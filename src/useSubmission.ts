@@ -1,16 +1,18 @@
 import React from "react";
 
+export type submissionHandler = (done: () => void) => void;
+export type submitHandler = (event?: Event) => void;
 export interface useSubmissionProps {
     readonly isValidating: boolean;
     readonly hasErrors: boolean;
-    validator(): string | false;
-    handler(done: () => void): void;
+    readonly handler: submissionHandler;
+    validator(): void;
 }
 
 export interface useSubmissionHook {
     readonly isSubmitting: boolean;
     readonly submitCount: number;
-    submit(event?: Event): void;
+    readonly submit: submitHandler;
 }
 
 export function useSubmission({
@@ -61,7 +63,6 @@ export function useSubmission({
                 validator();
             }
         }
-        return () => {};
     }, [hasErrors, isValidating, isSubmitting, runningSubmitHandler, waitForValidation]);
     return {isSubmitting: runningSubmitHandler, submitCount, submit};
 }

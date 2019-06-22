@@ -1,10 +1,9 @@
 import React, {Reducer} from "react";
 
-type allowableKeys = string | number;
+type allowableKeys = string;
 
-interface Values<T> {
+export interface Values<T> {
     readonly [name: string]: T;
-    readonly [name: number]: T;
 }
 
 enum ActionTypes { update, reset }

@@ -1,22 +1,26 @@
-import { useResetableValues } from "./useResetableValues";
+import { useResetableValues, Values } from "./useResetableValues";
 
-export interface Touches {
-    readonly [name: string]: boolean;
-}
+export type Touches = Values<boolean>;
 
+export type touchHandler = (name: string, touched: boolean) => void;
+export type touchFieldHandler = (name: string) => void;
 export interface useTouchHook {
     readonly touches: Touches,
-    setTouch(name: string, touched: boolean): void;
-    touchField(name: string): void;
+    readonly setTouch: touchHandler;
+    readonly touchField: touchFieldHandler;
     resetTouches(): void;
 }
 
 export function useTouch(): useTouchHook {
-    const {values, setValue, resetValues} = useResetableValues<boolean>({});
+    const {
+        values: touches, 
+        setValue: setTouch, 
+        resetValues: resetTouches,
+    } = useResetableValues<boolean>();
     return {
-        touches: values,
-        setTouch: setValue,
-        touchField: (name: string) => setValue(name, true),
-        resetTouches: resetValues,
+        touches,
+        setTouch,
+        resetTouches,
+        touchField: (name: string) => setTouch(name, true),
     }
 }
