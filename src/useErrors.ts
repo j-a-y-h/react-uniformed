@@ -1,20 +1,24 @@
-import { useResetableValues } from "./useResetableValues";
+import React from "react";
+import { useResetableValues, Values } from "./useResetableValues";
 
-export interface Errors {
-    readonly [name: string]: string;
-}
-
+export type validErrorValues = string;
+export type Errors = Values<validErrorValues>;
+export type errorHandler = (name: string, error: validErrorValues) => void;
 export interface useErrorsHook {
-    readonly errors: Errors,
-    setError(name: string, error: string): void,
-    resetErrors(): void
+    readonly errors: Errors;
+    readonly hasErrors: boolean;
+    readonly setError: errorHandler;
+    resetErrors(): void;
 }
 
 export function useErrors(): useErrorsHook {
-    const {values, setValue, resetValues} = useResetableValues<string>({});
-    return {
-        errors: values,
-        setError: setValue,
-        resetErrors: resetValues,
-    }
+    const {
+        values: errors, 
+        setValue: setError, 
+        resetValues: resetErrors,
+    } = useResetableValues<validErrorValues>();
+    const hasErrors = React.useMemo(() => (
+        Object.keys(errors).some((key) => errors[key])
+    ), [errors]);
+    return { errors, setError, resetErrors, hasErrors };
 }
