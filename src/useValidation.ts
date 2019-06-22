@@ -1,7 +1,7 @@
 import React, {Reducer} from "react";
 
 enum ActionTypes {
-    validating, none, reset, waitingForValidator
+    validating, none, resetAll, waitingForValidator
 }
 type validValidationValues = string | false | null | undefined;
 type validValidorReturnTypes = validValidationValues | Promise<validValidationValues>;
@@ -16,7 +16,7 @@ interface InternalValidationStateMap {
     readonly [name: string]: InternalValidationState;
 }
 interface ValidationStateMap {
-    readonly [name: string]: ActionTypes;
+    readonly [name: string]: boolean;
 }
 // TODO: use extends
 interface ActionPayload {
@@ -39,6 +39,7 @@ interface useValidationHook {
     readonly validationState: ValidationStateMap;
     validate(name: string, value: any): void; 
     validateAll(valuesMap: Values): void; 
+    stopValidating(): void;
 }
 type ValidationReducer = Reducer<InternalValidationStateMap, Action>;
 
@@ -55,7 +56,7 @@ function validatingReducer(validationStateMap: InternalValidationStateMap, actio
                 state: action.type,
                 results,
             }}
-        case ActionTypes.reset:
+        case ActionTypes.resetAll:
             return {};
         default:
             throw new Error();
@@ -77,7 +78,6 @@ export function useValidation(
     const [validating, dispatchValidating] = React.useReducer<ValidationReducer>(
         validatingReducer, {}
     );
-    // TODO: probably should add touches to the last arg
     const validate = React.useMemo(() => (name: string, value: any) => {
         // note: validator defaults to no validation
         const validator = validators[name] || (() => false);
@@ -87,7 +87,6 @@ export function useValidation(
             payload: { name, results: validator(value) }
         });
     }, []);
-    // TODO: probably should add touches to the last arg
     const validateAll = React.useMemo(() => (values: any) => {
         // I need a way to call a function after validation
         Object.keys(values).forEach((valueKey) => {
@@ -98,15 +97,17 @@ export function useValidation(
     // maps names or keys to the current validation state
     const validationState: ValidationStateMap = React.useMemo(() => (
         Object.keys(validating).reduce((accState, key) => {
-            const {state = ActionTypes.none} = validating[key];
-            accState[key] = state;
+            accState[key] = isInValidationState(validating[key]);
             return accState;
-        }, {} as {[key: string]: ActionTypes})
+        }, {} as {[key: string]: boolean})
     ), [validating]);
-    // determines if we are doing validation
+    // determines if we are validating any input
     const isValidating = React.useMemo(() => (
-        Object.keys(validating).some((key) => isInValidationState(validating[key]))
-    ), [validating]);
+        Object.keys(validationState).some((key) => validationState[key])
+    ), [validationState]);
+    const stopValidating = React.useMemo(() => () => {
+        dispatchValidating({ type: ActionTypes.resetAll });
+    }, []);
     React.useEffect(() => {
         Object.keys(validating).forEach((name) => {
             const {results, state} = validating[name];
@@ -134,5 +135,5 @@ export function useValidation(
             }
         });
     }, [validating]);
-    return {validate, validateAll, isValidating, validationState};
+    return {validate, validateAll, isValidating, validationState, stopValidating};
 }
