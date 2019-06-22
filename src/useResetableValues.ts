@@ -3,20 +3,20 @@ import React, {Reducer} from "react";
 type allowableKeys = string | number;
 
 interface Values<T> {
-    [name: string]: T;
-    [name: number]: T;
+    readonly [name: string]: T;
+    readonly [name: number]: T;
 }
 
 enum ActionTypes { update, reset }
 interface Action<T> {
-    type: ActionTypes;
-    payload: Values<T>;
+    readonly type: ActionTypes;
+    readonly payload: Values<T>;
 }
 
 export interface useResetableValuesHook<T> {
-    values: Values<T>,
-    setValue: (name: allowableKeys, value: T) => void,
-    resetValues: () => void
+    readonly values: Values<T>;
+    setValue(name: allowableKeys, value: T): void;
+    resetValues(): void;
 }
 function reducer<T>(state: Values<T>, action: Action<T>) {
     switch (action.type) {

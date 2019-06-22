@@ -1,14 +1,14 @@
 import { useResetableValues } from "./useResetableValues";
 
 export interface Touches {
-    [name: string]: boolean;
+    readonly [name: string]: boolean;
 }
 
 export interface useTouchHook {
-    touches: Touches,
-    setTouch: (name: string, touched: boolean) => void,
-    touchField: (name: string) => void,
-    resetTouches: () => void
+    readonly touches: Touches,
+    setTouch(name: string, touched: boolean): void;
+    touchField(name: string): void;
+    resetTouches(): void;
 }
 
 export function useTouch(): useTouchHook {

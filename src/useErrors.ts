@@ -1,13 +1,13 @@
 import { useResetableValues } from "./useResetableValues";
 
 export interface Errors {
-    [name: string]: string;
+    readonly [name: string]: string;
 }
 
 export interface useErrorsHook {
-    errors: Errors,
-    setError: (name: string, value: string) => void,
-    resetErrors: () => void
+    readonly errors: Errors,
+    setError(name: string, error: string): void,
+    resetErrors(): void
 }
 
 export function useErrors(): useErrorsHook {
