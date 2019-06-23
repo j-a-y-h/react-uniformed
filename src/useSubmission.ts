@@ -1,6 +1,6 @@
 import React from "react";
 
-export type submissionHandler = (done: () => void) => void;
+export type submissionHandler = () => void | Promise<void>;
 export type submitHandler = (event?: Event) => void;
 export interface useSubmissionProps {
     readonly isValidating: boolean;
@@ -19,6 +19,7 @@ export function useSubmission({
     isValidating,
     hasErrors,
     validator,
+    // async handlers should return promises
     handler,
 }: useSubmissionProps): useSubmissionHook {
     const [isSubmitting, setSubmitting] = React.useState(false);
@@ -52,7 +53,8 @@ export function useSubmission({
                         setRunningSubmitHandler(true);
                         setWaitForValidation(false);
                         // note: handler cannot read states inside this function
-                        handler(done);
+                        Promise.resolve(handler())
+                        .then(done, done);
                     }
                 }
             } else if (!runningSubmitHandler) {

@@ -28,17 +28,9 @@ interface FormFields {
     }
 }
 
-interface onSubmitProps {
-    readonly done: submissionHandler;
-    readonly touches: Touches;
-    readonly errors: Errors;
-    readonly hasErrors: boolean;
-    reset(): void;
-}
-
 export function useForm(
     fields: FormFields, 
-    onSubmit: (values: FormFields, submitHelpers: onSubmitProps) => void
+    onSubmit: (values: FormFields) => void | Promise<void>
 ): useFormsHook {
     const {initialValues, validators} = React.useMemo(() => {
         const initialReducerValue: any = {initialValues: {}, validators: {}};
@@ -50,17 +42,18 @@ export function useForm(
         }, initialReducerValue);
     }, [fields]);
     const {values, setValue, resetValues} = useFields(initialValues);
-    const {touches, touchField, resetTouches, setTouch} = useTouch();
+    const {touches, resetTouches, setTouch} = useTouch();
     const {errors, resetErrors, setError, hasErrors} = useErrors();
     const {validate, validateAll, isValidating, stopValidating} = useValidation(setError, validators);
     const reset = React.useMemo(
         () => useHandlers(resetValues, resetErrors, resetTouches, stopValidating),
         []
     );
-    const handler: submissionHandler = React.useMemo(() => ((done) => {
+    const handler: submissionHandler = React.useMemo(() => (() => {
         // note: give the handler every value so that we don't have to worry about
         // it later
-        onSubmit(values, {touches, done, reset, errors, hasErrors});
+        Promise.resolve(onSubmit(values))
+        .then(reset, reset);
     }), [touches, errors, hasErrors, values]);
     const {isSubmitting, submit, submitCount} = useSubmission({
         hasErrors, 
