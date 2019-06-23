@@ -1,24 +1,16 @@
 import React, {Reducer} from "react";
 import { validErrorValues } from "./useErrors";
+import { Fields } from "./useFields";
+import { Values } from "./useResetableValues";
 
 enum ActionTypes {
     validating, none, resetAll, waitingForValidator
 }
 type validValidorReturnTypes = validErrorValues | Promise<validErrorValues>;
-type validationCallback = (name: string, value: validErrorValues) => void;
-export type validator = (value: string) => validValidorReturnTypes;
 interface InternalValidationState {
     readonly state: ActionTypes;
     readonly results?: validValidorReturnTypes;
-    readonly waitingForValidator?: boolean;
 }
-interface InternalValidationStateMap {
-    readonly [name: string]: InternalValidationState;
-}
-interface ValidationStateMap {
-    readonly [name: string]: boolean;
-}
-// TODO: use extends
 interface ActionPayload {
     readonly name: string;
     readonly results?: validValidorReturnTypes;
@@ -27,16 +19,14 @@ interface Action {
     readonly type: ActionTypes;
     readonly payload?: ActionPayload;
 }
-
-export interface Validators {
-    readonly [name: string]: validator;
-}
-interface Values {
-    readonly [name: string]: any;
-}
-
+type InternalValidationStateMap = Values<InternalValidationState>;
+type ValidationStateMap = Values<boolean>;
+type validationCallback = (name: string, value: validErrorValues) => void;
+type ValidationReducer = Reducer<InternalValidationStateMap, Action>;
+export type validator = (value: string) => validValidorReturnTypes;
+export type Validators = Values<validator>;
 export type validateHandler = (name: string, value: any) => void; 
-export type validateAllHandler = (valuesMap: Values) => void;
+export type validateAllHandler = (valuesMap: Fields) => void;
 interface useValidationHook {
     readonly isValidating: boolean; 
     readonly validationState: ValidationStateMap;
@@ -44,7 +34,6 @@ interface useValidationHook {
     readonly validateAll: validateAllHandler; 
     stopValidating(): void;
 }
-type ValidationReducer = Reducer<InternalValidationStateMap, Action>;
 
 function validatingReducer(validationStateMap: InternalValidationStateMap, action: Action): InternalValidationStateMap {
     const {name, results} = action.payload || {} as ActionPayload;
@@ -90,7 +79,7 @@ export function useValidation(
             payload: { name, results: validator(value) }
         });
     }, []);
-    const validateAll = React.useMemo(() => (values: any) => {
+    const validateAll = React.useMemo(() => (values: Fields) => {
         // I need a way to call a function after validation
         Object.keys(values).forEach((valueKey) => {
             const value = values[valueKey];
