@@ -25,7 +25,7 @@ export interface UseFormsHook {
     readonly reset: () => void;
 }
 interface UseFormParameters {
-    readonly defaultValues: Values<string>;
+    readonly defaultValues?: Values<string>;
     readonly validators: Validators | singleValidator<string>;
     readonly onSubmit: (values: Values<string>) => void | Promise<void>;
 }
