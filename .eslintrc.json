@@ -22,11 +22,21 @@
 		"sourceType": "module"
 	},
 	"plugins": [
-		"react"
+		"react",
+		"react-hooks"
 	],
 	"rules": {
 		"quotes": ["error", "double", {
 			"avoidEscape": true
+		}],
+		"react-hooks/rules-of-hooks": "error",
+		"react-hooks/exhaustive-deps": "error",
+		"@typescript-eslint/explicit-function-return-type": "error",
+		"@typescript-eslint/no-explicit-any": "error",
+		"no-shadow": ["error", {
+			"builtinGlobals": false,
+			"hoist": "never",
+			"allow": []
 		}]
 	}
 }

@@ -2,14 +2,14 @@ import React from "react";
 
 export type submissionHandler = () => void | Promise<void>;
 export type submitHandler = (event?: Event) => void;
-export interface useSubmissionProps {
+export interface UseSubmissionProps {
     readonly isValidating: boolean;
     readonly hasErrors: boolean;
     readonly handler: submissionHandler;
-    validator(): void;
+    readonly validator: () => void;
 }
 
-export interface useSubmissionHook {
+export interface UseSubmissionHook {
     readonly isSubmitting: boolean;
     readonly submitCount: number;
     readonly submit: submitHandler;
@@ -21,25 +21,24 @@ export function useSubmission({
     validator,
     // async handlers should return promises
     handler,
-}: useSubmissionProps): useSubmissionHook {
+}: UseSubmissionProps): UseSubmissionHook {
     const [isSubmitting, setSubmitting] = React.useState(false);
     const [submitCount, setSubmitCount] = React.useState(0);
     const [waitForValidation, setWaitForValidation] = React.useState(false);
     const [runningSubmitHandler, setRunningSubmitHandler] = React.useState(false);
-    // TODO: check if useState update functions allow callback function as second argument
-    const submit = React.useMemo(() => (event?: Event) => {
+    const submit = React.useCallback((event?: Event): void => {
         if (event) {
             event.preventDefault();
         }
-        setSubmitting(true)
-        setSubmitCount(currentCount => currentCount + 1);
+        setSubmitting(true);
+        setSubmitCount((currentCount): number => currentCount + 1);
     }, []);
-    const done = React.useMemo(() => () => {
+    const done = React.useCallback((): void => {
         setSubmitting(false);
         setRunningSubmitHandler(false);
         setWaitForValidation(false);
     }, []);
-    React.useEffect(() => {
+    React.useEffect((): void => {
         if (isSubmitting) {
             if (waitForValidation) {
                 // waiting for validation
@@ -54,7 +53,7 @@ export function useSubmission({
                         setWaitForValidation(false);
                         // note: handler cannot read states inside this function
                         Promise.resolve(handler())
-                        .then(done, done);
+                            .then(done, done);
                     }
                 }
             } else if (!runningSubmitHandler) {
@@ -65,6 +64,9 @@ export function useSubmission({
                 validator();
             }
         }
-    }, [hasErrors, isValidating, isSubmitting, runningSubmitHandler, waitForValidation]);
-    return {isSubmitting: runningSubmitHandler, submitCount, submit};
+    }, [
+        hasErrors, isValidating, isSubmitting, runningSubmitHandler,
+        waitForValidation, done, handler, validator,
+    ]);
+    return { isSubmitting: runningSubmitHandler, submitCount, submit };
 }
