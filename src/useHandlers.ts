@@ -1,7 +1,7 @@
-import React from "react";
+import React, {SyntheticEvent} from "react";
 
 type handler<T, K extends T[], Z> = (...args: K) => Z;
-type keyValueEvent<T> = [string, T, Event];
+type keyValueEvent<T> = [string, T, SyntheticEvent];
 
 export function useHandlers<T, K extends T[]>(
     ...handlers: handler<T, K, void>[]
@@ -14,10 +14,10 @@ export function useHandlers<T, K extends T[]>(
 }
 
 export function useEventHandlers(
-    ...handlers: handler<string | Event, keyValueEvent<string>, void>[]
-): handler<Event, [Event], void> {
-    const handler = useHandlers<string | Event, keyValueEvent<string>>(...handlers);
-    return React.useCallback((evt: Event): void => {
+    ...handlers: handler<string | SyntheticEvent, keyValueEvent<string>, void>[]
+): handler<SyntheticEvent, [SyntheticEvent], void> {
+    const handler = useHandlers<string | SyntheticEvent, keyValueEvent<string>>(...handlers);
+    return React.useCallback((evt: SyntheticEvent): void => {
         const { target } = evt;
         handler(
             (target as HTMLInputElement).name,

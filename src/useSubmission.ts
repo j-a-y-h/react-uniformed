@@ -1,7 +1,7 @@
 import React from "react";
 
 export type submissionHandler = () => void | Promise<void>;
-export type submitHandler = (event?: Event) => void;
+export type submitHandler = (event?: React.SyntheticEvent) => void;
 export interface UseSubmissionProps {
     readonly isValidating: boolean;
     readonly hasErrors: boolean;
@@ -26,7 +26,7 @@ export function useSubmission({
     const [submitCount, setSubmitCount] = React.useState(0);
     const [waitForValidation, setWaitForValidation] = React.useState(false);
     const [runningSubmitHandler, setRunningSubmitHandler] = React.useState(false);
-    const submit = React.useCallback((event?: Event): void => {
+    const submit = React.useCallback((event?: React.SyntheticEvent): void => {
         if (event) {
             event.preventDefault();
         }
