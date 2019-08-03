@@ -1,4 +1,4 @@
-import React, {SyntheticEvent} from "react";
+import React, { SyntheticEvent } from "react";
 
 type handler<T, K extends T[], Z> = (...args: K) => Z;
 type keyValueEvent<T> = [string, T, SyntheticEvent];

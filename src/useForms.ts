@@ -5,8 +5,8 @@ import { useFields } from "./useFields";
 import { useTouch, Touches, touchHandler } from "./useTouch";
 import { useSubmission, submissionHandler, submitHandler } from "./useSubmission";
 import {
-    useValidator, Validators, validateHandler, validateAllHandler, singleValidator,
-} from "./useValidator";
+    useValidation, Validators, validateHandler, validateAllHandler, singleValidator,
+} from "./useValidation";
 import { Values, setValueCallback } from "./useResetableValues";
 
 export interface UseFormsHook {
@@ -37,7 +37,7 @@ export function useForm({ defaultValues, validators, onSubmit }: UseFormParamete
     // I want to decouple validator from use form
     const {
         validate, validateAll, isValidating, errors, resetErrors, setError, hasErrors,
-    } = useValidator(validators);
+    } = useValidation(validators);
     const validator = useCallback((): void => validateAll(values), [values, validateAll]);
     const reset = useHandlers(resetValues, resetErrors, resetTouches);
     const handler: submissionHandler = React.useCallback((): void => {

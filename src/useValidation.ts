@@ -6,6 +6,7 @@ import { Values, useResetableValues } from "./useResetableValues";
 
 type validValidorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
+
 export type singleValidator<T> = (values: Values<T>) => validSingleValidatorReturnTypes;
 export type validator = (value: string) => validValidorReturnTypes;
 export type Validators = Values<validator>;
@@ -25,7 +26,8 @@ interface UseValidatorHook<T> {
 // TODO: all methods should accept one param that is an object
 // TODO: all methods returned in all api should return void
 // TODO: look into supporting touch state
-export function useValidator(
+// TODO: cross validation. how to validate with reference to other values
+export function useValidation(
     validator: Validators | singleValidator<string>,
 ): UseValidatorHook<string> {
     const {
@@ -41,7 +43,7 @@ export function useValidator(
                 setValidationState(name, false);
             });
         } else {
-            const handler = validator[name] || ((): boolean => true);
+            const handler = validator[name] || ((): string => "");
             Promise.resolve(handler(value)).then((error): void => {
                 setError(name, error);
                 setValidationState(name, false);

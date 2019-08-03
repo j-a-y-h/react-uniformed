@@ -1,3 +1,4 @@
 import { useResetableValues } from "./useResetableValues";
 
-export const useFields = useResetableValues;;
+// eslint-disable-next-line import/prefer-default-export
+export const useFields = useResetableValues;
