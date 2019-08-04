@@ -32,7 +32,7 @@ interface UseFormParameters {
 
 // useHandlers(validateAll, onSubmit)
 export function useForm({ defaultValues, validators, onSubmit }: UseFormParameters): UseFormsHook {
-    const { values, setValue, resetValues } = useFields<string>(defaultValues);
+    const { values, setValue, resetValues } = useFields(defaultValues);
     const { touches, resetTouches, setTouch } = useTouch();
     // I want to decouple validator from use form
     const {
