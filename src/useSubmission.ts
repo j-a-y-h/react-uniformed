@@ -15,12 +15,9 @@ export interface UseSubmissionHook {
     readonly submit: submitHandler;
 }
 
+// async handlers should return promises
 export function useSubmission({
-    isValidating,
-    hasErrors,
-    validator,
-    // async handlers should return promises
-    handler,
+    isValidating, hasErrors, validator, handler,
 }: UseSubmissionProps): UseSubmissionHook {
     const [isSubmitting, setSubmitting] = React.useState(false);
     const [submitCount, setSubmitCount] = React.useState(0);

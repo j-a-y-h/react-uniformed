@@ -177,22 +177,19 @@ function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string 
 export function useHTML5Validator(
     rules: Values<HTML5ValidatorRules | validator>,
 ): Values<validator> {
-    const validatorObject = React.useMemo((): Values<validator> => {
-        const rawValidator = Object.keys(rules)
-            .reduce((validationMap: MutableValidator, name: string): MutableValidator => {
-                const currentValidator = rules[name];
-                if (typeof currentValidator !== "function") {
-                    validateRule(name, currentValidator);
-                }
-                return {
-                    ...validationMap,
-                    [name]: (typeof currentValidator !== "function")
-                        ? (value?: string): string => validateUsingHTML5(currentValidator, value)
-                        : currentValidator,
-                };
-            }, {});
-        return rawValidator;
-    }, [rules]);
-    // TODO: don't memo rules,
-    return validatorObject;
+    return React.useMemo((): Values<validator> => Object.keys(rules)
+        .reduce((validationMap: MutableValidator, name: string): MutableValidator => {
+            const currentValidator = rules[name];
+            if (typeof currentValidator !== "function") {
+                validateRule(name, currentValidator);
+            }
+            return {
+                ...validationMap,
+                [name]: (typeof currentValidator !== "function")
+                    ? (value?: string): string => validateUsingHTML5(currentValidator, value)
+                    : currentValidator,
+            };
+        }, {}),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []);
 }

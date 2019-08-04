@@ -35,8 +35,11 @@ export function useValidation(
         setError, errors, hasErrors, resetErrors, setErrors,
     } = useErrors();
     // this is empty if the user passes singleValidator
-    const fieldsToUseInValidateAll = React.useMemo((): string[] => requiredFields || ((typeof validator === "function") ? [] : Object.keys(validator)), [validator, requiredFields]);
+    const fieldsToUseInValidateAll = React.useMemo((): string[] => requiredFields || ((typeof validator === "function") ? [] : Object.keys(validator)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+        []);
     const { setValue: setValidationState, hasValue: isValidating } = useResetableValues();
+
     // create a validation function
     const validate = React.useCallback(async (name: string, value: string): Promise<void> => {
         setValidationState(name, true);
@@ -50,7 +53,9 @@ export function useValidation(
             setError(name, error);
             setValidationState(name, false);
         }
-    }, [setError, setValidationState, validator]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setError, setValidationState]);
+
     // create validate all function
     const validateAll = React.useCallback(async (values: Values<string>): Promise<void> => {
         const names = [...Object.keys(values), ...fieldsToUseInValidateAll];
@@ -71,7 +76,8 @@ export function useValidation(
                 validate(name, value);
             });
         }
-    }, [validator, setValidationState, setErrors, validate, fieldsToUseInValidateAll]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setValidationState, setErrors, validate, fieldsToUseInValidateAll]);
     return {
         validateAll, validate, errors, hasErrors, resetErrors, setError, isValidating,
     };

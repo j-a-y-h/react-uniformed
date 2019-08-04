@@ -17,10 +17,8 @@ export function useTouch(): UseTouchHook {
         setValue: setTouch,
         resetValues: resetTouches,
     } = useResetableValues<boolean>();
-    const touchField = React.useCallback(
-        (name: string): void => setTouch(name, true),
-        [setTouch],
-    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const touchField = React.useCallback((name: string): void => setTouch(name, true), []);
     return {
         touches, setTouch, resetTouches, touchField,
     };
