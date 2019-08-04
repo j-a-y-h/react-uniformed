@@ -40,14 +40,14 @@ export function useForm({ defaultValues, validators, onSubmit }: UseFormParamete
     } = useValidation(validators);
     const validator = useCallback((): void => validateAll(values), [values, validateAll]);
     const reset = useHandlers(resetValues, resetErrors, resetTouches);
-    const handler: submissionHandler = React.useCallback(async (): Promise<void> => {
+    const submissionHandler: submissionHandler = React.useCallback(async (): Promise<void> => {
         // note: give the handler every value so that we don't have to worry about
         // it later
         await onSubmit(values);
         reset();
     }, [onSubmit, values, reset]);
     const { isSubmitting, submit, submitCount } = useSubmission({
-        hasErrors, isValidating, handler, validator,
+        hasErrors, isValidating, onSubmit: submissionHandler, validator,
     });
     return {
         values,

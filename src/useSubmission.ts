@@ -5,7 +5,7 @@ export type submitHandler = (event?: React.SyntheticEvent) => void;
 export interface UseSubmissionProps {
     readonly isValidating: boolean;
     readonly hasErrors: boolean;
-    readonly handler: submissionHandler;
+    readonly onSubmit: submissionHandler;
     readonly validator: () => void;
 }
 
@@ -17,7 +17,7 @@ export interface UseSubmissionHook {
 
 // async handlers should return promises
 export function useSubmission({
-    isValidating, hasErrors, validator, handler,
+    isValidating, hasErrors, validator, onSubmit,
 }: UseSubmissionProps): UseSubmissionHook {
     const [isSubmitting, setSubmitting] = React.useState(false);
     const [submitCount, setSubmitCount] = React.useState(0);
@@ -49,7 +49,7 @@ export function useSubmission({
                         setRunningSubmitHandler(true);
                         setWaitForValidation(false);
                         // note: handler cannot read states inside this function
-                        Promise.resolve(handler())
+                        Promise.resolve(onSubmit())
                             .then(done, done);
                     }
                 }
@@ -63,7 +63,7 @@ export function useSubmission({
         }
     }, [
         hasErrors, isValidating, isSubmitting, runningSubmitHandler,
-        waitForValidation, done, handler, validator,
+        waitForValidation, done, onSubmit, validator,
     ]);
     return { isSubmitting: runningSubmitHandler, submitCount, submit };
 }
