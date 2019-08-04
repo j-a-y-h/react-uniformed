@@ -11,7 +11,7 @@ interface UpdatePayload<T> {
 }
 type ActionPayload<T> = Values<T> | UpdatePayload<T>;
 
-enum ActionTypes { update, reset }
+enum ActionTypes { update, reset, updateAll }
 interface Action<T> {
     readonly type: ActionTypes;
     readonly payload: ActionPayload<T>;
@@ -26,6 +26,9 @@ export interface UseResetableValuesHook<T> {
     readonly setValue: setValueCallback<T>;
     readonly resetValues: () => void;
 }
+export function hasValue<T>(values: Values<T>): boolean {
+    return !values || typeof values !== "object" || Object.keys(values).some((key): boolean => Boolean(values[key]));
+}
 function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
     let value;
     let name;
@@ -35,6 +38,10 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
             // don't do unnecessary updates
             return (state[name] !== value)
                 ? { ...state, [name]: value }
+                : state;
+        case ActionTypes.updateAll:
+            return (action.payload !== state)
+                ? { ...state, ...action.payload as Values<T> }
                 : state;
         case ActionTypes.reset:
             return (action.payload !== state)
@@ -50,6 +57,7 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
     const setValue = React.useCallback((name: allowableKeys, value: T): void => {
         dispatch({ type: ActionTypes.update, payload: { name, value } });
     }, []);
+    // TODO: support set all where we merge with current state
     const resetValues = React.useCallback((): void => {
         dispatch({ type: ActionTypes.reset, payload: initialValues });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,11 +66,8 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);
     // note: this counts 0 and empty string as no value.
-    const hasValue = React.useMemo(
-        (): boolean => Object.keys(values).some((key): boolean => Boolean(values[key])),
-        [values],
-    );
+    const hasValueCallback = React.useMemo((): boolean => hasValue(values), [values]);
     return {
-        values, setValue, resetValues, setValues, hasValue,
+        values, setValue, resetValues, setValues, hasValue: hasValueCallback,
     };
 }

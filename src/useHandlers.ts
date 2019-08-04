@@ -1,4 +1,6 @@
 import React, { SyntheticEvent } from "react";
+import { validateAllHandler } from "./useValidation";
+import { Values } from "./useResetableValues";
 
 type handler<T, K extends T[], Z> = (...args: K) => Z;
 type keyValueEvent<T> = [string, T, SyntheticEvent];
@@ -25,4 +27,10 @@ export function useEventHandlers(
             evt,
         );
     }, [handler]);
+}
+
+export function useValidationWithValues<T>(
+    validate: validateAllHandler<T>, values: Values<T>
+): () => void {
+    return React.useCallback(() => { validate(values) }, [validate, values]);
 }

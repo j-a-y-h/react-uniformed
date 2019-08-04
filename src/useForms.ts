@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Errors, errorHandler } from "./useErrors";
 import { useHandlers } from "./useHandlers";
 import { useFields } from "./useFields";
-import { useTouch, Touches, touchHandler } from "./useTouch";
+import { useTouch, Touches, touchHandler, touchFieldHandler } from "./useTouch";
 import { useSubmission, submissionHandler, submitHandler } from "./useSubmission";
 import {
     useValidation, Validators, validateHandler, validateAllHandler, singleValidator,
@@ -16,12 +16,13 @@ export interface UseFormsHook {
     readonly values: Values<string>;
     readonly setError: errorHandler;
     readonly setTouch: touchHandler;
+    readonly touchField: touchFieldHandler;
     readonly setValue: setValueCallback<string>;
     readonly submitCount: number;
     readonly submit: submitHandler;
     readonly touches: Touches;
-    readonly validate: validateHandler<string>;
-    readonly validateAll: validateAllHandler<string>;
+    readonly validateByName: validateHandler<string>;
+    readonly validate: validateAllHandler<string>;
     readonly reset: () => void;
 }
 interface UseFormParameters {
@@ -33,12 +34,17 @@ interface UseFormParameters {
 // useHandlers(validateAll, onSubmit)
 export function useForm({ defaultValues, validators, onSubmit }: UseFormParameters): UseFormsHook {
     const { values, setValue, resetValues } = useFields(defaultValues);
-    const { touches, resetTouches, setTouch } = useTouch();
+    const { touches, resetTouches, setTouch, touchField } = useTouch();
     // I want to decouple validator from use form
     const {
-        validate, validateAll, isValidating, errors, resetErrors, setError, hasErrors,
+        validate, validateByName, errors, resetErrors, setError, hasErrors,
     } = useValidation(validators);
-    const validator = useCallback((): void => validateAll(values), [values, validateAll]);
+    const submissionValidator = useCallback(async (): Promise<Errors> => {
+        const errors = await validate(values);
+        // TODO: efficient update all
+        Object.keys(errors).forEach(touchField);
+        return errors;
+    }, [values, validate]);
     const reset = useHandlers(resetValues, resetErrors, resetTouches);
     const submissionHandler: submissionHandler = React.useCallback(async (): Promise<void> => {
         // note: give the handler every value so that we don't have to worry about
@@ -47,19 +53,21 @@ export function useForm({ defaultValues, validators, onSubmit }: UseFormParamete
         reset();
     }, [onSubmit, values, reset]);
     const { isSubmitting, submit, submitCount } = useSubmission({
-        hasErrors, isValidating, onSubmit: submissionHandler, validator,
+        onSubmit: submissionHandler,
+        validator: submissionValidator
     });
     return {
         values,
         touches,
         errors,
         hasErrors,
+        touchField,
         setTouch,
         setError,
         setValue,
         reset,
+        validateByName,
         validate,
-        validateAll,
         isSubmitting,
         submit,
         submitCount,
