@@ -41,23 +41,21 @@ export function useValidation(
     );
     const { setValue: setValidationState, hasValue: isValidating } = useResetableValues();
     // create a validation function
-    const validate = React.useCallback((name: string, value: string): void => {
+    const validate = React.useCallback(async (name: string, value: string): Promise<void> => {
         setValidationState(name, true);
         if (typeof validator === "function") {
-            Promise.resolve(validator({ [name]: value })).then((localErrors = {}): void => {
-                setError(name, localErrors[name]);
-                setValidationState(name, false);
-            });
+            const localErrors = await validator({ [name]: value }) || {};
+            setError(name, localErrors[name]);
+            setValidationState(name, false);
         } else {
             const handler = validator[name] || ((): string => "");
-            Promise.resolve(handler(value)).then((error): void => {
-                setError(name, error);
-                setValidationState(name, false);
-            });
+            const error = await handler(value);
+            setError(name, error);
+            setValidationState(name, false);
         }
     }, [setError, setValidationState, validator]);
     // create validate all function
-    const validateAll = React.useCallback((values: Values<string>): void => {
+    const validateAll = React.useCallback(async (values: Values<string>): Promise<void> => {
         const names = [...Object.keys(values), ...fieldsToUseInValidateAll];
         const setAllValidationState = (state: boolean): void => {
             names.forEach((name): void => {
@@ -66,10 +64,9 @@ export function useValidation(
         };
         setAllValidationState(true);
         if (typeof validator === "function") {
-            Promise.resolve(validator(values)).then((localErrors): void => {
-                setErrors(localErrors);
-                setAllValidationState(false);
-            });
+            const localErrors = await validator(values);
+            setErrors(localErrors);
+            setAllValidationState(false);
         } else {
             names.forEach((name): void => {
                 const value = values[name];
