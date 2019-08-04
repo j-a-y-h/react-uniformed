@@ -31,12 +31,12 @@ export function useSubmission({
             event.preventDefault();
         }
         setSubmitting(true);
-        setSubmitCount((currentCount): number => currentCount + 1);
     }, []);
     const done = React.useCallback((): void => {
         setSubmitting(false);
         setRunningSubmitHandler(false);
         setWaitForValidation(false);
+        setSubmitCount((currentCount): number => currentCount + 1);
     }, []);
     React.useEffect((): void => {
         if (isSubmitting) {
