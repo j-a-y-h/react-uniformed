@@ -1,4 +1,6 @@
-import React, { Reducer } from "react";
+import {
+    Reducer, useReducer, useCallback, useMemo,
+} from "react";
 
 type allowableKeys = string;
 
@@ -53,20 +55,20 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
 }
 
 export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetableValuesHook<T> {
-    const [values, dispatch] = React.useReducer<ReducerType<T>>(reducer, initialValues);
-    const setValue = React.useCallback((name: allowableKeys, value: T): void => {
+    const [values, dispatch] = useReducer<ReducerType<T>>(reducer, initialValues);
+    const setValue = useCallback((name: allowableKeys, value: T): void => {
         dispatch({ type: ActionTypes.update, payload: { name, value } });
     }, []);
     // TODO: support set all where we merge with current state
-    const resetValues = React.useCallback((): void => {
+    const resetValues = useCallback((): void => {
         dispatch({ type: ActionTypes.reset, payload: initialValues });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    const setValues = React.useCallback((newValues: Values<T>): void => {
+    const setValues = useCallback((newValues: Values<T>): void => {
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);
     // note: this counts 0 and empty string as no value.
-    const hasValueCallback = React.useMemo((): boolean => hasValue(values), [values]);
+    const hasValueCallback = useMemo((): boolean => hasValue(values), [values]);
     return {
         values, setValue, resetValues, setValues, hasValue: hasValueCallback,
     };

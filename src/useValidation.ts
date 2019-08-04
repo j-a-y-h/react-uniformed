@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback, useMemo } from "react";
 import {
     validErrorValues, Errors, useErrors, errorHandler,
 } from "./useErrors";
@@ -26,7 +26,7 @@ interface UseValidatorHook<T> {
 function useValidationFieldNames(
     validator: Validators | singleValidator<string>, requiredFields?: string[],
 ): string[] {
-    return React.useMemo((): string[] => requiredFields || ((typeof validator === "function") ? [] : Object.keys(validator)),
+    return useMemo((): string[] => requiredFields || ((typeof validator === "function") ? [] : Object.keys(validator)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
         []);
 }
@@ -46,26 +46,27 @@ export function useValidation(
     const fieldsToUseInValidateAll = useValidationFieldNames(validator, requiredFields);
     const { setValue: setValidationState, hasValue: isValidating } = useResetableValues();
     // create a validation function
-    const validateByName = React
-        .useCallback(async (name: string, value: string): Promise<validErrorValues> => {
-            let error: validErrorValues;
-            setValidationState(name, true);
-            if (typeof validator === "function") {
-                const localErrors = await validator({ [name]: value });
-                error = localErrors[name] || "";
-            } else {
-                const handler = validator[name] || ((): validValidatorReturnTypes => "");
-                error = await handler(value) || "";
-            }
-            setError(name, error);
-            setValidationState(name, false);
-            return error;
+    const validateByName = useCallback(async (
+        name: string, value: string,
+    ): Promise<validErrorValues> => {
+        let error: validErrorValues;
+        setValidationState(name, true);
+        if (typeof validator === "function") {
+            const localErrors = await validator({ [name]: value });
+            error = localErrors[name] || "";
+        } else {
+            const handler = validator[name] || ((): validValidatorReturnTypes => "");
+            error = await handler(value) || "";
+        }
+        setError(name, error);
+        setValidationState(name, false);
+        return error;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [setError, setValidationState, validator]);
+    }, [setError, setValidationState, validator]);
 
     // create validate all function
     // TODO: decouple values
-    const validate = React.useCallback(async (values: Values<string>): Promise<Errors> => {
+    const validate = useCallback(async (values: Values<string>): Promise<Errors> => {
         const names = [...Object.keys(values), ...fieldsToUseInValidateAll];
         const setAllValidationState = (state: boolean): void => {
             names.forEach((name): void => {

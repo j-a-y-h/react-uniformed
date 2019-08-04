@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback } from "react";
 import { useResetableValues, Values } from "./useResetableValues";
 
 export type Touches = Values<boolean>;
@@ -18,7 +18,7 @@ export function useTouch(): UseTouchHook {
         resetValues: resetTouches,
     } = useResetableValues<boolean>();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const touchField = React.useCallback((name: string): void => setTouch(name, true), []);
+    const touchField = useCallback((name: string): void => setTouch(name, true), []);
     return {
         touches, setTouch, resetTouches, touchField,
     };

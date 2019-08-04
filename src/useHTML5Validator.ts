@@ -1,4 +1,4 @@
-import React from "react";
+import { useMemo } from "react";
 import { Values } from "./useResetableValues";
 import { validator } from "./useValidation";
 import { log } from "./utils";
@@ -177,7 +177,7 @@ function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string 
 export function useHTML5Validator(
     rules: Values<HTML5ValidatorRules | validator>,
 ): Values<validator> {
-    return React.useMemo((): Values<validator> => Object.keys(rules)
+    return useMemo((): Values<validator> => Object.keys(rules)
         .reduce((validationMap: MutableValidator, name: string): MutableValidator => {
             const currentValidator = rules[name];
             if (typeof currentValidator !== "function") {

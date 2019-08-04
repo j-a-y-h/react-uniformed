@@ -1,9 +1,9 @@
-import React from "react";
+import { useState, useCallback, SyntheticEvent } from "react";
 import { hasValue } from "./useResetableValues";
 import { Errors } from "./useErrors";
 
 export type submissionHandler = () => void | Promise<void>;
-export type submitHandler = (event?: React.SyntheticEvent) => void;
+export type submitHandler = (event?: SyntheticEvent) => void;
 export interface UseSubmissionProps {
     readonly onSubmit: submissionHandler;
     readonly validator: () => Promise<Errors> | Errors;
@@ -17,9 +17,9 @@ export interface UseSubmissionHook {
 
 // async handlers should return promises
 export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseSubmissionHook {
-    const [isSubmitting, setSubmitting] = React.useState(false);
-    const [submitCount, setSubmitCount] = React.useState(0);
-    const submit = React.useCallback(async (event?: React.SyntheticEvent): Promise<void> => {
+    const [isSubmitting, setSubmitting] = useState(false);
+    const [submitCount, setSubmitCount] = useState(0);
+    const submit = useCallback(async (event?: SyntheticEvent): Promise<void> => {
         if (event) {
             event.preventDefault();
         }
