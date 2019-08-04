@@ -1,8 +1,10 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { Errors, errorHandler } from "./useErrors";
 import { useHandlers } from "./useHandlers";
 import { useFields } from "./useFields";
-import { useTouch, Touches, touchHandler, touchFieldHandler } from "./useTouch";
+import {
+    useTouch, Touches, touchHandler, touchFieldHandler,
+} from "./useTouch";
 import { useSubmission, submissionHandler, submitHandler } from "./useSubmission";
 import {
     useValidation, Validators, validateHandler, validateAllHandler, singleValidator,
@@ -34,27 +36,29 @@ interface UseFormParameters {
 // useHandlers(validateAll, onSubmit)
 export function useForm({ defaultValues, validators, onSubmit }: UseFormParameters): UseFormsHook {
     const { values, setValue, resetValues } = useFields(defaultValues);
-    const { touches, resetTouches, setTouch, touchField } = useTouch();
+    const {
+        touches, resetTouches, setTouch, touchField,
+    } = useTouch();
     // I want to decouple validator from use form
     const {
         validate, validateByName, errors, resetErrors, setError, hasErrors,
     } = useValidation(validators);
     const submissionValidator = useCallback(async (): Promise<Errors> => {
-        const errors = await validate(values);
+        const validationErrors = await validate(values);
         // TODO: efficient update all
-        Object.keys(errors).forEach(touchField);
-        return errors;
-    }, [values, validate]);
+        Object.keys(validationErrors).forEach(touchField);
+        return validationErrors;
+    }, [validate, values, touchField]);
     const reset = useHandlers(resetValues, resetErrors, resetTouches);
-    const submissionHandler: submissionHandler = React.useCallback(async (): Promise<void> => {
+    const handleSubmit: submissionHandler = useCallback(async (): Promise<void> => {
         // note: give the handler every value so that we don't have to worry about
         // it later
         await onSubmit(values);
         reset();
     }, [onSubmit, values, reset]);
     const { isSubmitting, submit, submitCount } = useSubmission({
-        onSubmit: submissionHandler,
-        validator: submissionValidator
+        onSubmit: handleSubmit,
+        validator: submissionValidator,
     });
     return {
         values,

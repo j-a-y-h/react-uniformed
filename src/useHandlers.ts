@@ -12,6 +12,7 @@ export function useHandlers<T, K extends T[]>(
         handlers.forEach((func): void => {
             func(...args);
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [...handlers]);
 }
 
@@ -30,7 +31,7 @@ export function useEventHandlers(
 }
 
 export function useValidationWithValues<T>(
-    validate: validateAllHandler<T>, values: Values<T>
+    validate: validateAllHandler<T>, values: Values<T>,
 ): () => void {
-    return React.useCallback(() => { validate(values) }, [validate, values]);
+    return React.useCallback((): void => { validate(values); }, [validate, values]);
 }

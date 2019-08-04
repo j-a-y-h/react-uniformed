@@ -16,7 +16,7 @@ export interface UseSubmissionHook {
 }
 
 // async handlers should return promises
-export function useSubmission({validator, onSubmit}: UseSubmissionProps): UseSubmissionHook {
+export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseSubmissionHook {
     const [isSubmitting, setSubmitting] = React.useState(false);
     const [submitCount, setSubmitCount] = React.useState(0);
     const submit = React.useCallback(async (event?: React.SyntheticEvent): Promise<void> => {

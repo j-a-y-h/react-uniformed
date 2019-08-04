@@ -23,10 +23,12 @@ interface UseValidatorHook<T> {
     readonly resetErrors: () => void;
 }
 
-export function useValidationFieldNames(validator: Validators | singleValidator<string>, requiredFields?: string[]) {
+function useValidationFieldNames(
+    validator: Validators | singleValidator<string>, requiredFields?: string[],
+): string[] {
     return React.useMemo((): string[] => requiredFields || ((typeof validator === "function") ? [] : Object.keys(validator)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []);
+        []);
 }
 
 // TODO: consist naming conventaiton for return functions. ie (handleSubmit, onSubmit)
@@ -44,21 +46,22 @@ export function useValidation(
     const fieldsToUseInValidateAll = useValidationFieldNames(validator, requiredFields);
     const { setValue: setValidationState, hasValue: isValidating } = useResetableValues();
     // create a validation function
-    const validateByName = React.useCallback(async (name: string, value: string): Promise<validErrorValues> => {
-        let error: validErrorValues;
-        setValidationState(name, true);
-        if (typeof validator === "function") {
-            const localErrors = await validator({ [name]: value });
-            error = localErrors[name] || "";
-        } else {
-            const handler = validator[name] || ((): validValidatorReturnTypes => "");
-            error = await handler(value) || "";
-        }
-        setError(name, error);
-        setValidationState(name, false);
-        return error;
+    const validateByName = React
+        .useCallback(async (name: string, value: string): Promise<validErrorValues> => {
+            let error: validErrorValues;
+            setValidationState(name, true);
+            if (typeof validator === "function") {
+                const localErrors = await validator({ [name]: value });
+                error = localErrors[name] || "";
+            } else {
+                const handler = validator[name] || ((): validValidatorReturnTypes => "");
+                error = await handler(value) || "";
+            }
+            setError(name, error);
+            setValidationState(name, false);
+            return error;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [setError, setValidationState, validator]);
+        }, [setError, setValidationState, validator]);
 
     // create validate all function
     // TODO: decouple values
@@ -74,11 +77,12 @@ export function useValidation(
         if (typeof validator === "function") {
             localErrors = await validator(values);
         } else {
-            const errorsPromiseMap = names.map(async (name): Promise<[string, validValidatorReturnTypes]> => {
-                const handler = validator[name] || ((): validValidatorReturnTypes => "");
-                const currentErrors = await handler(values[name]);
-                return [name, currentErrors];
-            });
+            const errorsPromiseMap = names
+                .map(async (name): Promise<[string, validValidatorReturnTypes]> => {
+                    const handler = validator[name] || ((): validValidatorReturnTypes => "");
+                    const currentErrors = await handler(values[name]);
+                    return [name, currentErrors];
+                });
             const errorsMap = await Promise.all(errorsPromiseMap);
             localErrors = errorsMap.reduce((objectMap, [name, error]): Errors => ({
                 ...objectMap,
