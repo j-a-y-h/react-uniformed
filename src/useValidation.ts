@@ -8,7 +8,7 @@ type validValidorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
 
 export type singleValidator<T> = (values: Values<T>) => validSingleValidatorReturnTypes;
-export type validator = (value: string) => validValidorReturnTypes;
+export type validator = (value?: string) => validValidorReturnTypes;
 export type Validators = Values<validator>;
 export type validateHandler<T> = (name: string, value: T) => void;
 export type validateAllHandler<T> = (valuesMap: Values<T>) => void;
@@ -29,10 +29,16 @@ interface UseValidatorHook<T> {
 // TODO: cross validation. how to validate with reference to other values
 export function useValidation(
     validator: Validators | singleValidator<string>,
+    requiredFields?: string[],
 ): UseValidatorHook<string> {
     const {
         setError, errors, hasErrors, resetErrors, setErrors,
     } = useErrors();
+    // this is empty if the user passes singleValidator
+    const fieldsToUseInValidateAll = React.useMemo(
+        () => requiredFields || ((typeof validator === "function") ? [] : Object.keys(validator)),
+        [validator, requiredFields]
+    );
     const { setValue: setValidationState, hasValue: isValidating } = useResetableValues();
     // create a validation function
     const validate = React.useCallback((name: string, value: string): void => {
@@ -52,7 +58,7 @@ export function useValidation(
     }, [setError, setValidationState, validator]);
     // create validate all function
     const validateAll = React.useCallback((values: Values<string>): void => {
-        const names = Object.keys(values);
+        const names = [...Object.keys(values), ...fieldsToUseInValidateAll];
         const setAllValidationState = (state: boolean): void => {
             names.forEach((name): void => {
                 setValidationState(name, state);
@@ -71,7 +77,7 @@ export function useValidation(
                 validate(name, value);
             });
         }
-    }, [validator, setValidationState, setErrors, validate]);
+    }, [validator, setValidationState, setErrors, validate, fieldsToUseInValidateAll]);
     return {
         validateAll, validate, errors, hasErrors, resetErrors, setError, isValidating,
     };
