@@ -1,13 +1,17 @@
 import React from "react";
 import { Values } from "./useResetableValues";
 import { validator } from "./useValidation";
+import { log } from "./utils";
 
 // note: not all browsers support validation for some of these types.
-type supportedInputTypes = "text" | "number" | "date" | "email" | "checkbox" |
-"tel" | "time" | "url" | "week" | "month" | "year" | "range";
-const supportedInputTypesSet = new Set(["text", "number", "date", "email", "checkbox",
-    "tel", "time", "url", "week", "month", "year", "range"]);
+type supportedInputTypes = "email" | "text" | "url";
+// possible values:
+// "text" | "number" | "date" | "email" | "checkbox" |
+// "tel" | "time" | "url" | "week" | "month" | "year" | "range";
+const supportedInputTypesSet = new Set(["text", "email", "url"]);
 type supportedInputAttributes = "minLength" | "maxLength" | "min" | "max" | "required" | "pattern" | "type";
+
+type propertyValidatorsSetting = boolean | number | RegExp | string;
 interface HTML5ValidatorRules {
     readonly minLength?: number | [number, string];
     readonly maxLength?: number | [number, string];
@@ -23,9 +27,55 @@ interface HTML5ValidatorRules {
 interface MutableValidator {
     [name: string]: validator;
 }
+interface PropertyValidators {
+    readonly [property: string]: (value: any, setting: propertyValidatorsSetting) => boolean;
+}
+
+const defaultMessage = {
+    required: "input is required",
+    maxLength: "too long",
+    minLength: "too short",
+    max: "overflow",
+    min: "underflow",
+    pattern: "pattern mismatch",
+    type: "type mismatch"
+};
+
+const supportedProperties: supportedInputAttributes[] = [
+    "required", "pattern", "maxLength", "minLength", "max", "min", "type"
+];
+
+const propertyValidators: PropertyValidators = {
+    required: (value: any, required: propertyValidatorsSetting) => !required || Boolean(value),
+    maxLength: (value: any, maxLength: propertyValidatorsSetting) => {
+        return typeof value === "string" && value.length <= Number(maxLength)
+    },
+    minLength: (value: any, minLength: propertyValidatorsSetting) => {
+        return typeof value === "string" && value.length >= Number(minLength)
+    },
+    max: (value: any, max: propertyValidatorsSetting) => Number(value) <= Number(max),
+    min: (value: any, min: propertyValidatorsSetting) => Number(value) >= Number(min),
+    // do custom check: email, url, date
+    type: (value: any, type: propertyValidatorsSetting) => {
+        let regex: RegExp;
+        switch (type) {
+        case "url":
+            regex = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+            return regex.test(value);
+        case "email":
+            regex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+            return regex.test(value);
+        case "text":
+        default: return true;
+        }
+    },
+    pattern: (value: any, pattern: propertyValidatorsSetting) => {
+        return !(pattern instanceof RegExp) || pattern.test(value);
+    }
+};
 
 function getRuleValueAndMessage(
-    name: supportedInputAttributes, rules: HTML5ValidatorRules,
+    rules: HTML5ValidatorRules, name: supportedInputAttributes,
 ): [RegExp | number | boolean | string, string] {
     const rule = rules[name];
     let message = "";
@@ -46,70 +96,80 @@ function getRuleValueAndMessage(
 }
 
 function getRuleValue(
-    name: supportedInputAttributes, rules: HTML5ValidatorRules,
+    rules: HTML5ValidatorRules, name: supportedInputAttributes,
 ): string | number | boolean | RegExp {
-    const [value] = getRuleValueAndMessage(name, rules);
+    const [value] = getRuleValueAndMessage(rules, name);
     return value;
 }
-function getRuleMessage(name: supportedInputAttributes, rules: HTML5ValidatorRules): string {
-    const [, message] = getRuleValueAndMessage(name, rules);
+function getRuleMessage(rules: HTML5ValidatorRules, name: supportedInputAttributes): string {
+    const [, message] = getRuleValueAndMessage(rules, name);
     return message;
 }
-function hasRule(name: supportedInputAttributes, rules: HTML5ValidatorRules): boolean {
+function hasRule(rules: HTML5ValidatorRules, name: supportedInputAttributes): boolean {
     return ({}).hasOwnProperty.call(rules, name);
 }
 
-function getValidationMessage(input: HTMLInputElement, rules: HTML5ValidatorRules): string {
-    let message = "";
-    const { validity } = input;
-    if (!validity.valid) {
-        message = input.validationMessage;
-        // TODO: convert to a loop
-        if (validity.patternMismatch) {
-            message = getRuleMessage("pattern", rules) || message;
-        } else if (validity.rangeUnderflow) {
-            message = getRuleMessage("min", rules) || message;
-        } else if (validity.rangeOverflow) {
-            message = getRuleMessage("max", rules) || message;
-        } else if (validity.tooLong) {
-            message = getRuleMessage("maxLength", rules) || message;
-        } else if (validity.tooShort) {
-            message = getRuleMessage("minLength", rules) || message;
-        } else if (validity.valueMissing) {
-            message = getRuleMessage("required", rules) || message;
-        } else if (validity.typeMismatch) {
-            message = getRuleMessage("type", rules) || message;
+function validateRule(name: string, rules: HTML5ValidatorRules) {
+    // throws warnings for invalid rules
+    if (hasRule(rules, "type")) {
+        const type = getRuleValue(rules, "type") as string;
+        if (!supportedInputTypesSet.has(type)) {
+            // console warn unsupported type
+            log.warning("HTML5ValidatorError", `(input: ${name}) unsupported type (${type}).
+            An unsupported type just means we don't have custom validation logic for this.`);
         }
     }
-    return message;
-}
-
-function getStringValue(nonStringValue: string | number | boolean | RegExp): string {
-    return (nonStringValue instanceof RegExp) ? nonStringValue.source : String(nonStringValue);
-}
-
-function validateUsingHTML5(value: string, rules: HTML5ValidatorRules): string {
-    const rulesWithDefaults: HTML5ValidatorRules = {
-        type: "text",
-        required: false,
-        ...rules,
-    };
-    // TODO: allow support outside of browser context
-    const input = document.createElement("input");
-    input.required = Boolean(getRuleValue("required", rulesWithDefaults));
-    // note: don't put boolean properties here
-    const supportedProperties: supportedInputAttributes[] = [
-        "maxLength", "minLength", "max", "min", "type",
-    ];
-    supportedProperties.forEach((property): void => {
-        if (hasRule(property, rulesWithDefaults)) {
-            const ruleValue = getRuleValue(property, rulesWithDefaults) as string | number | RegExp;
-            const stringValue = getStringValue(ruleValue);
-            input.setAttribute(property, stringValue);
+    if (hasRule(rules, "maxLength") && hasRule(rules, "minLength")) {
+        const minLength = getRuleValue(rules, "minLength") as number;
+        const maxLength = getRuleValue(rules, "maxLength") as number;
+        if (maxLength < minLength) {
+            // console warn unsupported type
+            log.warning("HTML5ValidatorError", `(input: ${name}) maxLength (${maxLength}) is less than minLength (${minLength}).`);
+        }
+    }
+    if (hasRule(rules, "min") && hasRule(rules, "max")) {
+        const min = getRuleValue(rules, "min") as number;
+        const max = getRuleValue(rules, "max") as number;
+        if (max < min) {
+            // console warn unsupported type
+            log.warning("HTML5ValidatorError", `(input: ${name}) max (${max}) is less than min (${min}).`);
+        }
+    }
+    if (hasRule(rules, "pattern")) {
+        const pattern = getRuleValue(rules, "pattern");
+        if (!(pattern instanceof RegExp)) {
+            // console warn unsupported type
+            log.warning("HTML5ValidatorError", `(input: ${name}) pattern must be a RegExp object.`);
+        }
+    }
+    // perform number validation
+    const numberTypeRules: supportedInputAttributes[] = ["min", "max", "maxLength", "minLength"];
+    numberTypeRules.forEach((rule) => {
+        if (hasRule(rules, rule)) {
+            const ruleValue = getRuleValue(rules, rule);
+            if (typeof ruleValue !== "number") {
+                // console warn unsupported type
+                log.warning("HTML5ValidatorError", `(input: ${name}) ${rule} must be a number.`);
+            }
         }
     });
-    input.value = value;
-    return getValidationMessage(input, rulesWithDefaults);
+}
+function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string {
+    // check required
+    const erroredProperty = supportedProperties.find((property): boolean => {
+        let hasError = false;
+        if (hasRule(rules, property)) {
+            const propValue = getRuleValue(rules, property);
+            hasError = !propertyValidators[property](value, propValue);
+        }
+        return hasError;
+    });
+    let message = "";
+    if (erroredProperty) {
+        message = getRuleMessage(rules, erroredProperty) ||
+            defaultMessage[erroredProperty] || "input is invalid";
+    }
+    return message;
 }
 
 // a declarative way of validating inputs
@@ -118,17 +178,22 @@ function validateUsingHTML5(value: string, rules: HTML5ValidatorRules): string {
 export function useHTML5Validator(
     rules: Values<HTML5ValidatorRules | validator>,
 ): Values<validator> {
-    return React.useMemo((): Values<validator> => {
+    const validatorObject = React.useMemo((): Values<validator> => {
         const rawValidator = Object.keys(rules)
             .reduce((validationMap: MutableValidator, name: string): MutableValidator => {
                 const currentValidator = rules[name];
+                if (typeof currentValidator !== "function") {
+                    validateRule(name, currentValidator);
+                }
                 return {
                     ...validationMap,
                     [name]: (typeof currentValidator !== "function")
-                        ? (value: string): string => validateUsingHTML5(value, currentValidator)
+                        ? (value?: string): string => validateUsingHTML5(currentValidator, value)
                         : currentValidator,
                 };
             }, {});
         return rawValidator;
     }, [rules]);
+    // TODO: don't memo rules,
+    return validatorObject;
 }
