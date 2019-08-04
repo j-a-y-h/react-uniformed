@@ -27,9 +27,6 @@ interface HTML5ValidatorRules {
 interface MutableValidator {
     [name: string]: validator;
 }
-interface PropertyValidators {
-    readonly [property: string]: (value: any, setting: propertyValidatorsSetting) => boolean;
-}
 
 const defaultMessage = {
     required: "input is required",
@@ -38,40 +35,46 @@ const defaultMessage = {
     max: "overflow",
     min: "underflow",
     pattern: "pattern mismatch",
-    type: "type mismatch"
+    type: "type mismatch",
 };
 
 const supportedProperties: supportedInputAttributes[] = [
-    "required", "pattern", "maxLength", "minLength", "max", "min", "type"
+    "required", "pattern", "maxLength", "minLength", "max", "min", "type",
 ];
 
-const propertyValidators: PropertyValidators = {
-    required: (value: any, required: propertyValidatorsSetting) => !required || Boolean(value),
-    maxLength: (value: any, maxLength: propertyValidatorsSetting) => {
-        return typeof value === "string" && value.length <= Number(maxLength)
+const propertyValidators = {
+    required(required: propertyValidatorsSetting, value?: string): boolean {
+        return !required || Boolean(value);
     },
-    minLength: (value: any, minLength: propertyValidatorsSetting) => {
-        return typeof value === "string" && value.length >= Number(minLength)
+    maxLength(maxLength: propertyValidatorsSetting, value?: string): boolean {
+        return typeof value === "string" && value.length <= Number(maxLength);
     },
-    max: (value: any, max: propertyValidatorsSetting) => Number(value) <= Number(max),
-    min: (value: any, min: propertyValidatorsSetting) => Number(value) >= Number(min),
+    minLength(minLength: propertyValidatorsSetting, value?: string): boolean {
+        return typeof value === "string" && value.length >= Number(minLength);
+    },
+    max(max: propertyValidatorsSetting, value?: string): boolean {
+        return Number(value) <= Number(max);
+    },
+    min(min: propertyValidatorsSetting, value?: string): boolean {
+        return Number(value) >= Number(min);
+    },
     // do custom check: email, url, date
-    type: (value: any, type: propertyValidatorsSetting) => {
+    type(type: propertyValidatorsSetting, value: string = ""): boolean {
         let regex: RegExp;
         switch (type) {
-        case "url":
-            regex = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
-            return regex.test(value);
-        case "email":
-            regex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-            return regex.test(value);
-        case "text":
-        default: return true;
+            case "url":
+                regex = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+                return regex.test(value);
+            case "email":
+                regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+                return regex.test(value);
+            case "text":
+            default: return true;
         }
     },
-    pattern: (value: any, pattern: propertyValidatorsSetting) => {
+    pattern(pattern: propertyValidatorsSetting, value: string = ""): boolean {
         return !(pattern instanceof RegExp) || pattern.test(value);
-    }
+    },
 };
 
 function getRuleValueAndMessage(
@@ -87,10 +90,6 @@ function getRuleValueAndMessage(
     }
     if (name === "required") {
         value = Boolean(value);
-    }
-    if (name === "type" && (typeof value !== "string" || !supportedInputTypesSet.has(value))) {
-        // TODO: throw error telling user that the type is not supported
-        value = "text";
     }
     return [value, message];
 }
@@ -109,7 +108,7 @@ function hasRule(rules: HTML5ValidatorRules, name: supportedInputAttributes): bo
     return ({}).hasOwnProperty.call(rules, name);
 }
 
-function validateRule(name: string, rules: HTML5ValidatorRules) {
+function validateRule(name: string, rules: HTML5ValidatorRules): void {
     // throws warnings for invalid rules
     if (hasRule(rules, "type")) {
         const type = getRuleValue(rules, "type") as string;
@@ -144,7 +143,7 @@ function validateRule(name: string, rules: HTML5ValidatorRules) {
     }
     // perform number validation
     const numberTypeRules: supportedInputAttributes[] = ["min", "max", "maxLength", "minLength"];
-    numberTypeRules.forEach((rule) => {
+    numberTypeRules.forEach((rule): void => {
         if (hasRule(rules, rule)) {
             const ruleValue = getRuleValue(rules, rule);
             if (typeof ruleValue !== "number") {
@@ -160,14 +159,14 @@ function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string 
         let hasError = false;
         if (hasRule(rules, property)) {
             const propValue = getRuleValue(rules, property);
-            hasError = !propertyValidators[property](value, propValue);
+            hasError = !propertyValidators[property](propValue, value);
         }
         return hasError;
     });
     let message = "";
     if (erroredProperty) {
-        message = getRuleMessage(rules, erroredProperty) ||
-            defaultMessage[erroredProperty] || "input is invalid";
+        message = getRuleMessage(rules, erroredProperty)
+            || defaultMessage[erroredProperty] || "input is invalid";
     }
     return message;
 }

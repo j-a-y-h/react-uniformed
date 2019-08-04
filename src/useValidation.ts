@@ -35,10 +35,7 @@ export function useValidation(
         setError, errors, hasErrors, resetErrors, setErrors,
     } = useErrors();
     // this is empty if the user passes singleValidator
-    const fieldsToUseInValidateAll = React.useMemo(
-        () => requiredFields || ((typeof validator === "function") ? [] : Object.keys(validator)),
-        [validator, requiredFields]
-    );
+    const fieldsToUseInValidateAll = React.useMemo((): string[] => requiredFields || ((typeof validator === "function") ? [] : Object.keys(validator)), [validator, requiredFields]);
     const { setValue: setValidationState, hasValue: isValidating } = useResetableValues();
     // create a validation function
     const validate = React.useCallback(async (name: string, value: string): Promise<void> => {
