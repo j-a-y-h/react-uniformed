@@ -10,8 +10,7 @@ export function useHandlers<T, K extends T[]>(
         handlers.forEach((func): void => {
             func(...args);
         });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [...handlers]);
 }
 
 export function useEventHandlers(
