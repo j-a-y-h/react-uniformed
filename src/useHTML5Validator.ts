@@ -3,13 +3,11 @@ import { Values } from "./useResetableValues";
 import { validator } from "./useValidation";
 import { log } from "./utils";
 
-// note: not all browsers support validation for some of these types.
-// TODO: add number support
-type supportedInputTypes = "email" | "text" | "url" | "number";
+type supportedInputTypes = "email" | "text" | "url" | "number" | "date";
 // possible values:
 // "text" | "number" | "date" | "email" | "checkbox" |
 // "tel" | "time" | "url" | "week" | "month" | "year" | "range";
-const supportedInputTypesSet = new Set(["text", "email", "url", "number"]);
+const supportedInputTypesSet = new Set(["text", "email", "url", "number", "date"]);
 type supportedInputAttributes = "minLength" | "maxLength" | "min" | "max" | "required" | "pattern" | "type";
 
 type propertyValidatorsSetting = boolean | number | RegExp | string;
@@ -99,6 +97,8 @@ const propertyValidators = {
                 return regex.test(value);
             case "number":
                 return !isNaN(Number(value));
+            case "date":
+                return !isNaN((new Date(value)).getTime());
             case "text":
             default: return true;
         }
