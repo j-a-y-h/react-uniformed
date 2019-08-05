@@ -70,23 +70,29 @@ const supportedProperties: supportedConstraints[] = [
 ];
 
 const propertyValidators = {
-    required(required: constraintValues, value?: string): boolean {
+    required(rules: Constraints, required: constraintValues, value?: string): boolean {
         return !required || Boolean(value);
     },
-    maxLength(maxLength: constraintValues, value?: string): boolean {
+    maxLength(rules: Constraints, maxLength: constraintValues, value?: string): boolean {
         return typeof value === "string" && value.length <= Number(maxLength);
     },
-    minLength(minLength: constraintValues, value?: string): boolean {
+    minLength(rules: Constraints, minLength: constraintValues, value?: string): boolean {
         return typeof value === "string" && value.length >= Number(minLength);
     },
-    max(max: constraintValues, value?: string): boolean {
-        return Number(value) <= Number(max);
+    max(rules: Constraints, max: constraintValues, value?: string): boolean {
+        const type = getRuleValue(rules, "type");
+        return (type === "date")
+            ? new Date(value || "") <= new Date(max as string | number || "")
+            : Number(value) <= Number(max);
     },
-    min(min: constraintValues, value?: string): boolean {
-        return Number(value) >= Number(min);
+    min(rules: Constraints, min: constraintValues, value?: string): boolean {
+        const type = getRuleValue(rules, "type");
+        return (type === "date")
+            ? new Date(value || "") >= new Date(min as string | number || "")
+            : Number(value) >= Number(min);
     },
     // do custom check: email, url, date
-    type(type: constraintValues, value: string = ""): boolean {
+    type(rules: Constraints, type: constraintValues, value: string = ""): boolean {
         let regex: RegExp;
         switch (type) {
             case "url":
@@ -103,7 +109,7 @@ const propertyValidators = {
             default: return true;
         }
     },
-    pattern(pattern: constraintValues, value: string = ""): boolean {
+    pattern(rules: Constraints, pattern: constraintValues, value: string = ""): boolean {
         return !(pattern instanceof RegExp) || pattern.test(value);
     },
 };
@@ -168,16 +174,6 @@ function validateRule(name: string, rules: Constraints): void {
             log.warning("ConstraintError", `(input: ${name}) pattern must be a RegExp object.`);
         }
     }
-    // perform number validation
-    const numberTypeRules: supportedConstraints[] = ["min", "max", "maxLength", "minLength"];
-    numberTypeRules.forEach((rule): void => {
-        if (hasRule(rules, rule)) {
-            const ruleValue = getRuleValue(rules, rule);
-            if (typeof ruleValue !== "number") {
-                log.warning("ConstraintError", `(input: ${name}) ${rule} must be a number.`);
-            }
-        }
-    });
 }
 function validateUsingHTML5(rules: Constraints, value?: string): string {
     // check required
@@ -185,7 +181,7 @@ function validateUsingHTML5(rules: Constraints, value?: string): string {
         let hasError = false;
         if (hasRule(rules, property)) {
             const propValue = getRuleValue(rules, property);
-            hasError = !propertyValidators[property](propValue, value);
+            hasError = !propertyValidators[property](rules, propValue, value);
         }
         return hasError;
     });
@@ -207,6 +203,7 @@ function validateUsingHTML5(rules: Constraints, value?: string): string {
  * @return maps the rules to an object map with the value
  * being a function that accepts value as the only argument.
  * @example
+ *  // BASIC
  *  const validator = useConstraints({
  *      firstName: { required: true, minLength: 5, maxLength: 6 },
  *      lastName: { required: true, maxLength: 100 },
@@ -214,6 +211,11 @@ function validateUsingHTML5(rules: Constraints, value?: string): string {
  *      location: { required: true, pattern: /(europe|africa)/},
  *      email: { required: true, type: "email" },
  *      website: { required: true, type: "url" }
+ *  })
+ *  // ADVANCED
+ *  const validator = useConstraints({
+ *      // use min, max on date type
+ *      startDate: { type: "date", min: Date.now() },
  *  })
  */
 export function useConstraints(rules: Values<Constraints | validator>): Validators {
