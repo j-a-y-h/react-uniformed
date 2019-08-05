@@ -1,17 +1,17 @@
 import { useMemo } from "react";
 import { Values } from "./useResetableValues";
-import { validator } from "./useValidation";
+import { validator, Validators } from "./useValidation";
 import { log } from "./utils";
 
-type supportedInputTypes = "email" | "text" | "url" | "number" | "date";
+type supportedTypes = "email" | "text" | "url" | "number" | "date";
 // possible values:
 // "text" | "number" | "date" | "email" | "checkbox" |
 // "tel" | "time" | "url" | "week" | "month" | "year" | "range";
-const supportedInputTypesSet = new Set(["text", "email", "url", "number", "date"]);
-type supportedInputAttributes = "minLength" | "maxLength" | "min" | "max" | "required" | "pattern" | "type";
+const supportedTypesSet = new Set(["text", "email", "url", "number", "date"]);
+type supportedConstraints = "minLength" | "maxLength" | "min" | "max" | "required" | "pattern" | "type";
 
-type propertyValidatorsSetting = boolean | number | RegExp | string;
-interface HTML5ValidatorRules {
+type constraintValues = boolean | number | RegExp | string;
+interface Constraints {
     /**
      * A minLength used for non number values
      */
@@ -43,7 +43,7 @@ interface HTML5ValidatorRules {
      * email and url types are validated using the appropriate regex
      * @default text
      */
-    readonly type?: supportedInputTypes | [string, string];
+    readonly type?: supportedTypes | [string, string];
 }
 interface MutableValidator {
     [name: string]: validator;
@@ -59,7 +59,7 @@ const defaultMessage = {
     type: "The value must match the type.",
 };
 
-const supportedProperties: supportedInputAttributes[] = [
+const supportedProperties: supportedConstraints[] = [
     "required",
     "type",
     "pattern",
@@ -70,23 +70,23 @@ const supportedProperties: supportedInputAttributes[] = [
 ];
 
 const propertyValidators = {
-    required(required: propertyValidatorsSetting, value?: string): boolean {
+    required(required: constraintValues, value?: string): boolean {
         return !required || Boolean(value);
     },
-    maxLength(maxLength: propertyValidatorsSetting, value?: string): boolean {
+    maxLength(maxLength: constraintValues, value?: string): boolean {
         return typeof value === "string" && value.length <= Number(maxLength);
     },
-    minLength(minLength: propertyValidatorsSetting, value?: string): boolean {
+    minLength(minLength: constraintValues, value?: string): boolean {
         return typeof value === "string" && value.length >= Number(minLength);
     },
-    max(max: propertyValidatorsSetting, value?: string): boolean {
+    max(max: constraintValues, value?: string): boolean {
         return Number(value) <= Number(max);
     },
-    min(min: propertyValidatorsSetting, value?: string): boolean {
+    min(min: constraintValues, value?: string): boolean {
         return Number(value) >= Number(min);
     },
     // do custom check: email, url, date
-    type(type: propertyValidatorsSetting, value: string = ""): boolean {
+    type(type: constraintValues, value: string = ""): boolean {
         let regex: RegExp;
         switch (type) {
             case "url":
@@ -103,13 +103,13 @@ const propertyValidators = {
             default: return true;
         }
     },
-    pattern(pattern: propertyValidatorsSetting, value: string = ""): boolean {
+    pattern(pattern: constraintValues, value: string = ""): boolean {
         return !(pattern instanceof RegExp) || pattern.test(value);
     },
 };
 
 function getRuleValueAndMessage(
-    rules: HTML5ValidatorRules, name: supportedInputAttributes,
+    rules: Constraints, name: supportedConstraints,
 ): [RegExp | number | boolean | string, string] {
     const rule = rules[name];
     let message = "";
@@ -126,25 +126,25 @@ function getRuleValueAndMessage(
 }
 
 function getRuleValue(
-    rules: HTML5ValidatorRules, name: supportedInputAttributes,
+    rules: Constraints, name: supportedConstraints,
 ): string | number | boolean | RegExp {
     const [value] = getRuleValueAndMessage(rules, name);
     return value;
 }
-function getRuleMessage(rules: HTML5ValidatorRules, name: supportedInputAttributes): string {
+function getRuleMessage(rules: Constraints, name: supportedConstraints): string {
     const [, message] = getRuleValueAndMessage(rules, name);
     return message;
 }
-function hasRule(rules: HTML5ValidatorRules, name: supportedInputAttributes): boolean {
+function hasRule(rules: Constraints, name: supportedConstraints): boolean {
     return ({}).hasOwnProperty.call(rules, name);
 }
 
-function validateRule(name: string, rules: HTML5ValidatorRules): void {
+function validateRule(name: string, rules: Constraints): void {
     // throws warnings for invalid rules
     if (hasRule(rules, "type")) {
         const type = getRuleValue(rules, "type") as string;
-        if (!supportedInputTypesSet.has(type)) {
-            log.warning("HTML5ValidatorError", `(input: ${name}) unsupported type (${type}).
+        if (!supportedTypesSet.has(type)) {
+            log.warning("ConstraintError", `(input: ${name}) unsupported type (${type}).
             An unsupported type just means we don't have custom validation logic for this.`);
         }
     }
@@ -152,34 +152,34 @@ function validateRule(name: string, rules: HTML5ValidatorRules): void {
         const minLength = getRuleValue(rules, "minLength") as number;
         const maxLength = getRuleValue(rules, "maxLength") as number;
         if (maxLength < minLength) {
-            log.warning("HTML5ValidatorError", `(input: ${name}) maxLength (${maxLength}) is less than minLength (${minLength}).`);
+            log.warning("ConstraintError", `(input: ${name}) maxLength (${maxLength}) is less than minLength (${minLength}).`);
         }
     }
     if (hasRule(rules, "min") && hasRule(rules, "max")) {
         const min = getRuleValue(rules, "min") as number;
         const max = getRuleValue(rules, "max") as number;
         if (max < min) {
-            log.warning("HTML5ValidatorError", `(input: ${name}) max (${max}) is less than min (${min}).`);
+            log.warning("ConstraintError", `(input: ${name}) max (${max}) is less than min (${min}).`);
         }
     }
     if (hasRule(rules, "pattern")) {
         const pattern = getRuleValue(rules, "pattern");
         if (!(pattern instanceof RegExp)) {
-            log.warning("HTML5ValidatorError", `(input: ${name}) pattern must be a RegExp object.`);
+            log.warning("ConstraintError", `(input: ${name}) pattern must be a RegExp object.`);
         }
     }
     // perform number validation
-    const numberTypeRules: supportedInputAttributes[] = ["min", "max", "maxLength", "minLength"];
+    const numberTypeRules: supportedConstraints[] = ["min", "max", "maxLength", "minLength"];
     numberTypeRules.forEach((rule): void => {
         if (hasRule(rules, rule)) {
             const ruleValue = getRuleValue(rules, rule);
             if (typeof ruleValue !== "number") {
-                log.warning("HTML5ValidatorError", `(input: ${name}) ${rule} must be a number.`);
+                log.warning("ConstraintError", `(input: ${name}) ${rule} must be a number.`);
             }
         }
     });
 }
-function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string {
+function validateUsingHTML5(rules: Constraints, value?: string): string {
     // check required
     const erroredProperty = supportedProperties.find((property): boolean => {
         let hasError = false;
@@ -199,7 +199,7 @@ function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string 
 
 /* eslint-disable import/prefer-default-export */
 /**
- * A declarative way of validating inputs
+ * A declarative way of validating inputs based upon HTML 5 constraints
  *
  * @param rules an object mapping that
  * consist of HTML5ValidatorRules as value or validator function that accepts value
@@ -207,7 +207,7 @@ function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string 
  * @return maps the rules to an object map with the value
  * being a function that accepts value as the only argument.
  * @example
- *  const validator = useHTML5Validator({
+ *  const validator = useConstraints({
  *      firstName: { required: true, minLength: 5, maxLength: 6 },
  *      lastName: { required: true, maxLength: 100 },
  *      age: { type: "number", min: 18, max: 99 },
@@ -216,10 +216,8 @@ function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string 
  *      website: { required: true, type: "url" }
  *  })
  */
-export function useHTML5Validator(
-    rules: Values<HTML5ValidatorRules | validator>,
-): Values<validator> {
-    return useMemo((): Values<validator> => Object.keys(rules)
+export function useConstraints(rules: Values<Constraints | validator>): Validators {
+    return useMemo((): Validators => Object.keys(rules)
         .reduce((validationMap: MutableValidator, name: string): MutableValidator => {
             const currentValidator = rules[name];
             if (typeof currentValidator !== "function") {

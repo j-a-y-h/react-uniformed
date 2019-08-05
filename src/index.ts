@@ -5,4 +5,4 @@ export { useHandlers, useEventHandlers, useValidationWithValues } from "./useHan
 export { useSubmission } from "./useSubmission";
 export { useTouch } from "./useTouch";
 export { useValidation } from "./useValidation";
-export { useHTML5Validator } from "./useHTML5Validator";
+export { useConstraints } from "./useConstraints";
