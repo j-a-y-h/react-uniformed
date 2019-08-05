@@ -4,6 +4,7 @@ import { validator } from "./useValidation";
 import { log } from "./utils";
 
 // note: not all browsers support validation for some of these types.
+// TODO: add number support
 type supportedInputTypes = "email" | "text" | "url";
 // possible values:
 // "text" | "number" | "date" | "email" | "checkbox" |
@@ -13,17 +14,39 @@ type supportedInputAttributes = "minLength" | "maxLength" | "min" | "max" | "req
 
 type propertyValidatorsSetting = boolean | number | RegExp | string;
 interface HTML5ValidatorRules {
+    /**
+     * A minLength used for non number values
+     */
     readonly minLength?: number | [number, string];
+    /**
+     * A maxLength used for non number values
+     */
     readonly maxLength?: number | [number, string];
+    /**
+     * A min boundary used for type numbers
+     */
     readonly min?: number | [number, string];
+    /**
+     * A max boundary used for type numbers
+     */
     readonly max?: number | [number, string];
+    /**
+     * Determines if the field is required
+     * @default false
+     */
     readonly required?: boolean | string | [boolean, string];
+    /**
+     * A RegExp pattern used for validation
+     */
     readonly pattern?: RegExp | [RegExp, string];
-    // Date requires a new call
+    /**
+     * The type of input.
+     * currently supported values are **text**, **email**, **url**.
+     * email and url types are validated using the appropriate regex
+     * @default text
+     */
     readonly type?: supportedInputTypes | [string, string];
-    // TODO: do we need to suport arrays for radios?
 }
-// type HTML5Validator = Values<HTML5ValidatorRules>;
 interface MutableValidator {
     [name: string]: validator;
 }
@@ -171,9 +194,25 @@ function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string 
     return message;
 }
 
-// a declarative way of validating inputs
-// add support for non-native validation, ie we roll our own
-// eslint-disable-next-line import/prefer-default-export
+/* eslint-disable import/prefer-default-export */
+/**
+ * A declarative way of validating inputs
+ *
+ * @param rules an object mapping that
+ * consist of HTML5ValidatorRules as value or validator function that accepts value
+ * as the only argument.
+ * @return maps the rules to an object map with the value
+ * being a function that accepts value as the only argument.
+ * @example
+ *  const validator = useHTML5Validator({
+ *      firstName: { required: true, minLength: 5, maxLength: 6 },
+ *      lastName: { required: true, maxLength: 100 },
+ *      age: { min: 18, max: 99 },
+ *      location: { required: true, pattern: /(europe|africa)/},
+ *      email: { required: true, type: "email" },
+ *      website: { required: true, type: "url" }
+ *  })
+ */
 export function useHTML5Validator(
     rules: Values<HTML5ValidatorRules | validator>,
 ): Values<validator> {
