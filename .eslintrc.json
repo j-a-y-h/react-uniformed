@@ -8,7 +8,8 @@
         "plugin:import/errors",
         "plugin:import/warnings",
         "plugin:import/typescript",
-        "plugin:@typescript-eslint/recommended"
+		"plugin:@typescript-eslint/recommended",
+		"plugin:jsdoc/recommended"
     ],
 	"globals": {
 		"Atomics": "readonly",
@@ -23,12 +24,21 @@
 	},
 	"plugins": [
 		"react",
-		"react-hooks"
+		"react-hooks",
+		"jsdoc"
 	],
+	"settings": {
+		"jsdoc": {
+            "tagNamePreference": {
+                "returns": "return"
+            }
+        }
+	},
 	"rules": {
 		"quotes": ["error", "double", {
 			"avoidEscape": true
 		}],
+		"jsdoc/check-examples": 1,
 		"react-hooks/rules-of-hooks": "error",
 		"react-hooks/exhaustive-deps": "warn",
 		"@typescript-eslint/explicit-function-return-type": "error",
