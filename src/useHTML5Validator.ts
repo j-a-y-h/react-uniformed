@@ -5,11 +5,11 @@ import { log } from "./utils";
 
 // note: not all browsers support validation for some of these types.
 // TODO: add number support
-type supportedInputTypes = "email" | "text" | "url";
+type supportedInputTypes = "email" | "text" | "url" | "number";
 // possible values:
 // "text" | "number" | "date" | "email" | "checkbox" |
 // "tel" | "time" | "url" | "week" | "month" | "year" | "range";
-const supportedInputTypesSet = new Set(["text", "email", "url"]);
+const supportedInputTypesSet = new Set(["text", "email", "url", "number"]);
 type supportedInputAttributes = "minLength" | "maxLength" | "min" | "max" | "required" | "pattern" | "type";
 
 type propertyValidatorsSetting = boolean | number | RegExp | string;
@@ -62,7 +62,13 @@ const defaultMessage = {
 };
 
 const supportedProperties: supportedInputAttributes[] = [
-    "required", "pattern", "maxLength", "minLength", "max", "min", "type",
+    "required",
+    "type",
+    "pattern",
+    "maxLength",
+    "minLength",
+    "max",
+    "min",
 ];
 
 const propertyValidators = {
@@ -91,6 +97,8 @@ const propertyValidators = {
             case "email":
                 regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
                 return regex.test(value);
+            case "number":
+                return !isNaN(Number(value));
             case "text":
             default: return true;
         }
@@ -136,7 +144,6 @@ function validateRule(name: string, rules: HTML5ValidatorRules): void {
     if (hasRule(rules, "type")) {
         const type = getRuleValue(rules, "type") as string;
         if (!supportedInputTypesSet.has(type)) {
-            // console warn unsupported type
             log.warning("HTML5ValidatorError", `(input: ${name}) unsupported type (${type}).
             An unsupported type just means we don't have custom validation logic for this.`);
         }
@@ -145,7 +152,6 @@ function validateRule(name: string, rules: HTML5ValidatorRules): void {
         const minLength = getRuleValue(rules, "minLength") as number;
         const maxLength = getRuleValue(rules, "maxLength") as number;
         if (maxLength < minLength) {
-            // console warn unsupported type
             log.warning("HTML5ValidatorError", `(input: ${name}) maxLength (${maxLength}) is less than minLength (${minLength}).`);
         }
     }
@@ -153,14 +159,12 @@ function validateRule(name: string, rules: HTML5ValidatorRules): void {
         const min = getRuleValue(rules, "min") as number;
         const max = getRuleValue(rules, "max") as number;
         if (max < min) {
-            // console warn unsupported type
             log.warning("HTML5ValidatorError", `(input: ${name}) max (${max}) is less than min (${min}).`);
         }
     }
     if (hasRule(rules, "pattern")) {
         const pattern = getRuleValue(rules, "pattern");
         if (!(pattern instanceof RegExp)) {
-            // console warn unsupported type
             log.warning("HTML5ValidatorError", `(input: ${name}) pattern must be a RegExp object.`);
         }
     }
@@ -170,7 +174,6 @@ function validateRule(name: string, rules: HTML5ValidatorRules): void {
         if (hasRule(rules, rule)) {
             const ruleValue = getRuleValue(rules, rule);
             if (typeof ruleValue !== "number") {
-                // console warn unsupported type
                 log.warning("HTML5ValidatorError", `(input: ${name}) ${rule} must be a number.`);
             }
         }
@@ -207,7 +210,7 @@ function validateUsingHTML5(rules: HTML5ValidatorRules, value?: string): string 
  *  const validator = useHTML5Validator({
  *      firstName: { required: true, minLength: 5, maxLength: 6 },
  *      lastName: { required: true, maxLength: 100 },
- *      age: { min: 18, max: 99 },
+ *      age: { type: "number", min: 18, max: 99 },
  *      location: { required: true, pattern: /(europe|africa)/},
  *      email: { required: true, type: "email" },
  *      website: { required: true, type: "url" }
