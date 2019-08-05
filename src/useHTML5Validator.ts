@@ -50,13 +50,13 @@ interface MutableValidator {
 }
 
 const defaultMessage = {
-    required: "input is required",
-    maxLength: "too long",
-    minLength: "too short",
-    max: "overflow",
-    min: "underflow",
-    pattern: "pattern mismatch",
-    type: "type mismatch",
+    required: "There must be a value (if set).",
+    maxLength: "The number of characters is too long.",
+    minLength: "The number of characters is too short.",
+    max: "The value is too large.",
+    min: "The value is too small.",
+    pattern: "The value must match the pattern.",
+    type: "The value must match the type.",
 };
 
 const supportedProperties: supportedInputAttributes[] = [
