@@ -31,6 +31,22 @@ function useValidationFieldNames(
         []);
 }
 
+export async function validateValidators(
+    names: string[], validators: Validators, values: Values<string>,
+): Promise<Errors> {
+    const errorsPromiseMap = names
+        .map(async (name): Promise<[string, validValidatorReturnTypes]> => {
+            const handler = validators[name] || ((): validValidatorReturnTypes => "");
+            const currentErrors = await handler(values[name]);
+            return [name, currentErrors];
+        });
+    const errorsMap = await Promise.all(errorsPromiseMap);
+    return errorsMap.reduce((objectMap, [name, error]): Errors => ({
+        ...objectMap,
+        [name]: error,
+    }), {});
+}
+
 // TODO: consist naming conventaiton for return functions. ie (handleSubmit, onSubmit)
 // TODO: all methods should accept one param that is an object
 // TODO: all methods returned in all api should return void
@@ -74,21 +90,11 @@ export function useValidation(
             });
         };
         setAllValidationState(true);
-        let localErrors: Values<string>;
+        let localErrors: Errors;
         if (typeof validator === "function") {
             localErrors = await validator(values);
         } else {
-            const errorsPromiseMap = names
-                .map(async (name): Promise<[string, validValidatorReturnTypes]> => {
-                    const handler = validator[name] || ((): validValidatorReturnTypes => "");
-                    const currentErrors = await handler(values[name]);
-                    return [name, currentErrors];
-                });
-            const errorsMap = await Promise.all(errorsPromiseMap);
-            localErrors = errorsMap.reduce((objectMap, [name, error]): Errors => ({
-                ...objectMap,
-                [name]: error,
-            }), {});
+            localErrors = await validateValidators(names, validator, values);
         }
         setErrors(localErrors);
         setAllValidationState(false);

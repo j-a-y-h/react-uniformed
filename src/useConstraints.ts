@@ -1,7 +1,10 @@
 import { useMemo } from "react";
 import { Values } from "./useResetableValues";
-import { validator, Validators } from "./useValidation";
+import {
+    validator, Validators, singleValidator, validateValidators,
+} from "./useValidation";
 import { log } from "./utils";
+import { Errors } from "./useErrors";
 
 type supportedTypes = "email" | "text" | "url" | "number" | "date";
 // possible values:
@@ -30,6 +33,7 @@ interface Constraints {
     readonly max?: number | [number, string];
     /**
      * Determines if the field is required
+     *
      * @default false
      */
     readonly required?: boolean | string | [boolean, string];
@@ -41,6 +45,7 @@ interface Constraints {
      * The type of input.
      * currently supported values are **text**, **email**, **url**.
      * email and url types are validated using the appropriate regex
+     *
      * @default text
      */
     readonly type?: supportedTypes | [string, string];
@@ -48,6 +53,8 @@ interface Constraints {
 interface MutableValidator {
     [name: string]: validator;
 }
+
+type syncedContraint = (values: Values<string>) => Values<Constraints | validator>;
 
 const defaultMessage = {
     required: "There must be a value (if set).",
@@ -69,57 +76,12 @@ const supportedProperties: supportedConstraints[] = [
     "min",
 ];
 
-const propertyValidators = {
-    required(rules: Constraints, required: constraintValues, value?: string): boolean {
-        return !required || Boolean(value);
-    },
-    maxLength(rules: Constraints, maxLength: constraintValues, value?: string): boolean {
-        return typeof value === "string" && value.length <= Number(maxLength);
-    },
-    minLength(rules: Constraints, minLength: constraintValues, value?: string): boolean {
-        return typeof value === "string" && value.length >= Number(minLength);
-    },
-    max(rules: Constraints, max: constraintValues, value?: string): boolean {
-        const type = getRuleValue(rules, "type");
-        return (type === "date")
-            ? new Date(value || "") <= new Date(max as string | number || "")
-            : Number(value) <= Number(max);
-    },
-    min(rules: Constraints, min: constraintValues, value?: string): boolean {
-        const type = getRuleValue(rules, "type");
-        return (type === "date")
-            ? new Date(value || "") >= new Date(min as string | number || "")
-            : Number(value) >= Number(min);
-    },
-    // do custom check: email, url, date
-    type(rules: Constraints, type: constraintValues, value: string = ""): boolean {
-        let regex: RegExp;
-        switch (type) {
-            case "url":
-                regex = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
-                return regex.test(value);
-            case "email":
-                regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-                return regex.test(value);
-            case "number":
-                return !isNaN(Number(value));
-            case "date":
-                return !isNaN((new Date(value)).getTime());
-            case "text":
-            default: return true;
-        }
-    },
-    pattern(rules: Constraints, pattern: constraintValues, value: string = ""): boolean {
-        return !(pattern instanceof RegExp) || pattern.test(value);
-    },
-};
-
 function getRuleValueAndMessage(
     rules: Constraints, name: supportedConstraints,
-): [RegExp | number | boolean | string, string] {
+): [constraintValues, string] {
     const rule = rules[name];
     let message = "";
-    let value: RegExp | number | boolean | string;
+    let value: constraintValues;
     if (Array.isArray(rule)) {
         ([value, message] = rule);
     } else {
@@ -131,12 +93,65 @@ function getRuleValueAndMessage(
     return [value, message];
 }
 
-function getRuleValue(
-    rules: Constraints, name: supportedConstraints,
-): string | number | boolean | RegExp {
+function getRuleValue(rules: Constraints, name: supportedConstraints): constraintValues {
     const [value] = getRuleValueAndMessage(rules, name);
     return value;
 }
+
+const propertyValidators = {
+    required(rules: Constraints, required: constraintValues, value?: string): boolean {
+        return !required || Boolean(value);
+    },
+    maxLength(rules: Constraints, maxLength: constraintValues, value?: string): boolean {
+        return !value || (typeof value === "string" && value.length <= Number(maxLength));
+    },
+    minLength(rules: Constraints, minLength: constraintValues, value?: string): boolean {
+        return !value || (typeof value === "string" && value.length >= Number(minLength));
+    },
+    max(rules: Constraints, max: constraintValues, value?: string): boolean {
+        if (!value) {
+            return true;
+        }
+        const type = getRuleValue(rules, "type");
+        return (type === "date")
+            ? new Date(value || "") <= new Date(max as string | number || "")
+            : Number(value) <= Number(max);
+    },
+    min(rules: Constraints, min: constraintValues, value?: string): boolean {
+        if (!value) {
+            return true;
+        }
+        const type = getRuleValue(rules, "type");
+        return (type === "date")
+            ? new Date(value || "") >= new Date(min as string | number || "")
+            : Number(value) >= Number(min);
+    },
+    // do custom check: email, url, date
+    type(rules: Constraints, type: constraintValues, value: string = ""): boolean {
+        if (!value) {
+            return true;
+        }
+        let regex: RegExp;
+        switch (type) {
+            case "url":
+                regex = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+                return regex.test(value);
+            case "email":
+                regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+                return regex.test(value);
+            case "number":
+                return !Number.isNaN(Number(value));
+            case "date":
+                return !Number.isNaN((new Date(value)).getTime());
+            case "text":
+            default: return true;
+        }
+    },
+    pattern(rules: Constraints, pattern: constraintValues, value: string = ""): boolean {
+        return !value || (!(pattern instanceof RegExp) || pattern.test(value));
+    },
+};
+
 function getRuleMessage(rules: Constraints, name: supportedConstraints): string {
     const [, message] = getRuleValueAndMessage(rules, name);
     return message;
@@ -164,7 +179,7 @@ function validateRule(name: string, rules: Constraints): void {
     if (hasRule(rules, "min") && hasRule(rules, "max")) {
         const min = getRuleValue(rules, "min") as number;
         const max = getRuleValue(rules, "max") as number;
-        if (max < min) {
+        if (max < min) { // TODO: convert to date for date type
             log.warning("ConstraintError", `(input: ${name}) max (${max}) is less than min (${min}).`);
         }
     }
@@ -193,6 +208,22 @@ function validateUsingHTML5(rules: Constraints, value?: string): string {
     return message;
 }
 
+function mapConstraintsToValidators(rules: Values<Constraints | validator>): Validators {
+    return Object.keys(rules)
+        .reduce((validationMap: MutableValidator, name: string): MutableValidator => {
+            const currentValidator = rules[name];
+            if (typeof currentValidator !== "function") {
+                validateRule(name, currentValidator);
+            }
+            return {
+                ...validationMap,
+                [name]: (typeof currentValidator !== "function")
+                    ? (value?: string): string => validateUsingHTML5(currentValidator, value)
+                    : currentValidator,
+            };
+        }, {});
+}
+
 /* eslint-disable import/prefer-default-export */
 /**
  * A declarative way of validating inputs based upon HTML 5 constraints
@@ -216,22 +247,38 @@ function validateUsingHTML5(rules: Constraints, value?: string): string {
  *  const validator = useConstraints({
  *      // use min, max on date type
  *      startDate: { type: "date", min: Date.now() },
+ *      // custom message
+ *      name: {
+ *          required: "name is required",
+ *          maxLength: [55, "name must be under 55 characters"]
+ *      },
  *  })
+ *  // BIND CONSTRAINTS TO VALUES
+ *  const validator = useConstraints((values) => ({
+ *      startDate: { type: "date", min: Date.now() },
+ *      // ensure that the end date is always greater than the start date
+ *      endDate: {
+ *          type: "date",
+ *          min: [values.startDate, "end date must be greater than start date"]
+ *      },
+ *  }))
+ *  // this requires binding the validator with the values
+ *  const handleBlur = useValidationWithValues(validator, values);
  */
-export function useConstraints(rules: Values<Constraints | validator>): Validators {
-    return useMemo((): Validators => Object.keys(rules)
-        .reduce((validationMap: MutableValidator, name: string): MutableValidator => {
-            const currentValidator = rules[name];
-            if (typeof currentValidator !== "function") {
-                validateRule(name, currentValidator);
-            }
-            return {
-                ...validationMap,
-                [name]: (typeof currentValidator !== "function")
-                    ? (value?: string): string => validateUsingHTML5(currentValidator, value)
-                    : currentValidator,
+export function useConstraints(
+    rules: Values<Constraints | validator> | syncedContraint,
+): Validators | singleValidator<string> {
+    return useMemo((): Validators | singleValidator<string> => {
+        if (typeof rules === "function") {
+            return (values: Values<string>): Promise<Errors> => {
+                const constraints = rules(values);
+                const validators = mapConstraintsToValidators(constraints);
+                const names = Object.keys(constraints);
+                return validateValidators(names, validators, values);
             };
-        }, {}),
+        }
+        return mapConstraintsToValidators(rules);
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
 }
