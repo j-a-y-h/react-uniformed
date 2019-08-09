@@ -54,7 +54,7 @@ interface MutableValidator {
     [name: string]: validator;
 }
 
-type syncedContraint = (values: Values<string>) => Values<Constraints | validator>;
+type syncedConstraint = (values: Values<string>) => Values<Constraints | validator>;
 
 const defaultMessage = {
     required: "There must be a value (if set).",
@@ -266,7 +266,7 @@ function mapConstraintsToValidators(rules: Values<Constraints | validator>): Val
  *  const handleBlur = useValidationWithValues(validator, values);
  */
 export function useConstraints(
-    rules: Values<Constraints | validator> | syncedContraint,
+    rules: Values<Constraints | validator> | syncedConstraint,
 ): Validators | singleValidator<string> {
     return useMemo((): Validators | singleValidator<string> => {
         if (typeof rules === "function") {
