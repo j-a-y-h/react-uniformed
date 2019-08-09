@@ -35,14 +35,16 @@
         }
 	},
 	"rules": {
-		"quotes": ["error", "double", {
-			"avoidEscape": true
-		}],
-		"jsdoc/check-examples": 1,
+		"jsdoc/require-jsdoc": "off",
+		"jsdoc/require-param-type": "off",
+		"jsdoc/require-returns-type": "off",
 		"react-hooks/rules-of-hooks": "error",
 		"react-hooks/exhaustive-deps": "warn",
 		"@typescript-eslint/explicit-function-return-type": "error",
 		"@typescript-eslint/no-explicit-any": "error",
+		"quotes": ["error", "double", {
+			"avoidEscape": true
+		}],
 		"no-shadow": ["error", {
 			"builtinGlobals": false,
 			"hoist": "never",
