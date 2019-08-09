@@ -68,6 +68,7 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
         dispatch({ type: ActionTypes.reset, payload: initialValues });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    // TODO: support a non overriding variant
     const setValues = useCallback((newValues: Values<T>): void => {
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);

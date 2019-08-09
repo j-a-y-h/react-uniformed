@@ -63,7 +63,11 @@ export function useValidation(
     } = useErrors();
     // this is empty if the user passes singleValidator
     const fieldsToUseInValidateAll = useValidationFieldNames(validator, requiredFields);
-    const { setValue: setValidationState, hasValue: isValidating } = useResetableValues();
+    const {
+        setValue: setValidationState,
+        hasValue: isValidating,
+        setValues: setValidationStates,
+    } = useResetableValues();
     // create a validation function
     const validateByName = useCallback(async (
         name: string, value: string,
@@ -88,9 +92,14 @@ export function useValidation(
     const validate = useCallback(async (values: Values<string>): Promise<Errors> => {
         const names = [...Object.keys(values), ...fieldsToUseInValidateAll];
         const setAllValidationState = (state: boolean): void => {
-            names.forEach((name): void => {
-                setValidationState(name, state);
-            });
+            const allStates = names.reduce((
+                states: MutableValues<boolean>, name,
+            ): Values<boolean> => {
+                // eslint-disable-next-line no-param-reassign
+                states[name] = state;
+                return states;
+            }, {});
+            setValidationStates(allStates);
         };
         setAllValidationState(true);
         let localErrors: Errors;
