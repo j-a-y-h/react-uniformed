@@ -5,7 +5,6 @@ module.exports = {
     entry: "./src/index.ts",
     devtool: "inline-source-map",
     mode: "development",
-    target: "web",
     module: {
         rules: [
             {
@@ -21,7 +20,7 @@ module.exports = {
             },
             {
                 test: /\.tsx?$/,
-                loader: ["ts-loader"],
+                loader: "ts-loader",
                 exclude: /node_modules/,
             },
         ],
@@ -29,10 +28,14 @@ module.exports = {
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
     },
+    // for prod build include again
+    externals: {
+        // Use external version of React
+        react: "react",
+    },
     output: {
-        library: "AnotherFormLoader",
-        libraryTarget: "umd",
         filename: "index.js",
+        libraryTarget: "commonjs",
         path: path.resolve(__dirname, "dist"),
     },
 };
