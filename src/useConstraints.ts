@@ -99,12 +99,15 @@ function getRuleValue(rules: Constraints, name: supportedConstraints): constrain
 }
 
 const propertyValidators = {
+    // @ts-ignore
     required(rules: Constraints, required: constraintValues, value?: string): boolean {
         return !required || Boolean(value);
     },
+    // @ts-ignore
     maxLength(rules: Constraints, maxLength: constraintValues, value?: string): boolean {
         return !value || (typeof value === "string" && value.length <= Number(maxLength));
     },
+    // @ts-ignore
     minLength(rules: Constraints, minLength: constraintValues, value?: string): boolean {
         return !value || (typeof value === "string" && value.length >= Number(minLength));
     },
@@ -127,6 +130,7 @@ const propertyValidators = {
             : Number(value) >= Number(min);
     },
     // do custom check: email, url, date
+    // @ts-ignore
     type(rules: Constraints, type: constraintValues, value: string = ""): boolean {
         if (!value) {
             return true;
@@ -147,6 +151,7 @@ const propertyValidators = {
             default: return true;
         }
     },
+    // @ts-ignore TS6133
     pattern(rules: Constraints, pattern: constraintValues, value: string = ""): boolean {
         return !value || (!(pattern instanceof RegExp) || pattern.test(value));
     },
@@ -215,12 +220,11 @@ function mapConstraintsToValidators(rules: Values<Constraints | validator>): Val
             if (typeof currentValidator !== "function") {
                 validateRule(name, currentValidator);
             }
-            return {
-                ...validationMap,
-                [name]: (typeof currentValidator !== "function")
-                    ? (value?: string): string => validateUsingHTML5(currentValidator, value)
-                    : currentValidator,
-            };
+            // eslint-disable-next-line no-param-reassign
+            validationMap[name] = (typeof currentValidator !== "function")
+                ? (value?: string): string => validateUsingHTML5(currentValidator, value)
+                : currentValidator;
+            return validationMap;
         }, {});
 }
 

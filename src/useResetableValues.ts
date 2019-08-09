@@ -7,6 +7,10 @@ type allowableKeys = string;
 export interface Values<T> {
     readonly [name: string]: T;
 }
+export interface MutableValues<T> {
+    [name: string]: T;
+}
+
 interface UpdatePayload<T> {
     name: string;
     value: T;

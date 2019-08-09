@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import {
     validErrorValues, Errors, useErrors, errorHandler,
 } from "./useErrors";
-import { Values, useResetableValues } from "./useResetableValues";
+import { Values, useResetableValues, MutableValues } from "./useResetableValues";
 
 type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
@@ -41,10 +41,13 @@ export async function validateValidators(
             return [name, currentErrors];
         });
     const errorsMap = await Promise.all(errorsPromiseMap);
-    return errorsMap.reduce((objectMap, [name, error]): Errors => ({
-        ...objectMap,
-        [name]: error,
-    }), {});
+    return errorsMap.reduce((
+        objectMap: MutableValues<validValidatorReturnTypes>, [name, error],
+    ): Errors => {
+        // eslint-disable-next-line no-param-reassign
+        objectMap[name] = error;
+        return objectMap as Errors;
+    }, {});
 }
 
 // TODO: consist naming conventaiton for return functions. ie (handleSubmit, onSubmit)
