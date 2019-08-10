@@ -35,9 +35,6 @@ export function useHandlers<T, K extends T[]>(
     }, [...handlers]);
 }
 
-// useHandlersWithEvents
-// useHandlersAsEventHandler
-// useSettersAsEventHandler
 export function useSettersAsEventHandler(
     ...handlers: eventLikeHandlers[]
 ): Handler<reactOrNativeEvent, [reactOrNativeEvent], void> | EventListener {
