@@ -169,8 +169,8 @@ function hasRule(rules: Constraints, name: supportedConstraints): boolean {
 function validateRule(name: string, rules: Constraints): void {
     assert.error(
         !!rules && typeof rules === "object",
-        LoggingTypes.constraintError,
-        `Invalid constraint (${rules}) with name (${name})`,
+        LoggingTypes.typeError,
+        `(expected: Constraints, received: ${typeof rules}) The Constraints object with name (${name}) is invalid.`,
     );
     // throws warnings for invalid rules
     if (hasRule(rules, "type")) {
