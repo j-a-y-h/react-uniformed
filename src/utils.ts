@@ -2,6 +2,7 @@ const projectName = "JustAnotherValidator";
 
 export enum LoggingTypes {
     invalidArgument = "InvalidArgument",
+    typeError = "TypeError",
     constraintError = "ConstraintError",
 }
 interface Logger {
