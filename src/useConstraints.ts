@@ -14,6 +14,8 @@ const supportedTypesSet = new Set(["text", "email", "url", "number", "date"]);
 type supportedConstraints = "minLength" | "maxLength" | "min" | "max" | "required" | "pattern" | "type";
 
 type constraintValues = boolean | number | RegExp | string;
+
+// TODO:use typescript keyof
 interface Constraints {
     /**
      * A minLength used for non number values
