@@ -64,6 +64,7 @@ const defaultMessage = {
     min: "The value is too small.",
     pattern: "The value must match the pattern.",
     type: "The value must match the type.",
+    default: "The value is invalid.",
 };
 
 const supportedProperties: supportedConstraints[] = [
@@ -221,7 +222,7 @@ function validateUsingContraints(rules: Constraints, value?: string): string {
     let message = "";
     if (erroredProperty) {
         message = getRuleMessage(rules, erroredProperty)
-            || defaultMessage[erroredProperty] || "input is invalid";
+            || defaultMessage[erroredProperty] || defaultMessage.default;
     }
     return message;
 }
