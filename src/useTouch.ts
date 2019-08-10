@@ -9,6 +9,7 @@ export interface UseTouchHook {
     readonly setTouch: touchHandler;
     readonly touchField: touchFieldHandler;
     readonly resetTouches: () => void;
+    readonly setTouches: (touches: Touches) => void;
 }
 
 export function useTouch(): UseTouchHook {
@@ -16,10 +17,11 @@ export function useTouch(): UseTouchHook {
         values: touches,
         setValue: setTouch,
         resetValues: resetTouches,
+        setValues: setTouches,
     } = useResetableValues<boolean>();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const touchField = useCallback((name: string): void => setTouch(name, true), []);
     return {
-        touches, setTouch, resetTouches, touchField,
+        touches, setTouch, resetTouches, touchField, setTouches,
     };
 }

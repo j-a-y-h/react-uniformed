@@ -9,7 +9,7 @@ import { useSubmission, submissionHandler, submitHandler } from "./useSubmission
 import {
     useValidation, Validators, validateHandler, validateAllHandler, singleValidator,
 } from "./useValidation";
-import { Values, setValueCallback } from "./useResetableValues";
+import { Values, setValueCallback, MutableValues } from "./useResetableValues";
 
 export interface UseFormsHook {
     readonly errors: Errors;
@@ -37,7 +37,7 @@ interface UseFormParameters {
 export function useForm({ defaultValues, validators, onSubmit }: UseFormParameters): UseFormsHook {
     const { values, setValue, resetValues } = useFields(defaultValues);
     const {
-        touches, resetTouches, setTouch, touchField,
+        touches, resetTouches, setTouch, touchField, setTouches,
     } = useTouch();
     // I want to decouple validator from use form
     const {
@@ -45,10 +45,16 @@ export function useForm({ defaultValues, validators, onSubmit }: UseFormParamete
     } = useValidation(validators);
     const submissionValidator = useCallback(async (): Promise<Errors> => {
         const validationErrors = await validate(values);
-        // TODO: efficient update all
-        Object.keys(validationErrors).forEach(touchField);
+        const newTouches = Object.keys(validationErrors).reduce((
+            _touches: MutableValues<boolean>, name,
+        ): Touches => {
+            // eslint-disable-next-line no-param-reassign
+            _touches[name] = true;
+            return _touches;
+        }, {});
+        setTouches(newTouches);
         return validationErrors;
-    }, [validate, values, touchField]);
+    }, [validate, values, setTouches]);
     const reset = useHandlers(resetValues, resetErrors, resetTouches);
     const handleSubmit: submissionHandler = useCallback(async (): Promise<void> => {
         // note: give the handler every value so that we don't have to worry about
