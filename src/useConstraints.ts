@@ -12,7 +12,7 @@ type supportedTypes = "email" | "text" | "url" | "number" | "date";
 // "tel" | "time" | "url" | "week" | "month" | "year" | "range";
 const supportedTypesSet = new Set(["text", "email", "url", "number", "date"]);
 
-type constraintValues = boolean | number | RegExp | string;
+type constraintValues = boolean | number | RegExp | string | Date;
 
 interface Constraints {
     /**
@@ -26,11 +26,11 @@ interface Constraints {
     /**
      * A min boundary used for type numbers
      */
-    readonly min?: number | [number, string];
+    readonly min?: number | Date | [number | Date, string];
     /**
      * A max boundary used for type numbers
      */
-    readonly max?: number | [number, string];
+    readonly max?: number | Date | [number | Date, string];
     /**
      * Determines if the field is required
      *
@@ -191,9 +191,8 @@ function validateRule(name: string, rules: Constraints): void {
         );
     }
     if (hasRule(rules, "min") && hasRule(rules, "max")) {
-        const min = getRuleValue(rules, "min") as number;
-        const max = getRuleValue(rules, "max") as number;
-        // TODO: convert to date for date type
+        const min = getRuleValue(rules, "min") as number | Date;
+        const max = getRuleValue(rules, "max") as number | Date;
         assert.warning(
             max >= min,
             LoggingTypes.constraintError,
