@@ -19,7 +19,7 @@ function assertErrorType(name: string, error: validErrorValues): void {
     assert.warning(
         typeof error === "string",
         LoggingTypes.typeError,
-        `(expected: string, received: ${typeof error}). The validator for the input named (${name}) must return an empty string for valid values or a string containing the error description for invalid values.`,
+        `(expected: string, received: ${typeof error}) The validator for the input named (${name}) must return an empty string for valid values or a string containing the error description for invalid values.`,
     );
 }
 

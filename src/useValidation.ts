@@ -45,11 +45,13 @@ function useValidationFieldNames(
         []);
 }
 
-function assertValidator(functionName: string, validatorName: string, validator: Function): void {
-    assert.warning(
-        typeof validator === "function" && validator !== defaultValidator,
-        LoggingTypes.invalidArgument,
-        `${functionName} expects the validator (${validator}) with the name (${validatorName}) to be a function`,
+function assertValidator(functionName: string, name: string, validator: Function): void {
+    assert.error(
+        typeof validator === "function",
+        LoggingTypes.typeError,
+        // note: received is any bc we don't know what the validator is
+        // as the input could have defaulted to the defaultValidator
+        `(expect: function, received: any) ${functionName} expects the validator with the name (${name}) to be a function.`,
     );
 }
 

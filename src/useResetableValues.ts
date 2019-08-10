@@ -66,8 +66,8 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
     // TODO: support initializer function as the initial value
     assert.error(
         !initialValues || typeof initialValues === "object",
-        LoggingTypes.invalidArgument,
-        `${useResetableValues.name} expects an object map`,
+        LoggingTypes.typeError,
+        `(expected: Object<string, any> | undefined, received: ${typeof initialValues}) ${useResetableValues.name} expects an object map as the first argument or zero arguments.`,
     );
     const [values, dispatch] = useReducer<ReducerType<T>>(reducer, initialValues);
     const setValue = useCallback((name: allowableKeys, value: T): void => {

@@ -24,8 +24,8 @@ export interface UseSubmissionHook {
 export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseSubmissionHook {
     assert.error(
         typeof validator === "function" && typeof onSubmit === "function",
-        LoggingTypes.invalidArgument,
-        `${useSubmission.name} expects the properties named validator and onSubmit to be functions`,
+        LoggingTypes.typeError,
+        `(expected: function, function, received: ${typeof validator}, ${typeof onSubmit}) ${useSubmission.name} expects the properties named validator and onSubmit to be functions.`,
     );
     const [isSubmitting, setSubmitting] = useState(false);
     const [submitCount, setSubmitCount] = useState(0);

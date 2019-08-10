@@ -13,6 +13,7 @@ type keyValueEvent<T> = [string, T, reactOrNativeEvent];
 type eventLikeHandlers = Handler<string | reactOrNativeEvent, keyValueEvent<string>, void>
 interface UseEventHandlersWithRefProps {
     readonly event: keyof HTMLElementEventMap;
+    // TODO: change to setters to match the function signature
     readonly handlers: eventLikeHandlers[] | eventLikeHandlers;
 }
 type useEventHandlersWithRefProps<T> = T extends UseEventHandlersWithRefProps[]
@@ -26,8 +27,8 @@ export function useHandlers<T, K extends T[]>(
         handlers.forEach((func, index): void => {
             assert.error(
                 typeof func === "function",
-                LoggingTypes.invalidArgument,
-                `${useHandlers.name} expects a function at index ${index}`,
+                LoggingTypes.typeError,
+                `(expected: function, received: ${typeof func}) ${useHandlers.name} expects a function at index (${index}).`,
             );
             func(...args);
         });
@@ -41,7 +42,7 @@ export function useSettersAsEventHandler(
     const handler = useHandlers<string | reactOrNativeEvent, keyValueEvent<string>>(...handlers);
     return useCallback((evt: reactOrNativeEvent): void => {
         assert.error(
-            !!evt && !!evt.target,
+            evt && !!evt.target,
             LoggingTypes.invalidArgument,
             `${useSettersAsEventHandler.name} expects to be used in an event listener.`,
         );
@@ -59,15 +60,15 @@ export function useValidatorWithValues<T>(
 ): () => void {
     assert.error(
         typeof validate === "function",
-        LoggingTypes.invalidArgument,
-        `${useValidatorWithValues.name} expects a function as the first argument`,
+        LoggingTypes.typeError,
+        `(expected: function, received: ${typeof validate}) ${useValidatorWithValues.name} expects a function as the first argument.`,
     );
     return useCallback((): void => { validate(values); }, [validate, values]);
 }
 
 export function useSettersAsRefEventHandler(
     ...args: useEventHandlersWithRefProps<UseEventHandlersWithRefProps[] | eventLikeHandlers[]>
-): Ref<HTMLInputElement> {
+): Ref<EventTarget> {
     let event: keyof HTMLElementEventMap = "change";
     let handlers: eventLikeHandlers[];
     if (typeof args[0] === "function") {
@@ -76,9 +77,9 @@ export function useSettersAsRefEventHandler(
     } else {
         // provided an object
         assert.error(
-            !!args[0] && typeof args[0] === "object",
-            LoggingTypes.invalidArgument,
-            `${useSettersAsRefEventHandler.name} expects a list of functions or an object with event and handlers as properties`,
+            args[0] && typeof args[0] === "object",
+            LoggingTypes.typeError,
+            `(expected: {event: string, handlers: function[]}, received: ${typeof args[0]}) ${useSettersAsRefEventHandler.name} expects a list of functions or an object with event and handlers as properties.`,
         );
         const {
             event: firstEvent,
@@ -88,11 +89,11 @@ export function useSettersAsRefEventHandler(
         handlers = Array.isArray(firstHandlers) ? firstHandlers : [firstHandlers];
     }
     const eventHandler = useSettersAsEventHandler(...handlers) as EventListener;
-    const ref = useCallback((input: HTMLInputElement): void => {
+    const ref = useCallback((input: EventTarget): void => {
         assert.error(
-            !!input,
-            LoggingTypes.invalidArgument,
-            `${useSettersAsRefEventHandler.name} ref requires an HTMLElement`,
+            input && typeof input.addEventListener === "function",
+            LoggingTypes.typeError,
+            `(expected: EventTarget, received: ${typeof input}) ${useSettersAsRefEventHandler.name} ref requires an EventTarget.`,
         );
         input.addEventListener(event, eventHandler);
     }, [event, eventHandler]);

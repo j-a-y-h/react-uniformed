@@ -169,7 +169,7 @@ function validateRule(name: string, rules: Constraints): void {
     assert.error(
         !!rules && typeof rules === "object",
         LoggingTypes.constraintError,
-        `Invalid constriant (${rules}) with name (${name})`,
+        `Invalid constraint (${rules}) with name (${name})`,
     );
     // throws warnings for invalid rules
     if (hasRule(rules, "type")) {
@@ -228,9 +228,9 @@ function validateUsingContraints(rules: Constraints, value?: string): string {
 
 function mapConstraintsToValidators(rules: Values<Constraints | Validator>): Validators {
     assert.error(
-        !!rules && typeof rules === "object",
+        rules && typeof rules === "object",
         LoggingTypes.invalidArgument,
-        `${mapConstraintsToValidators.name} requires a constraint object`,
+        `(expected: Object<string, Constraint> received: ${typeof rules}) ${mapConstraintsToValidators.name} requires a constraint object.`,
     );
     return Object.keys(rules).reduce((
         validationMap: MutableValues<Validator>,
