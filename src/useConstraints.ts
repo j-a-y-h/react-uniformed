@@ -195,7 +195,7 @@ function validateRule(name: string, rules: Constraints): void {
         }
     }
 }
-function validateUsingHTML5(rules: Constraints, value?: string): string {
+function validateUsingContraints(rules: Constraints, value?: string): string {
     // check required
     const erroredProperty = supportedProperties.find((property): boolean => {
         let hasError = false;
@@ -222,7 +222,7 @@ function mapConstraintsToValidators(rules: Values<Constraints | validator>): Val
             }
             // eslint-disable-next-line no-param-reassign
             validationMap[name] = (typeof currentValidator !== "function")
-                ? (value?: string): string => validateUsingHTML5(currentValidator, value)
+                ? (value?: string): string => validateUsingContraints(currentValidator, value)
                 : currentValidator;
             return validationMap;
         }, {});
