@@ -32,7 +32,7 @@ export function useHandlers<T, K extends T[]>(
             func(...args);
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [...handlers]);
+    }, handlers);
 }
 
 export function useSettersAsEventHandler(
