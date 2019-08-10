@@ -1,35 +1,35 @@
 import { useCallback } from "react";
-import { Errors, errorHandler } from "./useErrors";
+import { Errors, ErrorHandler } from "./useErrors";
 import { useHandlers } from "./useHandlers";
 import { useFields } from "./useFields";
 import {
-    useTouch, Touches, touchHandler, touchFieldHandler,
+    useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from "./useTouch";
-import { useSubmission, submissionHandler, submitHandler } from "./useSubmission";
+import { useSubmission, SubmissionHandler, SubmitHandler } from "./useSubmission";
 import {
-    useValidation, Validators, validateHandler, validateAllHandler, singleValidator,
+    useValidation, Validators, ValidateHandler, ValidateAllHandler, SingleValidator,
 } from "./useValidation";
-import { Values, setValueCallback, MutableValues } from "./useResetableValues";
+import { Values, SetValueCallback, MutableValues } from "./useResetableValues";
 
 export interface UseFormsHook {
     readonly errors: Errors;
     readonly hasErrors: boolean;
     readonly isSubmitting: boolean;
     readonly values: Values<string>;
-    readonly setError: errorHandler;
-    readonly setTouch: touchHandler;
-    readonly touchField: touchFieldHandler;
-    readonly setValue: setValueCallback<string>;
+    readonly setError: ErrorHandler;
+    readonly setTouch: TouchHandler;
+    readonly touchField: TouchFieldHandler;
+    readonly setValue: SetValueCallback<string>;
     readonly submitCount: number;
-    readonly submit: submitHandler;
+    readonly submit: SubmitHandler;
     readonly touches: Touches;
-    readonly validateByName: validateHandler<string>;
-    readonly validate: validateAllHandler<string>;
+    readonly validateByName: ValidateHandler<string>;
+    readonly validate: ValidateAllHandler<string>;
     readonly reset: () => void;
 }
 interface UseFormParameters {
     readonly defaultValues?: Values<string>;
-    readonly validators: Validators | singleValidator<string>;
+    readonly validators: Validators | SingleValidator<string>;
     readonly onSubmit: (values: Values<string>) => void | Promise<void>;
 }
 
@@ -56,7 +56,7 @@ export function useForm({ defaultValues, validators, onSubmit }: UseFormParamete
         return validationErrors;
     }, [validate, values, setTouches]);
     const reset = useHandlers(resetValues, resetErrors, resetTouches);
-    const handleSubmit: submissionHandler = useCallback(async (): Promise<void> => {
+    const handleSubmit: SubmissionHandler = useCallback(async (): Promise<void> => {
         // note: give the handler every value so that we don't have to worry about
         // it later
         await onSubmit(values);

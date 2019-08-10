@@ -1,7 +1,8 @@
 const projectName = "JustAnotherValidator";
 
 export enum LoggingTypes {
-    invalidArgument = "InvalidArgument"
+    invalidArgument = "InvalidArgument",
+    constraintError = "ConstraintError",
 }
 interface Logger {
     (type: LoggingTypes, message: string): void;
@@ -13,7 +14,7 @@ interface Log {
 
 /* eslint-disable no-console */
 // eslint-disable-next-line import/prefer-default-export
-export const log: Log = {
+const log: Log = {
     warning(type: LoggingTypes, message: string): void {
         console.warn(`${projectName}: [${type}] ${message}`);
     },
@@ -31,7 +32,6 @@ function assertion(condition: boolean, type: LoggingTypes, message: string, logg
     }
 }
 
-// TODO: proper prop validation
 export const assert = {
     error(condition: boolean, type: LoggingTypes, message: string): void {
         assertion(condition, type, message, log.error);

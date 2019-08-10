@@ -2,11 +2,13 @@ import { useResetableValues, Values } from "./useResetableValues";
 
 export type validErrorValues = string;
 export type Errors = Values<validErrorValues>;
-export type errorHandler = (name: string, error: validErrorValues) => void;
+export interface ErrorHandler {
+    (name: string, error: validErrorValues): void;
+}
 export interface UseErrorsHook {
     readonly errors: Errors;
     readonly hasErrors: boolean;
-    readonly setError: errorHandler;
+    readonly setError: ErrorHandler;
     readonly setErrors: (errors: Errors) => void;
     readonly resetErrors: () => void;
 }

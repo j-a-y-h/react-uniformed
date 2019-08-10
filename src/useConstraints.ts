@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { Values } from "./useResetableValues";
+import { Values, MutableValues } from "./useResetableValues";
 import {
-    validator, Validators, singleValidator, validateValidators,
+    Validator, Validators, SingleValidator, validateValidators,
 } from "./useValidation";
-import { log } from "./utils";
+import { assert, LoggingTypes } from "./utils";
 import { Errors } from "./useErrors";
 
 type supportedTypes = "email" | "text" | "url" | "number" | "date";
@@ -11,11 +11,9 @@ type supportedTypes = "email" | "text" | "url" | "number" | "date";
 // "text" | "number" | "date" | "email" | "checkbox" |
 // "tel" | "time" | "url" | "week" | "month" | "year" | "range";
 const supportedTypesSet = new Set(["text", "email", "url", "number", "date"]);
-type supportedConstraints = "minLength" | "maxLength" | "min" | "max" | "required" | "pattern" | "type";
 
 type constraintValues = boolean | number | RegExp | string;
 
-// TODO:use typescript keyof
 interface Constraints {
     /**
      * A minLength used for non number values
@@ -52,11 +50,11 @@ interface Constraints {
      */
     readonly type?: supportedTypes | [string, string];
 }
-interface MutableValidator {
-    [name: string]: validator;
-}
 
-type syncedConstraint = (values: Values<string>) => Values<Constraints | validator>;
+type supportedConstraints = keyof Constraints;
+interface SyncedConstraint {
+    (values: Values<string>): Values<Constraints | Validator>;
+}
 
 const defaultMessage = {
     required: "There must be a value (if set).",
@@ -168,33 +166,46 @@ function hasRule(rules: Constraints, name: supportedConstraints): boolean {
 }
 
 function validateRule(name: string, rules: Constraints): void {
+    assert.error(
+        !!rules && typeof rules === "object",
+        LoggingTypes.constraintError,
+        `Invalid constriant (${rules}) with name (${name})`,
+    );
     // throws warnings for invalid rules
     if (hasRule(rules, "type")) {
         const type = getRuleValue(rules, "type") as string;
-        if (!supportedTypesSet.has(type)) {
-            log.warning("ConstraintError", `(input: ${name}) unsupported type (${type}).
-            An unsupported type just means we don't have custom validation logic for this.`);
-        }
+        assert.warning(
+            supportedTypesSet.has(type),
+            LoggingTypes.constraintError,
+            `(input: ${name}) unsupported type (${type}). An unsupported type just means we don't have custom validation logic for this.`,
+        );
     }
     if (hasRule(rules, "maxLength") && hasRule(rules, "minLength")) {
         const minLength = getRuleValue(rules, "minLength") as number;
         const maxLength = getRuleValue(rules, "maxLength") as number;
-        if (maxLength < minLength) {
-            log.warning("ConstraintError", `(input: ${name}) maxLength (${maxLength}) is less than minLength (${minLength}).`);
-        }
+        assert.warning(
+            maxLength >= minLength,
+            LoggingTypes.constraintError,
+            `(input: ${name}) maxLength (${maxLength}) is less than minLength (${minLength}).`,
+        );
     }
     if (hasRule(rules, "min") && hasRule(rules, "max")) {
         const min = getRuleValue(rules, "min") as number;
         const max = getRuleValue(rules, "max") as number;
-        if (max < min) { // TODO: convert to date for date type
-            log.warning("ConstraintError", `(input: ${name}) max (${max}) is less than min (${min}).`);
-        }
+        // TODO: convert to date for date type
+        assert.warning(
+            max >= min,
+            LoggingTypes.constraintError,
+            `(input: ${name}) max (${max}) is less than min (${min}).`,
+        );
     }
     if (hasRule(rules, "pattern")) {
         const pattern = getRuleValue(rules, "pattern");
-        if (!(pattern instanceof RegExp)) {
-            log.warning("ConstraintError", `(input: ${name}) pattern must be a RegExp object.`);
-        }
+        assert.warning(
+            pattern instanceof RegExp,
+            LoggingTypes.constraintError,
+            `(input: ${name}) pattern must be a RegExp object.`,
+        );
     }
 }
 function validateUsingContraints(rules: Constraints, value?: string): string {
@@ -215,19 +226,26 @@ function validateUsingContraints(rules: Constraints, value?: string): string {
     return message;
 }
 
-function mapConstraintsToValidators(rules: Values<Constraints | validator>): Validators {
-    return Object.keys(rules)
-        .reduce((validationMap: MutableValidator, name: string): MutableValidator => {
-            const currentValidator = rules[name];
-            if (typeof currentValidator !== "function") {
-                validateRule(name, currentValidator);
-            }
-            // eslint-disable-next-line no-param-reassign
-            validationMap[name] = (typeof currentValidator !== "function")
-                ? (value?: string): string => validateUsingContraints(currentValidator, value)
-                : currentValidator;
-            return validationMap;
-        }, {});
+function mapConstraintsToValidators(rules: Values<Constraints | Validator>): Validators {
+    assert.error(
+        !!rules && typeof rules === "object",
+        LoggingTypes.invalidArgument,
+        `${mapConstraintsToValidators.name} requires a constraint object`,
+    );
+    return Object.keys(rules).reduce((
+        validationMap: MutableValues<Validator>,
+        name: string,
+    ): MutableValues<Validator> => {
+        const currentValidator = rules[name];
+        if (typeof currentValidator !== "function") {
+            validateRule(name, currentValidator);
+        }
+        // eslint-disable-next-line no-param-reassign
+        validationMap[name] = (typeof currentValidator !== "function")
+            ? (value?: string): string => validateUsingContraints(currentValidator, value)
+            : currentValidator;
+        return validationMap;
+    }, {});
 }
 
 /* eslint-disable import/prefer-default-export */
@@ -272,9 +290,9 @@ function mapConstraintsToValidators(rules: Values<Constraints | validator>): Val
  *  const handleBlur = useValidationWithValues(validator, values);
  */
 export function useConstraints(
-    rules: Values<Constraints | validator> | syncedConstraint,
-): Validators | singleValidator<string> {
-    return useMemo((): Validators | singleValidator<string> => {
+    rules: Values<Constraints | Validator> | SyncedConstraint,
+): Validators | SingleValidator<string> {
+    return useMemo((): Validators | SingleValidator<string> => {
         if (typeof rules === "function") {
             return (values: Values<string>): Promise<Errors> => {
                 const constraints = rules(values);

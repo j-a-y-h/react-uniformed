@@ -2,12 +2,16 @@ import { useCallback } from "react";
 import { useResetableValues, Values } from "./useResetableValues";
 
 export type Touches = Values<boolean>;
-export type touchHandler = (name: string, touched: boolean) => void;
-export type touchFieldHandler = (name: string) => void;
+export interface TouchHandler {
+    (name: string, touched: boolean): void;
+}
+export interface TouchFieldHandler {
+    (name: string): void;
+}
 export interface UseTouchHook {
     readonly touches: Touches;
-    readonly setTouch: touchHandler;
-    readonly touchField: touchFieldHandler;
+    readonly setTouch: TouchHandler;
+    readonly touchField: TouchFieldHandler;
     readonly resetTouches: () => void;
     readonly setTouches: (touches: Touches) => void;
 }

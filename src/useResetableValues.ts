@@ -1,6 +1,7 @@
 import {
     Reducer, useReducer, useCallback, useMemo,
 } from "react";
+import { LoggingTypes, assert } from "./utils";
 
 type allowableKeys = string;
 
@@ -24,12 +25,15 @@ interface Action<T> {
 }
 
 type ReducerType<T> = Reducer<Values<T>, Action<T>>;
-export type setValueCallback<T> = (name: allowableKeys, value: T) => void;
+export interface SetValueCallback<T> {
+    (name: allowableKeys, value: T): void;
+}
+
 export interface UseResetableValuesHook<T> {
     readonly values: Values<T>;
     readonly hasValue: boolean;
+    readonly setValue: SetValueCallback<T>;
     readonly setValues: (values: Values<T>) => void;
-    readonly setValue: setValueCallback<T>;
     readonly resetValues: () => void;
 }
 export function hasValue<T>(values: Values<T>): boolean {
@@ -59,6 +63,12 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
 }
 
 export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetableValuesHook<T> {
+    // TODO: support initializer function as the initial value
+    assert.error(
+        !initialValues || typeof initialValues === "object",
+        LoggingTypes.invalidArgument,
+        `${useResetableValues.name} expects an object map`,
+    );
     const [values, dispatch] = useReducer<ReducerType<T>>(reducer, initialValues);
     const setValue = useCallback((name: allowableKeys, value: T): void => {
         dispatch({ type: ActionTypes.update, payload: { name, value } });

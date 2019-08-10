@@ -1,22 +1,32 @@
 import { useState, useCallback, SyntheticEvent } from "react";
 import { hasValue } from "./useResetableValues";
 import { Errors } from "./useErrors";
+import { assert, LoggingTypes } from "./utils";
 
-export type submissionHandler = () => void | Promise<void>;
-export type submitHandler = (event?: SyntheticEvent) => void;
+export interface SubmissionHandler {
+    (): void | Promise<void>;
+}
+export interface SubmitHandler {
+    (event?: SyntheticEvent): void;
+}
 export interface UseSubmissionProps {
-    readonly onSubmit: submissionHandler;
+    readonly onSubmit: SubmissionHandler;
     readonly validator: () => Promise<Errors> | Errors;
 }
 
 export interface UseSubmissionHook {
     readonly isSubmitting: boolean;
     readonly submitCount: number;
-    readonly submit: submitHandler;
+    readonly submit: SubmitHandler;
 }
 
 // async handlers should return promises
 export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseSubmissionHook {
+    assert.error(
+        typeof validator === "function" && typeof onSubmit === "function",
+        LoggingTypes.invalidArgument,
+        `${useSubmission.name} expects the properties named validator and onSubmit to be functions`,
+    );
     const [isSubmitting, setSubmitting] = useState(false);
     const [submitCount, setSubmitCount] = useState(0);
     const submit = useCallback(async (event?: SyntheticEvent): Promise<void> => {
