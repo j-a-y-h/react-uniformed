@@ -35,7 +35,10 @@ export function useHandlers<T, K extends T[]>(
     }, [...handlers]);
 }
 
-export function useEventHandlers(
+// useHandlersWithEvents
+// useHandlersAsEventHandler
+// useSettersAsEventHandler
+export function useSettersAsEventHandler(
     ...handlers: eventLikeHandlers[]
 ): Handler<reactOrNativeEvent, [reactOrNativeEvent], void> | EventListener {
     const handler = useHandlers<string | reactOrNativeEvent, keyValueEvent<string>>(...handlers);
@@ -43,7 +46,7 @@ export function useEventHandlers(
         assert.error(
             !!evt && !!evt.target,
             LoggingTypes.invalidArgument,
-            `${useEventHandlers.name} expects to be used in an event listener.`,
+            `${useSettersAsEventHandler.name} expects to be used in an event listener.`,
         );
         const { target } = evt;
         handler(
@@ -54,18 +57,18 @@ export function useEventHandlers(
     }, [handler]);
 }
 
-export function useValidationWithValues<T>(
+export function useValidatorWithValues<T>(
     validate: ValidateAllHandler<T>, values: Values<T>,
 ): () => void {
     assert.error(
         typeof validate === "function",
         LoggingTypes.invalidArgument,
-        `${useValidationWithValues.name} expects a function as the first argument`,
+        `${useValidatorWithValues.name} expects a function as the first argument`,
     );
     return useCallback((): void => { validate(values); }, [validate, values]);
 }
 
-export function useEventHandlersWithRef(
+export function useSettersAsRefEventHandler(
     ...args: useEventHandlersWithRefProps<UseEventHandlersWithRefProps[] | eventLikeHandlers[]>
 ): Ref<HTMLInputElement> {
     let event: keyof HTMLElementEventMap = "change";
@@ -78,7 +81,7 @@ export function useEventHandlersWithRef(
         assert.error(
             !!args[0] && typeof args[0] === "object",
             LoggingTypes.invalidArgument,
-            `${useEventHandlersWithRef.name} expects a list of functions or an object with event and handlers as properties`,
+            `${useSettersAsRefEventHandler.name} expects a list of functions or an object with event and handlers as properties`,
         );
         const {
             event: firstEvent,
@@ -87,12 +90,12 @@ export function useEventHandlersWithRef(
         event = firstEvent || event;
         handlers = Array.isArray(firstHandlers) ? firstHandlers : [firstHandlers];
     }
-    const eventHandler = useEventHandlers(...handlers) as EventListener;
+    const eventHandler = useSettersAsEventHandler(...handlers) as EventListener;
     const ref = useCallback((input: HTMLInputElement): void => {
         assert.error(
             !!input,
             LoggingTypes.invalidArgument,
-            `${useEventHandlersWithRef.name} ref requires an HTMLElement`,
+            `${useSettersAsRefEventHandler.name} ref requires an HTMLElement`,
         );
         input.addEventListener(event, eventHandler);
     }, [event, eventHandler]);
