@@ -3,7 +3,7 @@
 
 ----
 
-**react-uniformed** is a micro library that allows for the creation of declarative forms.
+**react-uniformed** is a feather weight library that allows for the creation of declarative React forms using hooks.  The flexibility and performance of **react-uniformed** allows the library to scale with the complexity of your forms.
 
 ## Install
 
@@ -81,18 +81,18 @@ const handleBlur = useSettersAsEventHandler(validateByName);
 ```
 
 ## Performance
-**react-uniformed** supports an uncontrolled input api that uses React refs.  This api allows us to avoid expensive React renders on keyup or change.
+**react-uniformed** supports uncontrolled inputs that uses React refs to synchronize the state of the input in the DOM and the state of the form in the Virtual DOM.  The uncontrolled input allows us to avoid expensive React renders on keyup or change.
 ```javascript
 import {useSettersAsRefEventHandler} from "react-uniformed";
 
 // useSettersAsRefEventHandler defaults to an on change event
 const changeRef = useSettersAsRefEventHandler(setValue);
 
-{/* name attribute is still required as the changeRef calls the setValue(name: string, value: any) function */}
+// name attribute is still required as the changeRef calls setValue(name, value) on change
 <input name="name" ref={changeRef} />
 ```
 
-`useSettersAsRefEventHandler` is generally only needed for larger forms or larger React trees. In addition to the ref api, **react-uniformed** as supports validation maps. Validation maps allows you to only validate the input that changed using `validateByName`. There is several ways to accomplish this...
+`useSettersAsRefEventHandler` is generally only needed for larger forms or larger React trees. In addition to the `useSettersAsRefEventHandler`, **react-uniformed** as supports validation maps. Validation maps allows you to only validate the input that changed using `validateByName`. There is several ways to accomplish this...
 
 ```javascript
 const {validateByName, errors} = useForm({
@@ -128,5 +128,4 @@ const {
         return errors;
     },
 });
-
 ```
