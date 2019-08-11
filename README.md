@@ -63,8 +63,6 @@ const validator = useConstraints({
     name: { required: true, minLength: 1, maxLength: 55 },
     // email types are validated using HTML standard regex
     email: { required: true, type: "email" },
-    // like email types, url types are validated using HTML standard regex
-    website: { type: "url" },
     date: {
         // set the error message for required by using a non empty string
         required: "Date is required",
@@ -73,41 +71,17 @@ const validator = useConstraints({
         min: [Date.now(), "Date must be today or later"]
     }
 });
-const { setValue, validateByName, values, submit } = useForm({
+const { setValue, validateByName } = useForm({
     validators: validator,
-    onSubmit: data => {
-        console.log(JSON.stringify(data));
-    },
+    onSubmit: data => console.log(JSON.stringify(data)),
 });
-const handleChange = useSettersAsEventHandler(setValue);
 // validate on change with the following code
 // const handleChange = useSettersAsEventHandler(setValue, validateByName);
 const handleBlur = useSettersAsEventHandler(validateByName);
-return (
-    <form onSubmit={submit}>
-        <div>
-            <label>Name</label>
-            <input
-                name="firstName"
-                value={values.firstName}
-                onChange={handleChange}
-            />
-        </div>
-        <div>
-            <label>Email</label>
-            <input
-                name="email"
-                value={values.email}
-                onChange={handleChange}
-            />
-        </div>
-        <input type="submit" />
-    </form>
-  );
 ```
 
 ## Performance
-**react-uniformed** supports an uncontrolled input api that uses React refs.  The source of truth for the form values is still hosted at the form level.
+**react-uniformed** supports an uncontrolled input api that uses React refs.  This api allows us to avoid expensive React renders on keyup or change.
 ```javascript
 import {useSettersAsRefEventHandler} from "react-uniformed";
 
@@ -118,7 +92,7 @@ const changeRef = useSettersAsRefEventHandler(setValue);
 <input name="name" ref={changeRef} />
 ```
 
-`useSettersAsRefEventHandler` is generally only need for larger forms or larger DOM trees. In addition to the ref api, **react-uniformed** as supports validation maps. Validation maps allows you to only validate the input that changed using `validateByName`. There is several ways to accomplish this...
+`useSettersAsRefEventHandler` is generally only needed for larger forms or larger React trees. In addition to the ref api, **react-uniformed** as supports validation maps. Validation maps allows you to only validate the input that changed using `validateByName`. There is several ways to accomplish this...
 
 ```javascript
 const {validateByName, errors} = useForm({
@@ -139,4 +113,20 @@ const handleBlur = useSettersAsEventHandler(validateByName);
 ```
 If you prefer to validate in one function, then you can do that as well
 ```javascript
+const {
+    // validateByName will call the validate function on each call
+    // but the error will be the one with the corresponding name
+    validateByName,
+    // validate is available with both a validation map and a validation function
+    validate,
+} = useForm({
+    validators: (values) => {
+        const errors = {name: "name will never be valid", email: ""};
+        if (!values.email) {
+            errors.email = "email is required"
+        }
+        return errors;
+    },
+});
+
 ```
