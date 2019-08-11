@@ -1,9 +1,9 @@
-## react-uniformed
-**Declarative React Forms**
+# react-uniformed / **Declarative React Forms**
 
-----
+**react-uniformed** is a feather weight library that allows for the creation of declarative React forms using hooks.
 
-**react-uniformed** is a feather weight library that allows for the creation of declarative React forms using hooks.  The flexibility and performance of **react-uniformed** allows the library to scale with the complexity of your forms.
+
+At first glance one may mistaken **react-uniformed** for one of the MANY React form libraries. However, as you dive deeper you will find features from this library that allows you to simplify the complexity of your forms while maintaining a performance edge on all of the popular React form libraries.
 
 ## Install
 
@@ -17,44 +17,38 @@ yarn add react-uniformed
 ```
 
 ## Getting Started
+The following demonstrates the basic use of **react-uniformed**
+
 ```javascript
 import {useForm, useSettersAsEventHandler} from "react-uniformed";
 
 // useForm holds the state of the form (ie touches, values, errors)
 const { setValue, values, submit } = useForm({
-    onSubmit: data => {
-        console.log(JSON.stringify(data));
-    },
+    onSubmit: data => console.log(JSON.stringify(data)),
 });
 // compose your event handlers using useSettersAsEventHandler
 const handleChange = useSettersAsEventHandler(setValue);
 return (
     {/* the submit function is only called after the form passes validation */}
     <form onSubmit={submit}>
-        <div>
-            <label>Name</label>
-            <input
-                name="name"
-                {/* this is a common controlled input example */}
-                value={values.name}
-                onChange={handleChange}
-            />
-        </div>
-        <div>
-            <label>Email</label>
-            <input
-                name="email"
-                value={values.email}
-                onChange={handleChange}
-            />
-        </div>
+        <label>Name</label>
+        <input
+            name="name"
+            value={values.name}
+            onChange={handleChange}
+        />
+        <label>Email</label>
+        <input name="email"
+            value={values.email}
+            onChange={handleChange}
+        />
         <input type="submit" />
     </form>
   );
 ```
 
 ## Form Validation
-
+Add validation to your form by setting the `validators` property in `useForm` and start validation by calling `validateByName` or `validate`. Then read the validation state from the `errors` object.
 ```javascript
 import {useForm, useSettersAsEventHandler, useConstraints} from "react-uniformed";
 
@@ -71,7 +65,7 @@ const validator = useConstraints({
         min: [Date.now(), "Date must be today or later"]
     }
 });
-const { setValue, validateByName } = useForm({
+const { setValue, validateByName, errors } = useForm({
     validators: validator,
     onSubmit: data => console.log(JSON.stringify(data)),
 });
@@ -129,3 +123,33 @@ const {
     },
 });
 ```
+## Build Forms Without `useForm`
+It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form then you should avoid using `useForm`. The following is basic implementation of `useForm`
+```javascript
+import {useCallback} from "react";
+import {
+    useFields, useTouch, useValidation, useHandlers, useSubmission
+} from "react-uniformed";
+function useForm() {
+    // tracks the input values
+    const { values, setValue, resetValues } = useFields();
+    // tracks the touch state of inputs
+    const { touches, touchField, resetTouches } = useTouch();
+    // handles validation
+    const { validateByName, validate, errors, resetErrors } = useValidation(validators);
+    // composes a "form reset" function
+    const reset = useHandlers(resetValues, resetErrors, resetTouches);
+    // creates a validation handler that binds the values
+    const validator = useCallback(() => validate(values), [values, validate]);
+    // useSubmission doesn't concern it self with the values of the form,
+    // so we must bind the onSubmit handler and the validator with the values
+    const handleSubmit = useCallback(() => console.log(values), [values]);
+    // handles the submission of the form by guarding submission until all values are valid
+    const { isSubmitting, submit, submitCount } = useSubmission({
+        onSubmit: handleSubmit,
+        validator: submissionValidator,
+    });
+}
+```
+
+**react-uniformed** was built from the ground up. Meaning, `useForm` was an abstraction that was created after defining all of the building blocks need for a React form.  This design allows you to break out of the abstracted layer and compose your own layer of abstraction that better suits your use case.
