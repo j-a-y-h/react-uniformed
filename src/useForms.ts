@@ -29,7 +29,7 @@ export interface UseFormsHook {
 }
 interface UseFormParameters {
     readonly defaultValues?: Values<string>;
-    readonly validators: Validators | SingleValidator<string>;
+    readonly validators?: Validators | SingleValidator<string>;
     readonly onSubmit: (values: Values<string>) => void | Promise<void>;
 }
 

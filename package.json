@@ -1,16 +1,29 @@
 {
-  "name": "use-form-builder",
+  "name": "react-uniformed",
   "version": "0.0.1",
   "description": "Scalable forms for React using hooks",
-  "main": "index.ts",
+  "main": "dist/react-uniformed.js",
   "author": "Jay Harris <jay@sourware.com>",
   "license": "MIT",
   "private": false,
+  "keywords": [
+    "react",
+    "hooks",
+    "form",
+    "forms",
+    "uniformed",
+    "form-validation",
+    "validation",
+    "typescript",
+    "react-hooks",
+    "react-uniformed",
+    "react-formed"
+  ],
   "scripts": {
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "build": "rimraf ./dist && webpack",
-    "build:prod": "yarn lint && yarn test && yarn build"
+    "build:prod": "yarn lint && yarn test && yarn build --config ./webpack.prod.config.js"
   },
   "peerDependencies": {
     "react": "^16.8.0"
@@ -31,14 +44,14 @@
     "eslint-plugin-react-hooks": "^1.6.1",
     "jest": "^24.8.0",
     "react": "^16.8.0",
-    "react-dom": "^16.8.0",
     "react-hooks-testing-library": "^0.5.1",
-    "react-test-renderer": "16.8.0",
+    "react-test-renderer": "^16.9.0",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.2",
     "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "webpack-cli": "^3.3.6",
+    "webpack-merge": "^4.2.1"
   }
 }

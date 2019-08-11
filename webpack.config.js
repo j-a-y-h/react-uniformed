@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
+const package = require("./package.json");
 
 module.exports = {
     entry: "./src/index.ts",
@@ -28,13 +28,12 @@ module.exports = {
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
     },
-    // for prod build include again
     externals: {
         // Use external version of React
         react: "react",
     },
     output: {
-        filename: "index.js",
+        filename: `${package.name}.js`,
         libraryTarget: "commonjs",
         path: path.resolve(__dirname, "dist"),
     },

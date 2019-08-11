@@ -22,7 +22,6 @@ export interface ValidateAllHandler<T> {
     (valuesMap: Values<T>): Promise<Errors>;
 }
 interface UseValidatorHook<T> {
-    // TODO: jsdocs
     readonly errors: Errors;
     readonly hasErrors: boolean;
     readonly setError: ErrorHandler;
@@ -75,12 +74,8 @@ export async function validateValidators(
     }, {});
 }
 
-// TODO: consist naming conventaiton for return functions. ie (handleSubmit, onSubmit)
-// TODO: all methods should accept one param that is an object
-// TODO: all methods returned in all api should return void
-// TODO: look into supporting touch state
 export function useValidation(
-    validator: Validators | SingleValidator<string>,
+    validator: Validators | SingleValidator<string> = {},
     expectedFields?: string[],
 ): UseValidatorHook<string> {
     const {
