@@ -96,7 +96,7 @@ const {validateByName, errors} = useForm({
         email: (value) => value ? "" : "email is required"
     },
 });
-// or as observed above, using useConstraints hook
+// useConstraints supports mixing validators and constraints
 const validator = useConstraints({
     name: (value) => "name still won't be valid",
     email: { required: true }
@@ -130,6 +130,7 @@ import {useCallback} from "react";
 import {
     useFields, useTouch, useValidation, useHandlers, useSubmission
 } from "react-uniformed";
+
 function useForm() {
     // tracks the input values
     const { values, setValue, resetValues } = useFields();
@@ -145,9 +146,9 @@ function useForm() {
     // so we must bind the onSubmit handler and the validator with the values
     const handleSubmit = useCallback(() => console.log(values), [values]);
     // handles the submission of the form by guarding submission until all values are valid
-    const { isSubmitting, submit, submitCount } = useSubmission({
+    const { submit } = useSubmission({
         onSubmit: handleSubmit,
-        validator: submissionValidator,
+        validator: validator,
     });
 }
 ```
