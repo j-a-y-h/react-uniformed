@@ -1,6 +1,6 @@
 {
   "name": "react-uniformed",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Scalable forms for React using hooks",
   "main": "dist/react-uniformed.js",
   "author": "Jay Harris <jay@sourware.com>",
