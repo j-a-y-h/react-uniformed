@@ -7,3 +7,6 @@ test
 webpack.*.config.js
 jest.config.js
 tsconfig.json
+.eslintrc.json
+src
+webpack.config.js
