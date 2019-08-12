@@ -1,45 +1,156 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+# react-uniformed / **Declarative React Forms**
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+**react-uniformed** is a feather weight library that allows for the creation of declarative React forms using hooks.
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
 
----
+At first glance one may mistaken **react-uniformed** for one of the MANY React form libraries. However, as you dive deeper you will find features from this library that allows you to simplify the complexity of your forms while maintaining a performance edge on all of the popular React form libraries.
 
-## Edit a file
+## Install
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
+NPM
+```shell
+npm install react-uniformed
+```
+Yarn
+```shell
+yarn add react-uniformed
+```
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+## Getting Started
+The following demonstrates the basic use of **react-uniformed**
 
----
+```javascript
+import {useForm, useSettersAsEventHandler} from "react-uniformed";
 
-## Create a file
+// useForm holds the state of the form (ie touches, values, errors)
+const { setValue, values, submit } = useForm({
+    onSubmit: data => console.log(JSON.stringify(data)),
+});
+// compose your event handlers using useSettersAsEventHandler
+const handleChange = useSettersAsEventHandler(setValue);
+return (
+    {/* the submit function is only called after the form passes validation */}
+    <form onSubmit={submit}>
+        <label>Name</label>
+        <input
+            name="name"
+            value={values.name}
+            onChange={handleChange}
+        />
+        <label>Email</label>
+        <input name="email"
+            value={values.email}
+            onChange={handleChange}
+        />
+        <input type="submit" />
+    </form>
+  );
+```
 
-Next, you’ll add a new file to this repository.
+## Form Validation
+Add validation to your form by setting the `validators` property in `useForm` and start validation by calling `validateByName` or `validate`. Then read the validation state from the `errors` object.
+```javascript
+import {useForm, useSettersAsEventHandler, useConstraints} from "react-uniformed";
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+// Use HTML5 style validation
+const validator = useConstraints({
+    name: { required: true, minLength: 1, maxLength: 55 },
+    // email types are validated using HTML standard regex
+    email: { required: true, type: "email" },
+    date: {
+        // set the error message for required by using a non empty string
+        required: "Date is required",
+        type: "date",
+        // set the error message and constraint using an array
+        min: [Date.now(), "Date must be today or later"]
+    }
+});
+const { setValue, validateByName, errors } = useForm({
+    validators: validator,
+    onSubmit: data => console.log(JSON.stringify(data)),
+});
+// validate on change with the following code
+// const handleChange = useSettersAsEventHandler(setValue, validateByName);
+const handleBlur = useSettersAsEventHandler(validateByName);
+```
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+## Performance
+**react-uniformed** supports uncontrolled inputs that uses React refs to synchronize the state of the input in the DOM and the state of the form in the Virtual DOM.  The uncontrolled input allows us to avoid expensive React renders on keyup or change.
+```javascript
+import {useSettersAsRefEventHandler} from "react-uniformed";
 
----
+// useSettersAsRefEventHandler defaults to an on change event
+const changeRef = useSettersAsRefEventHandler(setValue);
 
-## Clone a repository
+// name attribute is still required as the changeRef calls setValue(name, value) on change
+<input name="name" ref={changeRef} />
+```
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
+`useSettersAsRefEventHandler` is generally only needed for larger forms or larger React trees. In addition to the `useSettersAsRefEventHandler`, **react-uniformed** as supports validation maps. Validation maps allows you to only validate the input that changed using `validateByName`. There is several ways to accomplish this...
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
+```javascript
+const {validateByName, errors} = useForm({
+    validators: {
+        // name won't be valid because validators must return empty string for valid values
+        name: (value) => "name will never be valid",
+        email: (value) => value ? "" : "email is required"
+    },
+});
+// useConstraints supports mixing validators and constraints
+const validator = useConstraints({
+    name: (value) => "name still won't be valid",
+    email: { required: true }
+})
+// when used with useSettersAsEventHandler the validator
+// will call the validation that matches the current input element's name
+const handleBlur = useSettersAsEventHandler(validateByName);
+```
+If you prefer to validate in one function, then you can do that as well
+```javascript
+const {
+    // validateByName will call the validate function on each call
+    // but the error will be the one with the corresponding name
+    validateByName,
+    // validate is available with both a validation map and a validation function
+    validate,
+} = useForm({
+    validators: (values) => {
+        const errors = {name: "name will never be valid", email: ""};
+        if (!values.email) {
+            errors.email = "email is required"
+        }
+        return errors;
+    },
+});
+```
+## Build Forms Without `useForm`
+It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form then you should avoid using `useForm`. The following is basic implementation of `useForm`
+```javascript
+import {useCallback} from "react";
+import {
+    useFields, useTouch, useValidation, useHandlers, useSubmission
+} from "react-uniformed";
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+function useForm() {
+    // tracks the input values
+    const { values, setValue, resetValues } = useFields();
+    // tracks the touch state of inputs
+    const { touches, touchField, resetTouches } = useTouch();
+    // handles validation
+    const { validateByName, validate, errors, resetErrors } = useValidation(validators);
+    // composes a "form reset" function
+    const reset = useHandlers(resetValues, resetErrors, resetTouches);
+    // creates a validation handler that binds the values
+    const validator = useCallback(() => validate(values), [values, validate]);
+    // useSubmission doesn't concern it self with the values of the form,
+    // so we must bind the onSubmit handler and the validator with the values
+    const handleSubmit = useCallback(() => console.log(values), [values]);
+    // handles the submission of the form by guarding submission until all values are valid
+    const { submit } = useSubmission({
+        onSubmit: handleSubmit,
+        validator: validator,
+    });
+}
+```
+
+**react-uniformed** was built from the ground up. Meaning, `useForm` was an abstraction that was created after defining all of the building blocks need for a React form.  This design allows you to break out of the abstracted layer and compose your own layer of abstraction that better suits your use case.
