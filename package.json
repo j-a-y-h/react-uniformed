@@ -24,6 +24,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint src/**/*.ts",
+    "prepublish": "yarn lint && yarn test && yarn build",
     "build": "rimraf ./dist && webpack",
     "build:prod": "yarn lint && yarn test && yarn build --config ./webpack.prod.config.js"
   },
