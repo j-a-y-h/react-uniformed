@@ -6,6 +6,7 @@
   "author": "Jay Harris <jay@sourware.com>",
   "license": "MIT",
   "private": false,
+  "repository": "https://github.com/j-a-y-h/react-uniformed.git",
   "keywords": [
     "react",
     "hooks",
