@@ -7,6 +7,7 @@
   "license": "MIT",
   "private": false,
   "repository": "https://github.com/j-a-y-h/react-uniformed.git",
+  "homepage": "https://github.com/j-a-y-h/react-uniformed",
   "keywords": [
     "react",
     "hooks",
