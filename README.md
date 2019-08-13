@@ -2,8 +2,7 @@
 
 <div align="center"><p align="center">
 
-[![npm downloads](https://img.shields.io/npm/dm/react-uniformed.svg?style=flat-square)](https://www.npmjs.com/package/react-uniformed)
-[![npm](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat-square)](https://www.npmjs.com/package/react-uniformed)
+[![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 [![npm](https://badgen.net/bundlephobia/minzip/react-uniformed)](https://badgen.net/bundlephobia/minzip/react-uniformed)
 
 </p></div>
@@ -19,6 +18,10 @@
 * 💌 < 4k gzipped
 * 📜 HTML standard validation
 * 🚀 Controlled & Uncontrolled inputs support
+
+##### References
+* [Performance](#performance)
+* [Validation](#validation)
 
 ## Install
 
