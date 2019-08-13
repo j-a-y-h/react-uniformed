@@ -12,14 +12,12 @@
     "react",
     "hooks",
     "form",
-    "forms",
-    "uniformed",
-    "form-validation",
+    "uniform",
     "validation",
-    "typescript",
     "react-hooks",
-    "react-uniformed",
-    "react-formed"
+    "react-hooks-form",
+    "react-form",
+    "react-form-hooks"
   ],
   "scripts": {
     "test": "jest",
