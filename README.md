@@ -42,8 +42,10 @@ import {useForm, useSettersAsEventHandler} from "react-uniformed";
 const { setValue, values, submit } = useForm({
     onSubmit: data => console.log(JSON.stringify(data)),
 });
+
 // compose your event handlers using useSettersAsEventHandler
 const handleChange = useSettersAsEventHandler(setValue);
+
 return (
     {/* the submit function is only called after the form passes validation */}
     <form onSubmit={submit}>
@@ -82,10 +84,12 @@ const validators = useConstraints({
         min: [Date.now(), "Date must be today or later"]
     }
 });
+
 const { setValue, validateByName, errors } = useForm({
     validators,
     onSubmit: data => console.log(JSON.stringify(data)),
 });
+
 // validate on change with the following code
 // const handleChange = useSettersAsEventHandler(setValue, validateByName);
 // or validate on blur
@@ -111,14 +115,16 @@ const {validateByName, errors} = useForm({
     validators: {
         // name won't be valid because validators must return empty string for valid values
         name: (value) => "name will never be valid",
-        email: (value) => value ? "" : "email is required"
+        email: (value) => value ? "" : "email is required",
     },
 });
+
 // useConstraints supports mixing validators and constraints
 const validator = useConstraints({
     name: (value) => "name still won't be valid",
-    email: { required: true }
-})
+    email: { required: true },
+});
+
 // when used with useSettersAsEventHandler the validator
 // will call the validation that matches the current input element's name
 const handleBlur = useSettersAsEventHandler(validateByName);
@@ -135,7 +141,7 @@ const {
     validators(values) {
         const errors = {name: "name will never be valid", email: ""};
         if (!values.email) {
-            errors.email = "email is required"
+            errors.email = "email is required";
         }
         return errors;
     },
