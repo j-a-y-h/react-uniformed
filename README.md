@@ -61,7 +61,7 @@ return (
   );
 ```
 
-## Form Validation
+## Validation
 Add validation to your form by setting the `validators` property in `useForm` and start validation by calling `validateByName` or `validate`. Then read the validation state from the `errors` object.
 ```javascript
 import {useForm, useSettersAsEventHandler, useConstraints} from "react-uniformed";
@@ -139,7 +139,7 @@ const {
 });
 ```
 ## Build Forms Without `useForm`
-It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form then you should avoid using `useForm`. The following is a basic implementation of `useForm`
+It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form then you should avoid using `useForm` in favor of the form modules like `useFields`, `useTouch`, `useValidation`, and `useSubmission`. The following is a basic implementation of `useForm` that you can use to compose your form to your needs.
 ```javascript
 import {useCallback} from "react";
 import {
@@ -168,7 +168,7 @@ function useForm() {
     // so we must bind the onSubmit handler and the validator with the values
     const onSubmit = useCallback(() => console.log(values), [values]);
 
-    // handles the submission of the form by guarding submission until all values are valid
+    // Guards against submissions until all values are valid
     const { submit } = useSubmission({ onSubmit, validator });
 }
 ```
