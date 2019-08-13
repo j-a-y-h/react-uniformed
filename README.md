@@ -1,5 +1,13 @@
 # react-uniformed - **Lightweight / Fast / Simple / Scalable**
 
+<div align="center"><p align="center">
+
+[![npm downloads](https://img.shields.io/npm/dm/react-uniformed.svg?style=flat-square)](https://www.npmjs.com/package/react-uniformed)
+[![npm](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat-square)](https://www.npmjs.com/package/react-uniformed)
+[![npm](https://badgen.net/bundlephobia/minzip/react-uniformed)](https://badgen.net/bundlephobia/minzip/react-uniformed)
+
+</p></div>
+
 **react-uniformed** is a lightweight library that simplifies the creation of declarative React forms using only React Hooks. Additionally, this library will out perform all of the popular React form libraries without adding complexity to your code.
 
 *You don't have to learn a new framework with a massive API in order to do forms, <u>just use **react-uniformed**</u>*
@@ -146,7 +154,9 @@ function useForm() {
     const { touches, touchField, resetTouches } = useTouch();
 
     // handles validation
-    const { validateByName, validate, errors, resetErrors } = useValidation(validators);
+    const { validateByName, validate, errors, resetErrors } = useValidation({
+        name: () => "",
+    });
 
     // composes a "form reset" function
     const reset = useHandlers(resetValues, resetErrors, resetTouches);
