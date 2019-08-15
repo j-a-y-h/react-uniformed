@@ -85,6 +85,43 @@ export async function validateValidators(
     }, {});
 }
 
+/**
+ * A hook for performing validation.
+ * @param validator A validation map or a validation function.
+ * @param expectedFields Define the fields required for validation.
+ * This is useful if you want certain fields to always be validated (ie required fields).
+ * If you are using a validation map, then this value will default to the keys of the validation map.
+ * @return
+ * @example
+ *
+ * // validate using validation maps
+ * const {validateByName} = useValidation({
+ *     name: (value) => value ? "" : "name is required!",
+ *     email: (value) => value ? "" : "email is required!"
+ * });
+ *
+ * // "email is required!"
+ * validateByName("email", "");
+ * // {email: "email is required!"}
+ * console.log(errors);
+ *
+ * // validate with one validation function
+ * const {errors, validate} = useValidation((values) => {
+ *     const errors = {name: "", email: ""};
+ *     if (!values.name) {
+ *         errors.name = "name is required!";
+ *     }
+ *     if (!values.email) {
+ *         errors.email = "email is required!";
+ *     }
+ *     return errors;
+ * });
+ *
+ * // {name: "", email: "email is required!"}
+ * validate({name: "John"});
+ * // {name: "", email: "email is required!"}
+ * console.log(errors);
+ */
 export function useValidation(
     validator: SingleValidator<userSuppliedValue>, expectedFields?: string[],
 ): UseValidatorHook<userSuppliedValue>;
