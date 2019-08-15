@@ -1,7 +1,6 @@
 .npmignore
 node_modules
 examples
-dist
 coverage
 test
 webpack.*.config.js
