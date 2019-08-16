@@ -8,4 +8,5 @@ jest.config.js
 tsconfig.json
 .eslintrc.json
 src
+docs
 webpack.config.js

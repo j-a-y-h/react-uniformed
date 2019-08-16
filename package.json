@@ -23,10 +23,13 @@
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "size": "yarn bundle:prod --silent && bundlesize",
+    "clean": "rimraf ./dist",
     "prepublish": "yarn lint && yarn test && yarn build",
     "bundle:prod": "yarn build --config ./webpack.prod.config.js",
-    "build": "rimraf ./dist && webpack",
-    "build:prod": "yarn lint && yarn test && yarn bundle:prod"
+    "build": "yarn clean && webpack",
+    "build:prod": "yarn lint && yarn test && yarn bundle:prod",
+    "build:js": "yarn clean && yarn tsc ./src/index.ts --target ESNEXT --outdir dist &> /dev/null",
+    "build:docs:api": "yarn build:js || jsdoc2md ./dist/use*.js > ./docs/api.md"
   },
   "peerDependencies": {
     "react": "^16.8.0"
@@ -47,6 +50,7 @@
     "eslint-plugin-react": "^7.13.0",
     "eslint-plugin-react-hooks": "^1.6.1",
     "jest": "^24.8.0",
+    "jsdoc-to-markdown": "^5.0.0",
     "react": "^16.8.0",
     "react-hooks-testing-library": "^0.5.1",
     "react-test-renderer": "^16.9.0",
