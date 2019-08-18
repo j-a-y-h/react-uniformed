@@ -7,7 +7,12 @@ import {
 } from "./useTouch";
 import { useSubmission, SubmissionHandler, SubmitHandler } from "./useSubmission";
 import {
-    useValidation, Validators, ValidateHandler, ValidateAllHandler, SingleValidator,
+    useValidation,
+    Validators,
+    ValidateHandler,
+    ValidateAllHandler,
+    SingleValidator,
+    userSuppliedValue,
 } from "./useValidation";
 import { Values, SetValueCallback, MutableValues } from "./useResetableValues";
 
@@ -15,22 +20,22 @@ export interface UseFormsHook {
     readonly errors: Errors;
     readonly hasErrors: boolean;
     readonly isSubmitting: boolean;
-    readonly values: Values<string>;
+    readonly values: Values<userSuppliedValue>;
     readonly setError: ErrorHandler;
     readonly setTouch: TouchHandler;
     readonly touchField: TouchFieldHandler;
-    readonly setValue: SetValueCallback<string>;
+    readonly setValue: SetValueCallback<userSuppliedValue>;
     readonly submitCount: number;
     readonly submit: SubmitHandler;
     readonly touches: Touches;
-    readonly validateByName: ValidateHandler<string>;
-    readonly validate: ValidateAllHandler<string>;
+    readonly validateByName: ValidateHandler<userSuppliedValue>;
+    readonly validate: ValidateAllHandler<userSuppliedValue>;
     readonly reset: () => void;
 }
 interface UseFormParameters {
-    readonly defaultValues?: Values<string>;
-    readonly validators?: Validators | SingleValidator<string>;
-    readonly onSubmit: (values: Values<string>) => void | Promise<void>;
+    readonly defaultValues?: Values<userSuppliedValue>;
+    readonly validators?: Validators | SingleValidator<userSuppliedValue>;
+    readonly onSubmit: (values: Values<userSuppliedValue>) => void | Promise<void>;
 }
 
 // useHandlers(validateAll, onSubmit)

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { Values, MutableValues } from "./useResetableValues";
+import { Values, MutableValues, ConstantValues } from "./useResetableValues";
 import {
-    Validator, Validators, SingleValidator, validateValidators,
+    Validator, Validators, SingleValidator, validateValidators, userSuppliedValue,
 } from "./useValidation";
 import { assert, LoggingTypes } from "./utils";
 import { Errors } from "./useErrors";
@@ -10,9 +10,7 @@ type supportedTypes = "email" | "text" | "url" | "number" | "date";
 // possible values:
 // "text" | "number" | "date" | "email" | "checkbox" |
 // "tel" | "time" | "url" | "week" | "month" | "year" | "range";
-const supportedTypesSet = new Set(["text", "email", "url", "number", "date"]);
-
-type constraintValues = boolean | number | RegExp | string | Date;
+export const supportedTypesSet = new Set(["text", "email", "url", "number", "date"]);
 
 interface Constraints {
     /**
@@ -50,10 +48,14 @@ interface Constraints {
      */
     readonly type?: supportedTypes | [string, string];
 }
-
 type supportedConstraints = keyof Constraints;
+type constraintValues = boolean | number | RegExp | string | Date;
+type RequiredConstraint<T extends supportedConstraints> = {
+    [P in T]-?: constraintValues;
+};
+
 interface SyncedConstraint {
-    (values: Values<string>): Values<Constraints | Validator>;
+    (values: Values<userSuppliedValue>): Values<Constraints | Validator>;
 }
 
 const defaultMessage = {
@@ -64,10 +66,9 @@ const defaultMessage = {
     min: "The value is too small.",
     pattern: "The value must match the pattern.",
     type: "The value must match the type.",
-    default: "The value is invalid.",
 };
 
-const supportedProperties: supportedConstraints[] = [
+export const supportedProperties: supportedConstraints[] = [
     "required",
     "type",
     "pattern",
@@ -76,6 +77,11 @@ const supportedProperties: supportedConstraints[] = [
     "max",
     "min",
 ];
+
+function hasValue(value?: userSuppliedValue): value is string {
+    // @ts-ignore
+    return value === 0 || Boolean(value);
+}
 
 function getRuleValueAndMessage(
     rules: Constraints, name: supportedConstraints,
@@ -89,6 +95,7 @@ function getRuleValueAndMessage(
         value = rule || "";
     }
     if (name === "required") {
+        message = !message && typeof value === "string" ? value : message;
         value = Boolean(value);
     }
     return [value, message];
@@ -101,50 +108,50 @@ function getRuleValue(rules: Constraints, name: supportedConstraints): constrain
 
 const propertyValidators = {
     // @ts-ignore
-    required(rules: Constraints, required: constraintValues, value?: string): boolean {
-        return !required || Boolean(value);
+    required(rules: Constraints, required: constraintValues, value?: userSuppliedValue): boolean {
+        return !required || hasValue(value);
     },
     // @ts-ignore
-    maxLength(rules: Constraints, maxLength: constraintValues, value?: string): boolean {
-        return !value || (typeof value === "string" && value.length <= Number(maxLength));
+    maxLength(rules: Constraints, maxLength: constraintValues, value?: userSuppliedValue): boolean {
+        return !hasValue(value) || (typeof value === "string" && value.length <= Number(maxLength));
     },
     // @ts-ignore
-    minLength(rules: Constraints, minLength: constraintValues, value?: string): boolean {
-        return !value || (typeof value === "string" && value.length >= Number(minLength));
+    minLength(rules: Constraints, minLength: constraintValues, value?: userSuppliedValue): boolean {
+        return !hasValue(value) || (typeof value === "string" && value.length >= Number(minLength));
     },
-    max(rules: Constraints, max: constraintValues, value?: string): boolean {
-        if (!value) {
+    max(rules: Constraints, max: constraintValues, value?: userSuppliedValue): boolean {
+        if (!hasValue(value)) {
             return true;
         }
         const type = getRuleValue(rules, "type");
         return (type === "date")
-            ? new Date(value || "") <= new Date(max as string | number || "")
+            ? new Date(value) <= new Date(max as string | number)
             : Number(value) <= Number(max);
     },
-    min(rules: Constraints, min: constraintValues, value?: string): boolean {
-        if (!value) {
+    min(rules: Constraints, min: constraintValues, value?: userSuppliedValue): boolean {
+        if (!hasValue(value)) {
             return true;
         }
         const type = getRuleValue(rules, "type");
         return (type === "date")
-            ? new Date(value || "") >= new Date(min as string | number || "")
+            ? new Date(value) >= new Date(min as string | number)
             : Number(value) >= Number(min);
     },
-    // do custom check: email, url, date
     // @ts-ignore
-    type(rules: Constraints, type: constraintValues, value: string = ""): boolean {
-        if (!value) {
+    type(rules: Constraints, type: constraintValues, value: userSuppliedValue = ""): boolean {
+        if (!hasValue(value)) {
             return true;
         }
         let regex: RegExp;
         switch (type) {
             case "url":
-                regex = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+                regex = /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)$/;
                 return regex.test(value);
             case "email":
                 regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
                 return regex.test(value);
             case "number":
+                // could use: /^-?(\d+|\d+\.\d+|\.\d+)([eE][-+]?\d+)?$/
                 return !Number.isNaN(Number(value));
             case "date":
                 return !Number.isNaN((new Date(value)).getTime());
@@ -153,8 +160,8 @@ const propertyValidators = {
         }
     },
     // @ts-ignore TS6133
-    pattern(rules: Constraints, pattern: constraintValues, value: string = ""): boolean {
-        return !value || (!(pattern instanceof RegExp) || pattern.test(value));
+    pattern(rules: Constraints, pattern: constraintValues, value: userSuppliedValue = ""): boolean {
+        return !hasValue(value) || (!(pattern instanceof RegExp) || pattern.test(value));
     },
 };
 
@@ -162,7 +169,9 @@ function getRuleMessage(rules: Constraints, name: supportedConstraints): string 
     const [, message] = getRuleValueAndMessage(rules, name);
     return message;
 }
-function hasRule(rules: Constraints, name: supportedConstraints): boolean {
+function hasRule<T extends supportedConstraints>(
+    rules: Constraints, name: T,
+): rules is RequiredConstraint<T> {
     return ({}).hasOwnProperty.call(rules, name);
 }
 
@@ -182,8 +191,8 @@ function validateRule(name: string, rules: Constraints): void {
         );
     }
     if (hasRule(rules, "maxLength") && hasRule(rules, "minLength")) {
-        const minLength = getRuleValue(rules, "minLength") as number;
-        const maxLength = getRuleValue(rules, "maxLength") as number;
+        const minLength = getRuleValue(rules, "minLength");
+        const maxLength = getRuleValue(rules, "maxLength");
         assert.warning(
             maxLength >= minLength,
             LoggingTypes.constraintError,
@@ -191,8 +200,8 @@ function validateRule(name: string, rules: Constraints): void {
         );
     }
     if (hasRule(rules, "min") && hasRule(rules, "max")) {
-        const min = getRuleValue(rules, "min") as number | Date;
-        const max = getRuleValue(rules, "max") as number | Date;
+        const min = getRuleValue(rules, "min");
+        const max = getRuleValue(rules, "max");
         assert.warning(
             max >= min,
             LoggingTypes.constraintError,
@@ -208,7 +217,7 @@ function validateRule(name: string, rules: Constraints): void {
         );
     }
 }
-function validateUsingContraints(rules: Constraints, value?: string): string {
+function validateUsingContraints(rules: Constraints, value?: userSuppliedValue): string {
     // check required
     const erroredProperty = supportedProperties.find((property): boolean => {
         let hasError = false;
@@ -220,8 +229,7 @@ function validateUsingContraints(rules: Constraints, value?: string): string {
     });
     let message = "";
     if (erroredProperty) {
-        message = getRuleMessage(rules, erroredProperty)
-            || defaultMessage[erroredProperty] || defaultMessage.default;
+        message = getRuleMessage(rules, erroredProperty) || defaultMessage[erroredProperty];
     }
     return message;
 }
@@ -242,7 +250,9 @@ function mapConstraintsToValidators(rules: Values<Constraints | Validator>): Val
         }
         // eslint-disable-next-line no-param-reassign
         validationMap[name] = (typeof currentValidator !== "function")
-            ? (value?: string): string => validateUsingContraints(currentValidator, value)
+            ? (value?: userSuppliedValue): string => (
+                validateUsingContraints(currentValidator, value)
+            )
             : currentValidator;
         return validationMap;
     }, {});
@@ -286,15 +296,21 @@ function mapConstraintsToValidators(rules: Values<Constraints | Validator>): Val
  *          min: [values.startDate, "end date must be greater than start date"]
  *      },
  *  }))
- *  // this requires binding the validator with the values
+ *  // note: if you are using the constraints with the useForm hook
+ *  // then you can bind the validator with the values so that the handler
+ *  // can be used with events
  *  const handleBlur = useValidationWithValues(validator, values);
  */
+export function useConstraints<T extends Values<Constraints | Validator>>(
+    rules: T
+): ConstantValues<T, Validator>;
+export function useConstraints(rules: SyncedConstraint): SingleValidator<userSuppliedValue>;
 export function useConstraints(
     rules: Values<Constraints | Validator> | SyncedConstraint,
-): Validators | SingleValidator<string> {
-    return useMemo((): Validators | SingleValidator<string> => {
+): Validators | SingleValidator<userSuppliedValue> {
+    return useMemo((): Validators | SingleValidator<userSuppliedValue> => {
         if (typeof rules === "function") {
-            return (values: Values<string>): Promise<Errors> => {
+            return (values: Values<userSuppliedValue>): Promise<Errors> => {
                 const constraints = rules(values);
                 const validators = mapConstraintsToValidators(constraints);
                 const names = Object.keys(constraints);

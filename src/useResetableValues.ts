@@ -8,6 +8,9 @@ type allowableKeys = string;
 export interface Values<T> {
     readonly [name: string]: T;
 }
+export type ConstantValues<T, V> = Readonly<{
+    [P in keyof T]: V
+}>;
 export interface MutableValues<T> {
     [name: string]: T;
 }
@@ -18,7 +21,7 @@ interface UpdatePayload<T> {
 }
 type ActionPayload<T> = Values<T> | UpdatePayload<T>;
 
-enum ActionTypes { update, reset, updateAll }
+enum ActionTypes { update, reset }
 interface Action<T> {
     readonly type: ActionTypes;
     readonly payload: ActionPayload<T>;
@@ -48,10 +51,6 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
             // don't do unnecessary updates
             return (state[name] !== value)
                 ? { ...state, [name]: value }
-                : state;
-        case ActionTypes.updateAll:
-            return (action.payload !== state)
-                ? { ...state, ...action.payload as Values<T> }
                 : state;
         case ActionTypes.reset:
             return (action.payload !== state)

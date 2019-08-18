@@ -7,12 +7,12 @@ import { assert, LoggingTypes } from "./utils";
 
 type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
-
+export type userSuppliedValue = undefined | string | number | Date | null;
 export interface SingleValidator<T> {
     (values: Values<T>): validSingleValidatorReturnTypes;
 }
 export interface Validator {
-    (value?: string): validValidatorReturnTypes;
+    (value?: userSuppliedValue): validValidatorReturnTypes;
 }
 export type Validators = Values<Validator>;
 export interface ValidateHandler<T> {
@@ -55,7 +55,7 @@ function assertValidator(functionName: string, name: string, validator: Function
 }
 
 export async function validateValidators(
-    names: string[], validators: Validators, values: Values<string>,
+    names: string[], validators: Validators, values: Values<userSuppliedValue>,
 ): Promise<Errors> {
     const errorsPromiseMap = names
         .map(async (name): Promise<[string, validValidatorReturnTypes]> => {
@@ -75,9 +75,9 @@ export async function validateValidators(
 }
 
 export function useValidation(
-    validator: Validators | SingleValidator<string> = {},
+    validator: Validators | SingleValidator<userSuppliedValue> = {},
     expectedFields?: string[],
-): UseValidatorHook<string> {
+): UseValidatorHook<userSuppliedValue> {
     const {
         setError, errors, hasErrors, resetErrors, setErrors,
     } = useErrors();
@@ -90,7 +90,7 @@ export function useValidation(
     } = useResetableValues();
     // create a validate by input name function
     const validateByName = useCallback(async (
-        name: string, value: string,
+        name: string, value: userSuppliedValue,
     ): Promise<validErrorValues> => {
         let error: validErrorValues;
         setValidationState(name, true);
@@ -109,7 +109,7 @@ export function useValidation(
     }, [setError, setValidationState, validator]);
 
     // create validate all function
-    const validate = useCallback(async (values: Values<string>): Promise<Errors> => {
+    const validate = useCallback(async (values: Values<userSuppliedValue>): Promise<Errors> => {
         const names = [...Object.keys(values), ...fieldsToUseInValidateAll];
         const setAllValidationState = (state: boolean): void => {
             const allStates = names.reduce((

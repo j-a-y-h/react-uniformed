@@ -99,3 +99,6 @@ export function useSettersAsRefEventHandler(
     }, [event, eventHandler]);
     return ref;
 }
+
+// TODO: add a useValueTransform hook
+//   useValueTransform(Number, (s) => String(s).trim());
