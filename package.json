@@ -22,6 +22,7 @@
   "scripts": {
     "test": "jest --silent",
     "test:coverage": "rimraf ./coverage && yarn test --coverage --silent || true",
+    "test:coveralls": "yarn test --coverage --coverageReporters=text-lcov | coveralls",
     "lint": "eslint src/**/*.ts",
     "size": "yarn bundle:prod --silent && bundlesize",
     "clean": "rimraf ./dist",
@@ -44,6 +45,7 @@
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.13.0",
     "bundlesize": "^0.18.0",
+    "coveralls": "^3.0.6",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-loader": "^2.2.1",

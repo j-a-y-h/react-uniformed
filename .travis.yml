@@ -1,6 +1,14 @@
+sudo: false
+
 language: node_js
+
 node_js:
   - "stable"
+
 script:
   - yarn size
   - yarn build:prod
+  - yarn test:coveralls
+
+notifications:
+  email: false
