@@ -22,8 +22,8 @@
 * 🚀 Controlled & Uncontrolled inputs support
 
 ##### References
-* [Performance](#performance)
 * [Validation](#validation)
+* [Performance](#performance)
 
 ## Install
 
@@ -148,8 +148,8 @@ const {
     },
 });
 ```
-## Build Forms Without `useForm`
-It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form, then you should avoid using `useForm` in favor of other form hooks like `useFields`, `useTouch`, `useValidation`, and `useSubmission`. The following is a basic implementation of `useForm` that you can use to compose your form to your needs.
+## More Hooks
+It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form, then you should avoid using `useForm` in favor of other form hooks like `useFields`, `useTouch`, `useValidation`, and `useSubmission`. The following is a basic implementation of `useForm` that you can use to compose your forms.
 ```javascript
 import {useCallback} from "react";
 import {
