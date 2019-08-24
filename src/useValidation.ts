@@ -85,6 +85,19 @@ export async function validateValidators(
     }, {});
 }
 
+export function useValidation(
+    validator: SingleValidator<userSuppliedValue>, expectedFields?: string[],
+): UseValidatorHook<userSuppliedValue>;
+
+export function useValidation<T extends Validators>(
+    validator: T, expectedFields?: string[],
+): UseValidatorHookPartial<userSuppliedValue, T>;
+
+export function useValidation<T extends Validators>(
+    validator: T | SingleValidator<userSuppliedValue>,
+    expectedFields?: string[],
+): UseValidatorHookPartial<userSuppliedValue, T> | UseValidatorHook<userSuppliedValue>;
+
 /**
  * A hook for performing validation.
  * @param validator A validation map or a validation function.
@@ -122,19 +135,6 @@ export async function validateValidators(
  * // {name: "", email: "email is required!"}
  * console.log(errors);
  */
-export function useValidation(
-    validator: SingleValidator<userSuppliedValue>, expectedFields?: string[],
-): UseValidatorHook<userSuppliedValue>;
-
-export function useValidation<T extends Validators>(
-    validator: T, expectedFields?: string[],
-): UseValidatorHookPartial<userSuppliedValue, T>;
-
-export function useValidation<T extends Validators>(
-    validator: T | SingleValidator<userSuppliedValue>,
-    expectedFields?: string[],
-): UseValidatorHookPartial<userSuppliedValue, T> | UseValidatorHook<userSuppliedValue>;
-
 export function useValidation(
     validator: Validators | SingleValidator<userSuppliedValue>,
     expectedFields?: string[],
