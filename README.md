@@ -2,6 +2,7 @@
 
 <div align="center"><p align="center">
 
+[![travis](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 [![npm](https://badgen.net/bundlephobia/minzip/react-uniformed)](https://badgen.net/bundlephobia/minzip/react-uniformed)
 
