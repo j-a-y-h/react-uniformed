@@ -97,8 +97,8 @@ module.exports = {
     reporters: [
         "default",
         ["./node_modules/jest-html-reporters", {
-            publicPath: "./",
-            filename: "./coverage/report.html",
+            publicPath: "./coverage",
+            filename: "report.html",
             expand: true,
         }],
     ],
