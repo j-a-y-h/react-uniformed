@@ -22,7 +22,7 @@
 
 NPM
 ```shell
-npm install react-uniformed
+npm install --save react-uniformed
 ```
 Yarn
 ```shell
