@@ -22,7 +22,7 @@
   "scripts": {
     "test": "jest --silent",
     "test:coverage": "rimraf ./coverage && yarn test --coverage --silent || true",
-    "test:coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "test:coveralls": "yarn test --coverage --coverageReporters=text-lcov | coveralls",
     "lint": "eslint src/**/*.ts",
     "size": "yarn bundle:prod --silent && bundlesize",
     "clean": "rimraf ./dist",
