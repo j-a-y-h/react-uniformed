@@ -15,7 +15,7 @@
 
 ##### Overview
 * ‍️💆🏾‍♂️ Simple API
-* 🐐 Lightweight / Fast / Scalable
+* 🐐  Fast / Scalable
 * 🙅🏻‍♀️ Zero dependencies
 * 💌 < 4k gzipped
 * 📜 HTML standard validation
