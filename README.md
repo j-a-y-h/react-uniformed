@@ -133,7 +133,7 @@ const handleBlur = useSettersAsEventHandler(validateByName);
 If you prefer to validate in one function, then you can do that as well
 ```javascript
 const {
-    // validateByName will call the validate function on each call
+    // note: validateByName will call the validate function on each call
     // but the error will be the one with the corresponding name
     validateByName,
     // validate is available with both a validation map and a validation function
@@ -149,7 +149,7 @@ const {
 });
 ```
 ## Build Forms Without `useForm`
-It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form then you should avoid using `useForm` in favor of the form modules like `useFields`, `useTouch`, `useValidation`, and `useSubmission`. The following is a basic implementation of `useForm` that you can use to compose your form to your needs.
+It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form, then you should avoid using `useForm` in favor of other form hooks like `useFields`, `useTouch`, `useValidation`, and `useSubmission`. The following is a basic implementation of `useForm` that you can use to compose your form to your needs.
 ```javascript
 import {useCallback} from "react";
 import {
