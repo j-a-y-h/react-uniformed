@@ -11,6 +11,9 @@ export interface Values<T> {
 export type ConstantValues<T, V> = Readonly<{
     [P in keyof T]: V
 }>;
+export type PartialValues<T, V> = Readonly<Partial<{
+    [P in keyof T]: V
+}>>;
 export interface MutableValues<T> {
     [name: string]: T;
 }

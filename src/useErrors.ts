@@ -4,8 +4,8 @@ import { assert, LoggingTypes } from "./utils";
 
 export type validErrorValues = string;
 export type Errors = Values<validErrorValues>;
-export interface ErrorHandler {
-    (name: string, error: validErrorValues): void;
+export interface ErrorHandler<T = string> {
+    (name: T, error: validErrorValues): void;
 }
 export interface UseErrorsHook {
     readonly errors: Errors;

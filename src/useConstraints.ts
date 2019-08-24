@@ -54,8 +54,10 @@ type RequiredConstraint<T extends supportedConstraints> = {
     [P in T]-?: constraintValues;
 };
 
+export type ConstraintValidators = Values<Constraints | Validator>;
+
 interface SyncedConstraint {
-    (values: Values<userSuppliedValue>): Values<Constraints | Validator>;
+    (values: Values<userSuppliedValue>): ConstraintValidators;
 }
 
 const defaultMessage = {
@@ -234,7 +236,7 @@ function validateUsingContraints(rules: Constraints, value?: userSuppliedValue):
     return message;
 }
 
-function mapConstraintsToValidators(rules: Values<Constraints | Validator>): Validators {
+function mapConstraintsToValidators(rules: ConstraintValidators): Validators {
     assert.error(
         rules && typeof rules === "object",
         LoggingTypes.invalidArgument,
@@ -259,6 +261,17 @@ function mapConstraintsToValidators(rules: Values<Constraints | Validator>): Val
 }
 
 /* eslint-disable import/prefer-default-export */
+
+export function useConstraints<T extends ConstraintValidators>(
+    rules: T
+): ConstantValues<T, Validator>;
+
+export function useConstraints(rules: SyncedConstraint): SingleValidator<userSuppliedValue>;
+
+export function useConstraints<T extends ConstraintValidators>(
+    rules: SyncedConstraint | T
+): ConstantValues<T, Validator> | SingleValidator<userSuppliedValue>;
+
 /**
  * A declarative way of validating inputs based upon HTML 5 constraints
  *
@@ -301,12 +314,8 @@ function mapConstraintsToValidators(rules: Values<Constraints | Validator>): Val
  *  // can be used with events
  *  const handleBlur = useValidationWithValues(validator, values);
  */
-export function useConstraints<T extends Values<Constraints | Validator>>(
-    rules: T
-): ConstantValues<T, Validator>;
-export function useConstraints(rules: SyncedConstraint): SingleValidator<userSuppliedValue>;
 export function useConstraints(
-    rules: Values<Constraints | Validator> | SyncedConstraint,
+    rules: ConstraintValidators | SyncedConstraint,
 ): Validators | SingleValidator<userSuppliedValue> {
     return useMemo((): Validators | SingleValidator<userSuppliedValue> => {
         if (typeof rules === "function") {

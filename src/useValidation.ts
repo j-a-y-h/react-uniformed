@@ -2,7 +2,9 @@ import { useCallback, useMemo } from "react";
 import {
     validErrorValues, Errors, useErrors, ErrorHandler,
 } from "./useErrors";
-import { Values, useResetableValues, MutableValues } from "./useResetableValues";
+import {
+    Values, useResetableValues, MutableValues, PartialValues,
+} from "./useResetableValues";
 import { assert, LoggingTypes } from "./utils";
 
 type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
@@ -15,11 +17,11 @@ export interface Validator {
     (value?: userSuppliedValue): validValidatorReturnTypes;
 }
 export type Validators = Values<Validator>;
-export interface ValidateHandler<T> {
-    (name: string, value: T): Promise<validErrorValues>;
+export interface ValidateHandler<T, K = string> {
+    (name: K, value: T): Promise<validErrorValues>;
 }
-export interface ValidateAllHandler<T> {
-    (valuesMap: Values<T>): Promise<Errors>;
+export interface ValidateAllHandler<T, K = Values<T>> {
+    (valuesMap: K): Promise<Errors>;
 }
 interface UseValidatorHook<T> {
     readonly errors: Errors;
@@ -27,6 +29,15 @@ interface UseValidatorHook<T> {
     readonly setError: ErrorHandler;
     readonly validateByName: ValidateHandler<T>;
     readonly validate: ValidateAllHandler<T>;
+    readonly isValidating: boolean;
+    readonly resetErrors: () => void;
+}
+interface UseValidatorHookPartial<T, K> {
+    readonly errors: PartialValues<K, Error>;
+    readonly hasErrors: boolean;
+    readonly setError: ErrorHandler<keyof K>;
+    readonly validateByName: ValidateHandler<T, keyof K>;
+    readonly validate: ValidateAllHandler<T, PartialValues<K, T>>;
     readonly isValidating: boolean;
     readonly resetErrors: () => void;
 }
@@ -75,9 +86,22 @@ export async function validateValidators(
 }
 
 export function useValidation(
-    validator: Validators | SingleValidator<userSuppliedValue> = {},
+    validator: SingleValidator<userSuppliedValue>, expectedFields?: string[],
+): UseValidatorHook<userSuppliedValue>;
+
+export function useValidation<T extends Validators>(
+    validator: T, expectedFields?: string[],
+): UseValidatorHookPartial<userSuppliedValue, T>;
+
+export function useValidation<T extends Validators>(
+    validator: T | SingleValidator<userSuppliedValue>,
     expectedFields?: string[],
-): UseValidatorHook<userSuppliedValue> {
+): UseValidatorHookPartial<userSuppliedValue, T> | UseValidatorHook<userSuppliedValue>;
+
+export function useValidation(
+    validator: Validators | SingleValidator<userSuppliedValue>,
+    expectedFields?: string[],
+): UseValidatorHookPartial<userSuppliedValue, Validators> | UseValidatorHook<userSuppliedValue> {
     const {
         setError, errors, hasErrors, resetErrors, setErrors,
     } = useErrors();

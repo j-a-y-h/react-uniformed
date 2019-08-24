@@ -14,10 +14,10 @@ import {
     SingleValidator,
     userSuppliedValue,
 } from "./useValidation";
-import { Values, SetValueCallback, MutableValues } from "./useResetableValues";
+import { Values, SetValueCallback, MutableValues, PartialValues } from "./useResetableValues";
 
 export interface UseFormsHook {
-    readonly errors: Errors;
+    readonly errors: Errors | PartialValues<Validators, Error>;
     readonly hasErrors: boolean;
     readonly isSubmitting: boolean;
     readonly values: Values<userSuppliedValue>;
@@ -39,7 +39,7 @@ interface UseFormParameters {
 }
 
 // useHandlers(validateAll, onSubmit)
-export function useForm({ defaultValues, validators, onSubmit }: UseFormParameters): UseFormsHook {
+export function useForm({ defaultValues, validators = {}, onSubmit }: UseFormParameters): UseFormsHook {
     const { values, setValue, resetValues } = useFields(defaultValues);
     const {
         touches, resetTouches, setTouch, touchField, setTouches,

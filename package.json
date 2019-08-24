@@ -20,8 +20,8 @@
     "react-form-hooks"
   ],
   "scripts": {
-    "test": "jest",
-    "test:coverage": "rimraf ./coverage && yarn test --coverage || true",
+    "test": "jest --silent",
+    "test:coverage": "rimraf ./coverage && yarn test --coverage --silent || true",
     "lint": "eslint src/**/*.ts",
     "size": "yarn bundle:prod --silent && bundlesize",
     "clean": "rimraf ./dist",
@@ -38,8 +38,9 @@
     "react": "^16.8.0"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.15",
+    "@types/jest": "^24.0.17",
     "@types/react": "^16.8.20",
+    "@types/react-dom": "^16.8.5",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.13.0",
     "bundlesize": "^0.18.0",
@@ -57,6 +58,7 @@
     "jsdoc-to-markdown": "^5.0.0",
     "open-cli": "^5.0.0",
     "react": "^16.8.0",
+    "react-dom": "^16.9.0",
     "react-hooks-testing-library": "^0.5.1",
     "react-test-renderer": "^16.9.0",
     "rimraf": "^2.6.3",
