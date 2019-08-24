@@ -115,14 +115,13 @@ const changeRef = useSettersAsRefEventHandler(setValue);
 ```javascript
 const {validateByName, errors} = useForm({
     validators: {
-        // name won't be valid because validators must return empty string for valid values
-        name: (value) => "name will never be valid",
-        email: (value) => value ? "" : "email is required",
+        // validators must return empty string for valid value
+        name: (value) => value ? "" : "email is required",
     },
 });
 
 // useConstraints supports mixing validators and constraints
-const validator = useConstraints({
+const validators = useConstraints({
     name: (value) => "name still won't be valid",
     email: { required: true },
 });
