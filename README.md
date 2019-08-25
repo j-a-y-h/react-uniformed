@@ -24,7 +24,7 @@
 ##### References
 * [Validation](#validation)
 * [Performance](#performance)
-* [API](./docs/API.md)
+* [API](https://github.com/j-a-y-h/react-uniformed/blob/documentation/docs/API.md)
 
 ## Install
 
