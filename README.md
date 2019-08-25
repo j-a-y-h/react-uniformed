@@ -2,6 +2,9 @@
 
 <div align="center"><p align="center">
 
+[![travis](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/j-a-y-h/react-uniformed/badge.svg?branch=coveralls)](https://coveralls.io/github/j-a-y-h/react-uniformed?branch=coveralls)
+[![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 [![npm](https://badgen.net/bundlephobia/minzip/react-uniformed)](https://badgen.net/bundlephobia/minzip/react-uniformed)
 
 </p></div>
@@ -12,17 +15,22 @@
 
 ##### Overview
 * ‍️💆🏾‍♂️ Simple API
-* 🐐 Lightweight / Fast / Scalable
+* 🐐  Fast / Scalable
 * 🙅🏻‍♀️ Zero dependencies
 * 💌 < 4k gzipped
 * 📜 HTML standard validation
 * 🚀 Controlled & Uncontrolled inputs support
 
+##### References
+* [Validation](#validation)
+* [Performance](#performance)
+* [API](https://github.com/j-a-y-h/react-uniformed/blob/documentation/docs/API.md)
+
 ## Install
 
 NPM
 ```shell
-npm install --save react-uniformed
+npm install react-uniformed
 ```
 Yarn
 ```shell
@@ -37,8 +45,10 @@ import {useForm, useSettersAsEventHandler} from "react-uniformed";
 const { setValue, values, submit } = useForm({
     onSubmit: data => console.log(JSON.stringify(data)),
 });
+
 // compose your event handlers using useSettersAsEventHandler
 const handleChange = useSettersAsEventHandler(setValue);
+
 return (
     {/* the submit function is only called after the form passes validation */}
     <form onSubmit={submit}>
@@ -77,10 +87,12 @@ const validators = useConstraints({
         min: [Date.now(), "Date must be today or later"]
     }
 });
+
 const { setValue, validateByName, errors } = useForm({
     validators,
     onSubmit: data => console.log(JSON.stringify(data)),
 });
+
 // validate on change with the following code
 // const handleChange = useSettersAsEventHandler(setValue, validateByName);
 // or validate on blur
@@ -104,16 +116,17 @@ const changeRef = useSettersAsRefEventHandler(setValue);
 ```javascript
 const {validateByName, errors} = useForm({
     validators: {
-        // name won't be valid because validators must return empty string for valid values
-        name: (value) => "name will never be valid",
-        email: (value) => value ? "" : "email is required"
+        // validators must return empty string for valid value
+        name: (value) => value ? "" : "email is required",
     },
 });
+
 // useConstraints supports mixing validators and constraints
-const validator = useConstraints({
+const validators = useConstraints({
     name: (value) => "name still won't be valid",
-    email: { required: true }
-})
+    email: { required: true },
+});
+
 // when used with useSettersAsEventHandler the validator
 // will call the validation that matches the current input element's name
 const handleBlur = useSettersAsEventHandler(validateByName);
@@ -121,7 +134,7 @@ const handleBlur = useSettersAsEventHandler(validateByName);
 If you prefer to validate in one function, then you can do that as well
 ```javascript
 const {
-    // validateByName will call the validate function on each call
+    // note: validateByName will call the validate function on each call
     // but the error will be the one with the corresponding name
     validateByName,
     // validate is available with both a validation map and a validation function
@@ -130,14 +143,14 @@ const {
     validators(values) {
         const errors = {name: "name will never be valid", email: ""};
         if (!values.email) {
-            errors.email = "email is required"
+            errors.email = "email is required";
         }
         return errors;
     },
 });
 ```
-## Build Forms Without `useForm`
-It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form then you should avoid using `useForm` in favor of the form modules like `useFields`, `useTouch`, `useValidation`, and `useSubmission`. The following is a basic implementation of `useForm` that you can use to compose your form to your needs.
+## More Hooks
+It should be noted that `useForm` is just one layer of abstraction used to simplify the form building process. If you need more granular control and orchestration of your form, then you should avoid using `useForm` in favor of other form hooks like `useFields`, `useTouch`, `useValidation`, and `useSubmission`. The following is a basic implementation of `useForm` that you can use to compose your forms.
 ```javascript
 import {useCallback} from "react";
 import {

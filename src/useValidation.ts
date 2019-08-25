@@ -98,6 +98,46 @@ export function useValidation<T extends Validators>(
     expectedFields?: string[],
 ): UseValidatorHookPartial<userSuppliedValue, T> | UseValidatorHook<userSuppliedValue>;
 
+/**
+ * A hook for performing validation.
+ *
+ * @param validator A validation map or a validation function.
+ * @param expectedFields Define the fields required for validation.
+ * This is useful if you want certain fields to always be validated (ie required fields).
+ * If you are using a validation map,
+ * then this value will default to the keys of the validation map.
+ * @return returns an useValidation object
+ *
+ * @example
+ *
+ * // validate using validation maps
+ * const {validateByName, errors} = useValidation({
+ *     name: (value) => value ? "" : "name is required!",
+ *     email: (value) => value ? "" : "email is required!"
+ * });
+ *
+ * // "email is required!"
+ * await validateByName("email", "");
+ * // {email: "email is required!"}
+ * console.log(errors);
+ *
+ * // validate with one validation function
+ * const {errors, validate} = useValidation((values) => {
+ *     const errors = {name: "", email: ""};
+ *     if (!values.name) {
+ *         errors.name = "name is required!";
+ *     }
+ *     if (!values.email) {
+ *         errors.email = "email is required!";
+ *     }
+ *     return errors;
+ * });
+ *
+ * // {name: "", email: "email is required!"}
+ * await validate({name: "John"});
+ * // {name: "", email: "email is required!"}
+ * console.log(errors);
+ */
 export function useValidation(
     validator: Validators | SingleValidator<userSuppliedValue>,
     expectedFields?: string[],

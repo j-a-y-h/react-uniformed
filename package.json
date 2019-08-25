@@ -33,7 +33,7 @@
     "build": "yarn clean && webpack",
     "build:prod": "yarn lint && yarn test && yarn bundle:prod",
     "build:js": "yarn clean && yarn tsc ./src/index.ts --target ESNEXT --outdir dist &> /dev/null",
-    "build:docs:api": "yarn build:js || jsdoc2md ./dist/use*.js > ./docs/api.md"
+    "build:docs:api": "yarn build:js || jsdoc2md ./dist/use*.js > ./docs/API.md"
   },
   "peerDependencies": {
     "react": "^16.8.0"
