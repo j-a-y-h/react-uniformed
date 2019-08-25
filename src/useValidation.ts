@@ -100,11 +100,14 @@ export function useValidation<T extends Validators>(
 
 /**
  * A hook for performing validation.
+ *
  * @param validator A validation map or a validation function.
  * @param expectedFields Define the fields required for validation.
  * This is useful if you want certain fields to always be validated (ie required fields).
- * If you are using a validation map, then this value will default to the keys of the validation map.
- * @return
+ * If you are using a validation map,
+ * then this value will default to the keys of the validation map.
+ * @return returns an useValidation object
+ *
  * @example
  *
  * // validate using validation maps
