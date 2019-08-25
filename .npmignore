@@ -1,6 +1,7 @@
 .npmignore
 .github
 .travis.yml
+.vscode
 CHANGELOG.md
 node_modules
 examples
