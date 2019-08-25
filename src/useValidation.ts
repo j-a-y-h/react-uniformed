@@ -111,13 +111,13 @@ export function useValidation<T extends Validators>(
  * @example
  *
  * // validate using validation maps
- * const {validateByName} = useValidation({
+ * const {validateByName, errors} = useValidation({
  *     name: (value) => value ? "" : "name is required!",
  *     email: (value) => value ? "" : "email is required!"
  * });
  *
  * // "email is required!"
- * validateByName("email", "");
+ * await validateByName("email", "");
  * // {email: "email is required!"}
  * console.log(errors);
  *
@@ -134,7 +134,7 @@ export function useValidation<T extends Validators>(
  * });
  *
  * // {name: "", email: "email is required!"}
- * validate({name: "John"});
+ * await validate({name: "John"});
  * // {name: "", email: "email is required!"}
  * console.log(errors);
  */
