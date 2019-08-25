@@ -24,6 +24,7 @@
 ##### References
 * [Validation](#validation)
 * [Performance](#performance)
+* [API](./docs/API.md)
 
 ## Install
 
