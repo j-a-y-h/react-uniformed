@@ -4,7 +4,7 @@
 <dt><a href="#useConstraints">useConstraints(rules)</a> ⇒</dt>
 <dd><p>A declarative way of validating inputs based upon HTML 5 constraints</p>
 </dd>
-<dt><a href="#useValidation">useValidation(validator, expectedFields)</a> ⇒</dt>
+<dt><a href="#useValidation">useValidation(validator)</a> ⇒</dt>
 <dd><p>A hook for performing validation.</p>
 </dd>
 </dl>
@@ -59,7 +59,7 @@ being a function that accepts value as the only argument.
 ```
 <a name="useValidation"></a>
 
-## useValidation(validator, expectedFields) ⇒
+## useValidation(validator) ⇒
 A hook for performing validation.
 
 **Kind**: global function  
@@ -68,7 +68,6 @@ A hook for performing validation.
 | Param | Description |
 | --- | --- |
 | validator | A validation map or a validation function. |
-| expectedFields | Define the fields required for validation. This is useful if you want certain fields to always be validated (ie required fields). If you are using a validation map, then this value will default to the keys of the validation map. |
 
 **Example**  
 ```js
