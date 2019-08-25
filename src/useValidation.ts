@@ -77,16 +77,15 @@ export async function validateValidators(
 }
 
 export function useValidation(
-    validator: SingleValidator<userSuppliedValue>, expectedFields?: string[],
+    validator: SingleValidator<userSuppliedValue>
 ): UseValidatorHook<userSuppliedValue>;
 
 export function useValidation<T extends Validators>(
-    validator: T, expectedFields?: string[],
+    validator: T
 ): UseValidatorHookPartial<userSuppliedValue, T>;
 
 export function useValidation<T extends Validators>(
-    validator: T | SingleValidator<userSuppliedValue>,
-    expectedFields?: string[],
+    validator: T | SingleValidator<userSuppliedValue>
 ): UseValidatorHookPartial<userSuppliedValue, T> | UseValidatorHook<userSuppliedValue>;
 
 /**
@@ -131,10 +130,10 @@ export function useValidation(
     const {
         setError, errors, hasErrors, resetErrors, setErrors,
     } = useErrors();
-    const fieldsToUseInValidateAll = useMemo((): string[] => {
-        return (!validator || typeof validator === "function") ? [] : Object.keys(validator);
+    const fieldsToUseInValidateAll = useMemo((): string[] => (
+        (!validator || typeof validator === "function") ? [] : Object.keys(validator)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    ), []);
     const {
         setValue: setValidationState,
         hasValue: isValidating,
