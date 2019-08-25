@@ -133,7 +133,7 @@ export function useValidation(
     } = useErrors();
     const fieldsToUseInValidateAll = useMemo((): string[] => {
         return (!validator || typeof validator === "function") ? [] : Object.keys(validator);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const {
         setValue: setValidationState,
