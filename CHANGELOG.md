@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.7] - 2019-08-24
+### Removed
+* [`useValidation`] Removed the unused `expectedFields` parameter
+
+### Fixed
+* [`useValidation`] Prevents `validate` from calling validators twice when `useValidation` is called with a validation map.
+
 ## [0.0.6] - 2019-08-18
 ### Changed
 * [`useConstraint`] Updated the url regex pattern

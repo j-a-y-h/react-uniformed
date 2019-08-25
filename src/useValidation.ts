@@ -46,15 +46,6 @@ function defaultValidator(): validValidatorReturnTypes {
     return "";
 }
 
-function useValidationFieldNames(
-    validator: Validators | SingleValidator<string>,
-    expectedFields?: string[],
-): string[] {
-    return useMemo((): string[] => expectedFields || ((typeof validator === "function") ? [] : Object.keys(validator)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
-}
-
 function assertValidator(functionName: string, name: string, validator: Function): void {
     assert.error(
         typeof validator === "function",
@@ -86,26 +77,21 @@ export async function validateValidators(
 }
 
 export function useValidation(
-    validator: SingleValidator<userSuppliedValue>, expectedFields?: string[],
+    validator: SingleValidator<userSuppliedValue>
 ): UseValidatorHook<userSuppliedValue>;
 
 export function useValidation<T extends Validators>(
-    validator: T, expectedFields?: string[],
+    validator: T
 ): UseValidatorHookPartial<userSuppliedValue, T>;
 
 export function useValidation<T extends Validators>(
-    validator: T | SingleValidator<userSuppliedValue>,
-    expectedFields?: string[],
+    validator: T | SingleValidator<userSuppliedValue>
 ): UseValidatorHookPartial<userSuppliedValue, T> | UseValidatorHook<userSuppliedValue>;
 
 /**
  * A hook for performing validation.
  *
  * @param validator A validation map or a validation function.
- * @param expectedFields Define the fields required for validation.
- * This is useful if you want certain fields to always be validated (ie required fields).
- * If you are using a validation map,
- * then this value will default to the keys of the validation map.
  * @return returns an useValidation object
  *
  * @example
@@ -140,13 +126,14 @@ export function useValidation<T extends Validators>(
  */
 export function useValidation(
     validator: Validators | SingleValidator<userSuppliedValue>,
-    expectedFields?: string[],
 ): UseValidatorHookPartial<userSuppliedValue, Validators> | UseValidatorHook<userSuppliedValue> {
     const {
         setError, errors, hasErrors, resetErrors, setErrors,
     } = useErrors();
-    // this is empty if the user passes singleValidator
-    const fieldsToUseInValidateAll = useValidationFieldNames(validator, expectedFields);
+    const fieldsToUseInValidateAll = useMemo((): string[] => (
+        (!validator || typeof validator === "function") ? [] : Object.keys(validator)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    ), []);
     const {
         setValue: setValidationState,
         hasValue: isValidating,
@@ -174,7 +161,7 @@ export function useValidation(
 
     // create validate all function
     const validate = useCallback(async (values: Values<userSuppliedValue>): Promise<Errors> => {
-        const names = [...Object.keys(values), ...fieldsToUseInValidateAll];
+        const names = Array.from(new Set([...Object.keys(values), ...fieldsToUseInValidateAll]));
         const setAllValidationState = (state: boolean): void => {
             const allStates = names.reduce((
                 states: MutableValues<boolean>, name,
