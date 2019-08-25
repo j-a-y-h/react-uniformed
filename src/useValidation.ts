@@ -161,7 +161,7 @@ export function useValidation(
 
     // create validate all function
     const validate = useCallback(async (values: Values<userSuppliedValue>): Promise<Errors> => {
-        const names = [...Object.keys(values), ...fieldsToUseInValidateAll];
+        const names = Array.from(new Set([...Object.keys(values), ...fieldsToUseInValidateAll]));
         const setAllValidationState = (state: boolean): void => {
             const allStates = names.reduce((
                 states: MutableValues<boolean>, name,
