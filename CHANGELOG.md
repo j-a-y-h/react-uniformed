@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`useValidation`] Removed the use expectedFields parameter as it was never used
 
 ### Fixed
-* [`useValidation`] prevents `validate` from calling validators twice when useValidation is used with a validation map.
+* [`useValidation`] prevents `validate` from calling validators twice when `useValidation` is called with a validation map.
 
 ## [0.0.6] - 2019-08-18
 ### Changed
