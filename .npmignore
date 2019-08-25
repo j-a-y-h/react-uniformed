@@ -1,4 +1,7 @@
 .npmignore
+.github
+.travis.yml
+CHANGELOG.md
 node_modules
 examples
 coverage
