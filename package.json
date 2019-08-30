@@ -23,15 +23,16 @@
     "test": "jest --silent",
     "test:coverage": "rimraf ./coverage && yarn test --coverage --silent || true",
     "test:coveralls": "yarn test --coverage --coverageReporters=text-lcov | coveralls",
+    "test:stability": "yarn test && yarn lint",
     "lint": "eslint src/**/*.ts",
     "size": "yarn bundle:prod --silent && bundlesize",
     "clean": "rimraf ./dist",
-    "prepublishOnly": "yarn lint && yarn test && yarn build",
+    "prepublishOnly": "yarn test:stability && yarn build",
     "open:report": "open-cli ./coverage/report.html -- 'google chrome'",
     "open:coverage": "open-cli ./coverage/lcov-report/index.html -- 'google chrome'",
     "bundle:prod": "yarn build --config ./webpack.prod.config.js",
     "build": "yarn clean && webpack",
-    "build:prod": "yarn lint && yarn test && yarn bundle:prod",
+    "build:prod": "yarn test:stability && yarn bundle:prod",
     "build:js": "yarn clean && yarn tsc ./src/index.ts --target ESNEXT --outdir dist &> /dev/null",
     "build:docs:api": "yarn build:js || jsdoc2md ./dist/use*.js > ./docs/API.md"
   },
@@ -55,6 +56,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
+    "husky": "^3.0.4",
     "jest": "^24.8.0",
     "jest-html-reporters": "^1.1.8",
     "jsdoc-to-markdown": "^5.0.0",
@@ -76,5 +78,10 @@
       "path": "./dist/react-uniformed.min.js",
       "maxSize": "4 kB"
     }
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn test:stability"
+    }
+  }
 }
