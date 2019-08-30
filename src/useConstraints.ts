@@ -81,7 +81,6 @@ export const supportedProperties: supportedConstraints[] = [
 ];
 
 function hasValue(value?: userSuppliedValue): value is string {
-    // @ts-ignore
     return value === 0 || Boolean(value);
 }
 
@@ -109,16 +108,13 @@ function getRuleValue(rules: Constraints, name: supportedConstraints): constrain
 }
 
 const propertyValidators = {
-    // @ts-ignore
-    required(rules: Constraints, required: constraintValues, value?: userSuppliedValue): boolean {
+    required(_: Constraints, required: constraintValues, value?: userSuppliedValue): boolean {
         return !required || hasValue(value);
     },
-    // @ts-ignore
-    maxLength(rules: Constraints, maxLength: constraintValues, value?: userSuppliedValue): boolean {
+    maxLength(_: Constraints, maxLength: constraintValues, value?: userSuppliedValue): boolean {
         return !hasValue(value) || (typeof value === "string" && value.length <= Number(maxLength));
     },
-    // @ts-ignore
-    minLength(rules: Constraints, minLength: constraintValues, value?: userSuppliedValue): boolean {
+    minLength(_: Constraints, minLength: constraintValues, value?: userSuppliedValue): boolean {
         return !hasValue(value) || (typeof value === "string" && value.length >= Number(minLength));
     },
     max(rules: Constraints, max: constraintValues, value?: userSuppliedValue): boolean {
@@ -139,8 +135,7 @@ const propertyValidators = {
             ? new Date(value) >= new Date(min as string | number)
             : Number(value) >= Number(min);
     },
-    // @ts-ignore
-    type(rules: Constraints, type: constraintValues, value: userSuppliedValue = ""): boolean {
+    type(_: Constraints, type: constraintValues, value: userSuppliedValue = ""): boolean {
         if (!hasValue(value)) {
             return true;
         }
@@ -161,8 +156,7 @@ const propertyValidators = {
         default: return true;
         }
     },
-    // @ts-ignore TS6133
-    pattern(rules: Constraints, pattern: constraintValues, value: userSuppliedValue = ""): boolean {
+    pattern(_: Constraints, pattern: constraintValues, value: userSuppliedValue = ""): boolean {
         return !hasValue(value) || (!(pattern instanceof RegExp) || pattern.test(value));
     },
 };
