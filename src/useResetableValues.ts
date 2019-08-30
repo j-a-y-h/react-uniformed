@@ -49,18 +49,18 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
     let value;
     let name;
     switch (action.type) {
-        case ActionTypes.update:
-            ({ value, name } = action.payload as UpdatePayload<T>);
-            // don't do unnecessary updates
-            return (state[name] !== value)
-                ? { ...state, [name]: value }
-                : state;
-        case ActionTypes.reset:
-            return (action.payload !== state)
-                ? { ...action.payload as Values<T> }
-                : state;
-        default:
-            throw new Error();
+    case ActionTypes.update:
+        ({ value, name } = action.payload as UpdatePayload<T>);
+        // don't do unnecessary updates
+        return (state[name] !== value)
+            ? { ...state, [name]: value }
+            : state;
+    case ActionTypes.reset:
+        return (action.payload !== state)
+            ? { ...action.payload as Values<T> }
+            : state;
+    default:
+        throw new Error();
     }
 }
 

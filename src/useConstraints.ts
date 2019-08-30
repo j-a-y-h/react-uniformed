@@ -146,19 +146,19 @@ const propertyValidators = {
         }
         let regex: RegExp;
         switch (type) {
-            case "url":
-                regex = /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)$/;
-                return regex.test(value);
-            case "email":
-                regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-                return regex.test(value);
-            case "number":
-                // could use: /^-?(\d+|\d+\.\d+|\.\d+)([eE][-+]?\d+)?$/
-                return !Number.isNaN(Number(value));
-            case "date":
-                return !Number.isNaN((new Date(value)).getTime());
-            case "text":
-            default: return true;
+        case "url":
+            regex = /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)$/;
+            return regex.test(value);
+        case "email":
+            regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+            return regex.test(value);
+        case "number":
+            // could use: /^-?(\d+|\d+\.\d+|\.\d+)([eE][-+]?\d+)?$/
+            return !Number.isNaN(Number(value));
+        case "date":
+            return !Number.isNaN((new Date(value)).getTime());
+        case "text":
+        default: return true;
         }
     },
     // @ts-ignore TS6133
