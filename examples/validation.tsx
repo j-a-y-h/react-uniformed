@@ -24,7 +24,7 @@ export default function Form() {
         <label>Name </label>
         <input
           type="text"
-          name="firstName"
+          name="name"
           value={values.name}
           onBlur={handleBlur}
           onChange={handleChange}
@@ -54,7 +54,7 @@ export default function Form() {
         <label>Website</label>
         <input
           type="text"
-          name="firstName"
+          name="website"
           value={values.website}
           onBlur={handleBlur}
           onChange={handleChange}
