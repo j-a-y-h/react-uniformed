@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { useForm, useSettersAsEventHandler, useConstraints } from "../src";
 
 export default function Form() {
@@ -64,6 +63,3 @@ export default function Form() {
     </form>
   );
 }
-
-const rootElement = document.getElementById('root');
-ReactDOM.render(<Form />, rootElement);
