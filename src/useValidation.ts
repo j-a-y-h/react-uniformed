@@ -9,7 +9,7 @@ import { assert, LoggingTypes } from "./utils";
 
 type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
-export type userSuppliedValue = undefined | string | number | Date | null;
+export type userSuppliedValue = string | string[] | number | undefined | null;
 export interface SingleValidator<T> {
     (values: Values<T>): validSingleValidatorReturnTypes;
 }

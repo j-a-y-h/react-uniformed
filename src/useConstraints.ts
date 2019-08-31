@@ -24,11 +24,11 @@ interface Constraints {
     /**
      * A min boundary used for type numbers
      */
-    readonly min?: number | Date | [number | Date, string];
+    readonly min?: number | string | [number | string, string];
     /**
      * A max boundary used for type numbers
      */
-    readonly max?: number | Date | [number | Date, string];
+    readonly max?: number | string | [number | string, string];
     /**
      * Determines if the field is required
      *
@@ -148,9 +148,10 @@ const propertyValidators = {
             regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
             return regex.test(value);
         case "number":
-            // could use: /^-?(\d+|\d+\.\d+|\.\d+)([eE][-+]?\d+)?$/
-            return !Number.isNaN(Number(value));
+            return /^-?(\d+|\d+\.\d+|\.\d+)([eE][-+]?\d+)?$/.test(value);
         case "date":
+            // TODO: update to date yyyy-MM-dd
+            // TODO: support datetime-local and datetime with warning
             return !Number.isNaN((new Date(value)).getTime());
         case "text":
         default: return true;

@@ -1,5 +1,5 @@
 import {
-    SyntheticEvent, useCallback, Ref
+    SyntheticEvent, useCallback, Ref,
 } from "react";
 import { assert, LoggingTypes } from "./utils";
 import { ValidateAllHandler } from "./useValidation";
