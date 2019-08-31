@@ -40,6 +40,7 @@ interface UseFormParameters {
     readonly onSubmit: (values: Values<userSuppliedValue>) => void | Promise<void>;
 }
 
+// TODO: support nested objects, and arrays
 // useHandlers(validateAll, onSubmit)
 export function useForm({
     defaultValues, validators = {}, onSubmit,
