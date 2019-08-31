@@ -21,59 +21,59 @@ export default function Form() {
         website: {
             type: ["url", "Please enter a valid website url or leave the field blank."]
         },
-  });
-  const { setValue, validateByName, values, errors, submit } = useForm({
-    validators,
-    onSubmit: data => alert(JSON.stringify(data)),
-  });
-  const handleChange = useSettersAsEventHandler(setValue);
-  const handleBlur = useSettersAsEventHandler(validateByName);
-  return (
-    <form onSubmit={submit}>
-      {Object.keys(errors).map(error => errors[error] && (
-        <p style={{ color: "red" }} key={error}>{errors[error]}</p>
-      ))}
-      <div>
-        <label>Name </label>
-        <input
-          type="text"
-          name="name"
-          value={values.name}
-          onBlur={handleBlur}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label>Email</label>
-        <input
-          type="text"
-          name="email"
-          value={values.email}
-          onBlur={handleBlur}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label>Mobile number</label>
-        <input
-          type="tel"
-          name="phone"
-          value={values.phone}
-          onBlur={handleBlur}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label>Website</label>
-        <input
-          type="text"
-          name="website"
-          value={values.website}
-          onBlur={handleBlur}
-          onChange={handleChange}
-        />
-      </div>
-      <input type="submit" />
-    </form>
-  );
+    });
+    const { setValue, validateByName, values, errors, submit } = useForm({
+        validators,
+        onSubmit: data => alert(JSON.stringify(data)),
+    });
+    const handleChange = useSettersAsEventHandler(setValue);
+    const handleBlur = useSettersAsEventHandler(validateByName);
+    return (
+        <form onSubmit={submit}>
+        {Object.keys(errors).map(error => errors[error] && (
+            <p style={{ color: "red" }} key={error}>{errors[error]}</p>
+        ))}
+        <div>
+            <label>Name </label>
+            <input
+                type="text"
+                name="name"
+                value={values.name}
+                onBlur={handleBlur}
+                onChange={handleChange}
+            />
+        </div>
+        <div>
+            <label>Email</label>
+            <input
+                type="text"
+                name="email"
+                value={values.email}
+                onBlur={handleBlur}
+                onChange={handleChange}
+            />
+        </div>
+        <div>
+            <label>Mobile number</label>
+            <input
+                type="tel"
+                name="phone"
+                value={values.phone}
+                onBlur={handleBlur}
+                onChange={handleChange}
+            />
+        </div>
+        <div>
+            <label>Website</label>
+            <input
+                type="text"
+                name="website"
+                value={values.website}
+                onBlur={handleBlur}
+                onChange={handleChange}
+            />
+        </div>
+        <input type="submit" />
+        </form>
+    );
 }
