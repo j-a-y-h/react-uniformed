@@ -4,8 +4,7 @@ import { useForm, useSettersAsEventHandler, useConstraints } from "../src";
 
 function Form() {
   const validator = useConstraints({
-    firstName: { required: true, minLength: 5, maxLength: 4 },
-    lastName: { required: true, maxLength: 100 },
+    name: { required: true, minLength: 1, maxLength: 55 },
     email: { required: true, type: "email" },
     phone: { required: true, maxLength: 11, minLength: 8 }
   });
@@ -17,7 +16,6 @@ function Form() {
   });
   const handleChange = useSettersAsEventHandler(setValue);
   const handleBlur = useSettersAsEventHandler(validateByName);
-  console.log(errors, values);
   return (
     <form onSubmit={submit}>
       {Object.keys(errors).map(error => {
@@ -28,56 +26,49 @@ function Form() {
         );
       })}
       <div>
-        <label>First name</label>
+        <label>Name</label>
         <input
-          value={values.firstName}
           type="text"
           name="firstName"
+          value={values.firstName}
           onBlur={handleBlur}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label>Last name</label>
-        <input
-          value={values.lastName}
-          type="text"
-          name="lastName"
           onChange={handleChange}
         />
       </div>
       <div>
         <label>Email</label>
         <input
-          value={values.email}
           type="text"
           name="email"
+          value={values.email}
           onChange={handleChange}
         />
       </div>
       <div>
         <label>Mobile number</label>
         <input
-          value={values.phone}
           type="tel"
           name="phone"
+          value={values.phone}
           onChange={handleChange}
         />
       </div>
       <div>
+        <label>Start Date</label>
         <input
-          value={values.startDate}
           type="date"
           name="startDate"
+          value={values.startDate}
           onChange={handleChange}
         />
       </div>
 
       <div>
+        <label>End Date</label>
         <input
-          value={values.endDate}
           type="date"
           name="endDate"
+          value={values.endDate}
           onChange={handleChange}
         />
       </div>
