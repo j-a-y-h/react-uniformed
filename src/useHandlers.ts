@@ -1,5 +1,5 @@
 import {
-    SyntheticEvent, useCallback, Ref,
+    SyntheticEvent, useCallback, Ref
 } from "react";
 import { assert, LoggingTypes } from "./utils";
 import { ValidateAllHandler } from "./useValidation";
@@ -19,6 +19,9 @@ interface UseEventHandlersWithRefProps {
 type useEventHandlersWithRefProps<T> = T extends UseEventHandlersWithRefProps[]
     ? [UseEventHandlersWithRefProps]
     : eventLikeHandlers[];
+interface ReactOrNativeEventListener {
+    (event: Event | SyntheticEvent): void;
+}
 
 export function useHandlers<T, K extends T[]>(
     ...handlers: Handler<T, K, void>[]
@@ -38,7 +41,7 @@ export function useHandlers<T, K extends T[]>(
 
 export function useSettersAsEventHandler(
     ...handlers: eventLikeHandlers[]
-): Handler<reactOrNativeEvent, [reactOrNativeEvent], void> | EventListener {
+): ReactOrNativeEventListener {
     const handler = useHandlers<string | reactOrNativeEvent, keyValueEvent<string>>(...handlers);
     return useCallback((evt: reactOrNativeEvent): void => {
         assert.error(
@@ -49,6 +52,16 @@ export function useSettersAsEventHandler(
         const { target } = evt;
         handler(
             (target as HTMLInputElement).name,
+            // TODO: support select and multiple select
+            /**
+             * let value = "";
+             * if (target instanceof HTMLSelectElement || target.selectedOptions) {
+             *     const values = Array.from(target.selectedOptions).map((option) => option.value);
+             *     value = target.multiple ? values : value[0];
+             * } else {
+             *     ({value} = target);
+             * }
+             */
             (target as HTMLInputElement).value,
             evt,
         );
@@ -88,7 +101,7 @@ export function useSettersAsRefEventHandler(
         event = firstEvent || event;
         handlers = Array.isArray(firstHandlers) ? firstHandlers : [firstHandlers];
     }
-    const eventHandler = useSettersAsEventHandler(...handlers) as EventListener;
+    const eventHandler = useSettersAsEventHandler(...handlers);
     const ref = useCallback((input: EventTarget): void => {
         assert.error(
             input && typeof input.addEventListener === "function",
