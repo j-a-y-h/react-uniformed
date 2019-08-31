@@ -3,28 +3,23 @@ import ReactDOM from "react-dom";
 import { useForm, useSettersAsEventHandler, useConstraints } from "../src";
 
 function Form() {
-  const validator = useConstraints({
+  const validators = useConstraints({
     name: { required: true, minLength: 1, maxLength: 55 },
     email: { required: true, type: "email" },
-    phone: { required: true, maxLength: 11, minLength: 8 }
+    phone: { pattern: /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/ },
+    website: { type: "url" },
   });
   const { setValue, validateByName, values, errors, submit } = useForm({
-    validators: validator,
-    onSubmit: data => {
-      alert(JSON.stringify(data));
-    }
+    validators,
+    onSubmit: data => alert(JSON.stringify(data)),
   });
   const handleChange = useSettersAsEventHandler(setValue);
   const handleBlur = useSettersAsEventHandler(validateByName);
   return (
     <form onSubmit={submit}>
-      {Object.keys(errors).map(error => {
-        return (
-          <p style={{ color: "red" }} key={error}>
-            {errors[error]}
-          </p>
-        );
-      })}
+      {Object.keys(errors).map(error => (
+        <p style={{ color: "red" }} key={error}>{errors[error]}</p>
+      ))}
       <div>
         <label>Name</label>
         <input
@@ -41,6 +36,7 @@ function Form() {
           type="text"
           name="email"
           value={values.email}
+          onBlur={handleBlur}
           onChange={handleChange}
         />
       </div>
@@ -50,25 +46,7 @@ function Form() {
           type="tel"
           name="phone"
           value={values.phone}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label>Start Date</label>
-        <input
-          type="date"
-          name="startDate"
-          value={values.startDate}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>End Date</label>
-        <input
-          type="date"
-          name="endDate"
-          value={values.endDate}
+          onBlur={handleBlur}
           onChange={handleChange}
         />
       </div>
