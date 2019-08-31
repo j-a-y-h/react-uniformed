@@ -9,18 +9,16 @@ export default function Form() {
         validators,
         onSubmit: data => alert(JSON.stringify(data)),
     });
-    const handleChange = useSettersAsEventHandler(setValue);
-    const handleBlur = useSettersAsEventHandler(validateByName);
+    const handleChange = useSettersAsEventHandler(setValue, validateByName);
     return (
         <form onSubmit={submit}>
         <div>
             <label>Email</label>
             <input
-            type="text"
-            name="email"
-            value={values.email}
-            onBlur={handleBlur}
-            onChange={handleChange}
+                type="text"
+                name="email"
+                value={values.email}
+                onChange={handleChange}
             />
             <p style={{ color: "red" }}>{errors.email}</p>
         </div>
