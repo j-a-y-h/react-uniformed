@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { useForm, useSettersAsEventHandler, useConstraints } from "../src";
 
-function Form() {
+export default function Form() {
   const validators = useConstraints({
     name: { required: true, minLength: 1, maxLength: 55 },
     email: { required: true, type: "email" },
@@ -17,15 +17,15 @@ function Form() {
   const handleBlur = useSettersAsEventHandler(validateByName);
   return (
     <form onSubmit={submit}>
-      {Object.keys(errors).map(error => (
-        <p style={{ color: "red" }} key={error}>{errors[error]}</p>
+      {Object.keys(errors).map(error => errors[error] && (
+        <p style={{ color: "red" }} key={error}>[{error}]: {errors[error]}</p>
       ))}
       <div>
-        <label>Name</label>
+        <label>Name </label>
         <input
           type="text"
           name="firstName"
-          value={values.firstName}
+          value={values.name}
           onBlur={handleBlur}
           onChange={handleChange}
         />
@@ -46,6 +46,16 @@ function Form() {
           type="tel"
           name="phone"
           value={values.phone}
+          onBlur={handleBlur}
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <label>Website</label>
+        <input
+          type="text"
+          name="firstName"
+          value={values.website}
           onBlur={handleBlur}
           onChange={handleChange}
         />
