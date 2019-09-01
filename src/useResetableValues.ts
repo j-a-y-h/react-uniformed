@@ -90,7 +90,7 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
         assert.error(
             newValues && (typeof newValues === "object" || typeof newValues === "function"),
             LoggingTypes.invalidArgument,
-            `(expected: Object<string, any> | (currentValues) => newValues, received: ${typeof newValues}) ${useResetableValues.name}.setValues expects an object map or a function as the first argument.`,
+            `(expected: Object<string, any> | (currentValues) => newValues, received: ${typeof newValues}) ${useResetableValues.name}.setValues expects an object map or a function as the only argument.`,
         );
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);

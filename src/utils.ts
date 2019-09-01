@@ -1,4 +1,4 @@
-const projectName = "JustAnotherValidator";
+const projectName = "react-uniformed";
 
 export enum LoggingTypes {
     invalidArgument = "InvalidArgument",
