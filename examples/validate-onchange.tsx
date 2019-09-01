@@ -15,7 +15,6 @@ export default function Form() {
         <div>
             <label>Email</label>
             <input
-                type="text"
                 name="email"
                 value={values.email}
                 onChange={handleChange}
