@@ -1,6 +1,5 @@
 import { renderHook } from 'react-hooks-testing-library';
 import { useConstraints, supportedTypesSet, supportedProperties } from "../src/useConstraints";
-import { userSuppliedValue } from '../src/useValidation';
 
 describe("useConstraints", () => {
     const ERROR = "__required__";
@@ -23,14 +22,17 @@ describe("useConstraints", () => {
         const { result } = renderHook(() => useConstraints({
             number: { type: "number" },
         }));
-        expect(result.current.number(new Date())).toEqual(SUCCESS);
+        // @ts-ignore
+        expect(result.current.number(new Date())).not.toEqual(SUCCESS);
         expect(result.current.number(5)).toEqual(SUCCESS);
+        expect(result.current.number(5e4)).toEqual(SUCCESS);
         expect(result.current.number("asdfasdf")).not.toEqual(SUCCESS);
     });
     it("supports url types", () => {
         const { result } = renderHook(() => useConstraints({
             url: { type: "url" },
         }));
+        // @ts-ignore
         expect(result.current.url(new Date())).not.toEqual(SUCCESS);
         expect(result.current.url(5)).not.toEqual(SUCCESS);
         expect(result.current.url("http://example.com")).toEqual(SUCCESS);
@@ -48,6 +50,7 @@ describe("useConstraints", () => {
         const { result } = renderHook(() => useConstraints({
             date: { type: "date" },
         }));
+        // @ts-ignore
         expect(result.current.date(new Date())).toEqual(SUCCESS);
         expect(result.current.date("asdfdsfds")).not.toEqual(SUCCESS);
         expect(result.current.date(Date.now())).toEqual(SUCCESS);
@@ -159,7 +162,7 @@ describe("useConstraints", () => {
             max: { max: 3 },
             min: { min: 3 },
         }));
-        const validate = (value?: userSuppliedValue) => {
+        const validate = (value?: any) => {
             expect(result.current.optional(value)).toEqual(SUCCESS);
             expect(result.current.type(value)).toEqual(SUCCESS);
             expect(result.current.pattern(value)).toEqual(SUCCESS);
@@ -178,14 +181,19 @@ describe("useConstraints", () => {
         const past = new Date("2015-08-21");
         const future = "2020-08-21"; // this is on purpose
 
+        // @ts-ignore
         const { result } = renderHook(() => useConstraints({
             max: { max: now, type: "date" },
             min: { min: now, type: "date" },
         }));
+        // @ts-ignore
         expect(result.current.min(now)).toEqual(SUCCESS);
         expect(result.current.min(future)).toEqual(SUCCESS);
+        // @ts-ignore
         expect(result.current.min(past)).not.toEqual(SUCCESS);
+        // @ts-ignore
         expect(result.current.max(now)).toEqual(SUCCESS);
+        // @ts-ignore
         expect(result.current.max(past)).toEqual(SUCCESS);
         expect(result.current.max(future)).not.toEqual(SUCCESS);
     });

@@ -3,13 +3,13 @@ import {
     validErrorValues, Errors, useErrors, ErrorHandler,
 } from "./useErrors";
 import {
-    Values, useResetableValues, MutableValues, PartialValues,
-} from "./useResetableValues";
+    Values, useGenericValues, MutableValues, PartialValues,
+} from "./useGenericValues";
 import { assert, LoggingTypes } from "./utils";
+import { userSuppliedValue, Fields } from "./useFields";
 
 type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
-export type userSuppliedValue = undefined | string | number | Date | null;
 export interface SingleValidator<T> {
     (values: Values<T>): validSingleValidatorReturnTypes;
 }
@@ -57,7 +57,7 @@ function assertValidator(functionName: string, name: string, validator: Function
 }
 
 export async function validateValidators(
-    names: string[], validators: Validators, values: Values<userSuppliedValue>,
+    names: string[], validators: Validators, values: Fields,
 ): Promise<Errors> {
     const errorsPromiseMap = names
         .map(async (name): Promise<[string, validValidatorReturnTypes]> => {
@@ -138,7 +138,7 @@ export function useValidation(
         setValue: setValidationState,
         hasValue: isValidating,
         setValues: setValidationStates,
-    } = useResetableValues();
+    } = useGenericValues();
     // create a validate by input name function
     const validateByName = useCallback(async (
         name: string, value: userSuppliedValue,
@@ -160,7 +160,7 @@ export function useValidation(
     }, [setError, setValidationState, validator]);
 
     // create validate all function
-    const validate = useCallback(async (values: Values<userSuppliedValue>): Promise<Errors> => {
+    const validate = useCallback(async (values: Fields): Promise<Errors> => {
         const names = Array.from(new Set([...Object.keys(values), ...fieldsToUseInValidateAll]));
         const setAllValidationState = (state: boolean): void => {
             const allStates = names.reduce((

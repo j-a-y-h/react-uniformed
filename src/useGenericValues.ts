@@ -22,7 +22,8 @@ interface UpdatePayload<T> {
     name: string;
     value: T;
 }
-type ActionPayload<T> = Values<T> | UpdatePayload<T>;
+type SetValuesCallback<T> = (currentState: Values<T>) => Values<T>;
+type ActionPayload<T> = Values<T> | UpdatePayload<T> | SetValuesCallback<T>;
 
 enum ActionTypes { update, reset }
 interface Action<T> {
@@ -35,11 +36,16 @@ export interface SetValueCallback<T> {
     (name: allowableKeys, value: T): void;
 }
 
+interface SetValues<T> {
+    (currentState: Values<T>): void;
+    (callback: SetValuesCallback<T>): void;
+}
+
 export interface UseResetableValuesHook<T> {
     readonly values: Values<T>;
     readonly hasValue: boolean;
     readonly setValue: SetValueCallback<T>;
-    readonly setValues: (values: Values<T>) => void;
+    readonly setValues: SetValues<T>;
     readonly resetValues: () => void;
 }
 export function hasValue<T>(values: Values<T>): boolean {
@@ -48,6 +54,7 @@ export function hasValue<T>(values: Values<T>): boolean {
 function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
     let value;
     let name;
+    let newState;
     switch (action.type) {
     case ActionTypes.update:
         ({ value, name } = action.payload as UpdatePayload<T>);
@@ -56,34 +63,38 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
             ? { ...state, [name]: value }
             : state;
     case ActionTypes.reset:
-        return (action.payload !== state)
-            ? { ...action.payload as Values<T> }
+        newState = typeof action.payload === "function"
+            ? action.payload(state)
+            : action.payload;
+        return (newState !== state)
+            ? { ...newState as Values<T> }
             : state;
     default:
         throw new Error();
     }
 }
 
-export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetableValuesHook<T> {
+export function useGenericValues<T>(initialValues: Values<T> = {}): UseResetableValuesHook<T> {
     // TODO: support initializer function as the initial value
     assert.error(
         !initialValues || typeof initialValues === "object",
         LoggingTypes.typeError,
-        `(expected: Object<string, any> | undefined, received: ${typeof initialValues}) ${useResetableValues.name} expects an object map as the first argument or zero arguments.`,
+        `(expected: Object<string, any> | undefined, received: ${typeof initialValues}) ${useGenericValues.name} expects an object map as the first argument or zero arguments.`,
     );
     const [values, dispatch] = useReducer<ReducerType<T>>(reducer, initialValues);
     const setValue = useCallback((name: allowableKeys, value: T): void => {
         dispatch({ type: ActionTypes.update, payload: { name, value } });
     }, []);
-    // TODO: support set all where we merge with current state
-    const resetValues = useCallback((): void => {
-        dispatch({ type: ActionTypes.reset, payload: initialValues });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    // TODO: support a non overriding variant
-    const setValues = useCallback((newValues: Values<T>): void => {
+    const setValues = useCallback((newValues: Values<T> | SetValuesCallback<T>): void => {
+        assert.error(
+            newValues && (typeof newValues === "object" || typeof newValues === "function"),
+            LoggingTypes.invalidArgument,
+            `(expected: Object<string, any> | (currentValues) => newValues, received: ${typeof newValues}) ${useGenericValues.name}.setValues expects an object map or a function as the only argument.`,
+        );
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const resetValues = useCallback((): void => setValues(initialValues), []);
     // note: this counts 0 and empty string as no value.
     const hasValueCallback = useMemo((): boolean => hasValue(values), [values]);
     return {

@@ -27,25 +27,35 @@
     "lint": "eslint src/**/*.ts",
     "size": "yarn bundle:prod --silent && bundlesize",
     "clean": "rimraf ./dist",
-    "prepublishOnly": "yarn test:stability && yarn build",
+    "start:examples": "yarn build:examples && webpack-dev-server --mode development --config=webpack.examples.config.js",
+    "prepublishOnly": "yarn lint && yarn test && yarn build",
     "open:report": "open-cli ./coverage/report.html -- 'google chrome'",
     "open:coverage": "open-cli ./coverage/lcov-report/index.html -- 'google chrome'",
     "bundle:prod": "yarn build --config ./webpack.prod.config.js",
     "build": "yarn clean && webpack",
     "build:prod": "yarn test:stability && yarn bundle:prod",
     "build:js": "yarn clean && yarn tsc ./src/index.ts --target ESNEXT --outdir dist &> /dev/null",
-    "build:docs:api": "yarn build:js || jsdoc2md ./dist/use*.js > ./docs/API.md"
+    "build:docs:api": "yarn build:js || jsdoc2md ./dist/use*.js > ./docs/API.md",
+    "build:examples": "yarn build --config ./webpack.examples.config.js && copyfiles -f examples/index.html dist"
   },
   "peerDependencies": {
     "react": "^16.8.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
     "@types/jest": "^24.0.17",
     "@types/react": "^16.8.20",
     "@types/react-dom": "^16.8.5",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
+    "babel-loader": "^8.0.6",
+    "babel-polyfill": "^6.26.0",
     "bundlesize": "^0.18.0",
+    "copyfiles": "^2.1.1",
     "coveralls": "^3.0.6",
     "eslint": "^6.2.2",
     "eslint-config-airbnb": "^18.0.1",
@@ -71,6 +81,7 @@
     "typescript": "^3.5.3",
     "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.8.0",
     "webpack-merge": "^4.2.1"
   },
   "bundlesize": [
