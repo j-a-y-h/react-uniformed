@@ -1,13 +1,13 @@
 import React from "react";
-import { useForm, useSettersAsEventHandler, useConstraints } from "../src";
+import { useForm, useSettersAsEventHandler } from "../src";
 
 export default function Form() {
-    const { setValue, validateByName, values, errors, submit } = useForm({
+    const { setValue, values, submit } = useForm({
         onSubmit: data => alert(JSON.stringify(data)),
     });
-    const handleChange = useSettersAsEventHandler(setValue, validateByName);
+    const handleChange = useSettersAsEventHandler(setValue);
     return (
-        <form onSubmit={submit}>
+        <form>
             <h3>Favorite Fruits</h3>
             <div>
                 <label>
@@ -18,12 +18,7 @@ export default function Form() {
                     Peach
                     <input type="checkbox" value="peach" name="fruits" />
                 </label>
-                <label>
-                    Oranges
-                    <input type="checkbox" value="orange" name="fruits" />
-                </label>
             </div>
-            <input type="text" value="tangerine" name="fruits" />
             <h3>Preferred Drink</h3>
             <div>
                 <label>
@@ -32,7 +27,7 @@ export default function Form() {
                         type="radio"
                         value="juice"
                         name="drink"
-                        checked={values.juice}
+                        checked={values.drink === "juice"}
                         onChange={handleChange}
                     />
                 </label>
@@ -42,17 +37,7 @@ export default function Form() {
                         type="radio"
                         value="water"
                         name="drink"
-                        checked={values.water}
-                        onChange={handleChange}
-                    />
-                </label>
-                <label>
-                    Soda
-                    <input
-                        type="radio"
-                        value="soda"
-                        name="drink"
-                        checked={values.soda}
+                        checked={values.drink === "water"}
                         onChange={handleChange}
                     />
                 </label>
