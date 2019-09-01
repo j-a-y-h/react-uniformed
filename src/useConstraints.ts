@@ -5,7 +5,7 @@ import {
 } from "./useValidation";
 import { assert, LoggingTypes } from "./utils";
 import { Errors } from "./useErrors";
-import { userSuppliedValue } from "./useFields";
+import { userSuppliedValue, Fields } from "./useFields";
 
 type supportedTypes = "email" | "text" | "url" | "number" | "date";
 // possible values:
@@ -58,7 +58,7 @@ type RequiredConstraint<T extends supportedConstraints> = {
 export type ConstraintValidators = Values<Constraints | Validator>;
 
 interface SyncedConstraint {
-    (values: Values<userSuppliedValue>): ConstraintValidators;
+    (values: Fields): ConstraintValidators;
 }
 
 const defaultMessage = {
@@ -315,7 +315,7 @@ export function useConstraints(
 ): Validators | SingleValidator<userSuppliedValue> {
     return useMemo((): Validators | SingleValidator<userSuppliedValue> => {
         if (typeof rules === "function") {
-            return (values: Values<userSuppliedValue>): Promise<Errors> => {
+            return (values: Fields): Promise<Errors> => {
                 const constraints = rules(values);
                 const validators = mapConstraintsToValidators(constraints);
                 const names = Object.keys(constraints);

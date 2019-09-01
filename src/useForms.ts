@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { Errors, ErrorHandler } from "./useErrors";
 import { useHandlers } from "./useHandlers";
-import { useFields, userSuppliedValue } from "./useFields";
+import { useFields, userSuppliedValue, Fields } from "./useFields";
 import {
     useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from "./useTouch";
@@ -14,14 +14,14 @@ import {
     SingleValidator,
 } from "./useValidation";
 import {
-    Values, SetValueCallback, MutableValues, PartialValues,
+    SetValueCallback, MutableValues, PartialValues,
 } from "./useGenericValues";
 
 export interface UseFormsHook {
     readonly errors: Errors | PartialValues<Validators, Error>;
     readonly hasErrors: boolean;
     readonly isSubmitting: boolean;
-    readonly values: Values<userSuppliedValue>;
+    readonly values: Fields;
     readonly setError: ErrorHandler;
     readonly setTouch: TouchHandler;
     readonly touchField: TouchFieldHandler;
@@ -34,9 +34,9 @@ export interface UseFormsHook {
     readonly reset: () => void;
 }
 interface UseFormParameters {
-    readonly defaultValues?: Values<userSuppliedValue>;
+    readonly defaultValues?: Fields;
     readonly validators?: Validators | SingleValidator<userSuppliedValue>;
-    readonly onSubmit: (values: Values<userSuppliedValue>) => void | Promise<void>;
+    readonly onSubmit: (values: Fields) => void | Promise<void>;
 }
 
 // TODO: support nested objects, and arrays

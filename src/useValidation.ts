@@ -6,7 +6,7 @@ import {
     Values, useGenericValues, MutableValues, PartialValues,
 } from "./useGenericValues";
 import { assert, LoggingTypes } from "./utils";
-import { userSuppliedValue } from "./useFields";
+import { userSuppliedValue, Fields } from "./useFields";
 
 type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
@@ -57,7 +57,7 @@ function assertValidator(functionName: string, name: string, validator: Function
 }
 
 export async function validateValidators(
-    names: string[], validators: Validators, values: Values<userSuppliedValue>,
+    names: string[], validators: Validators, values: Fields,
 ): Promise<Errors> {
     const errorsPromiseMap = names
         .map(async (name): Promise<[string, validValidatorReturnTypes]> => {
@@ -160,7 +160,7 @@ export function useValidation(
     }, [setError, setValidationState, validator]);
 
     // create validate all function
-    const validate = useCallback(async (values: Values<userSuppliedValue>): Promise<Errors> => {
+    const validate = useCallback(async (values: Fields): Promise<Errors> => {
         const names = Array.from(new Set([...Object.keys(values), ...fieldsToUseInValidateAll]));
         const setAllValidationState = (state: boolean): void => {
             const allStates = names.reduce((
