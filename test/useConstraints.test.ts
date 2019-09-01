@@ -1,6 +1,5 @@
 import { renderHook } from 'react-hooks-testing-library';
 import { useConstraints, supportedTypesSet, supportedProperties } from "../src/useConstraints";
-import { userSuppliedValue } from '../src/useValidation';
 
 describe("useConstraints", () => {
     const ERROR = "__required__";
@@ -163,7 +162,7 @@ describe("useConstraints", () => {
             max: { max: 3 },
             min: { min: 3 },
         }));
-        const validate = (value?: userSuppliedValue) => {
+        const validate = (value?: any) => {
             expect(result.current.optional(value)).toEqual(SUCCESS);
             expect(result.current.type(value)).toEqual(SUCCESS);
             expect(result.current.pattern(value)).toEqual(SUCCESS);

@@ -54,6 +54,7 @@ export function hasValue<T>(values: Values<T>): boolean {
 function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
     let value;
     let name;
+    let newState;
     switch (action.type) {
     case ActionTypes.update:
         ({ value, name } = action.payload as UpdatePayload<T>);
@@ -62,7 +63,7 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
             ? { ...state, [name]: value }
             : state;
     case ActionTypes.reset:
-        const newState = typeof action.payload === "function"
+        newState = typeof action.payload === "function"
             ? action.payload(state)
             : action.payload;
         return (newState !== state)
@@ -73,6 +74,7 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
     }
 }
 
+// TODO: change name
 export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetableValuesHook<T> {
     // TODO: support initializer function as the initial value
     assert.error(
