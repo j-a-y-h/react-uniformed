@@ -86,9 +86,9 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
     }, []);
     const setValues = useCallback((newValues: Values<T> | SetValuesCallback<T>): void => {
         assert.error(
-            newValues && typeof newValues === "object",
+            newValues && (typeof newValues === "object" || typeof newValues === "function"),
             LoggingTypes.invalidArgument,
-            `(expected: Object<string, any>, received: ${typeof newValues}) ${useResetableValues.name}.setValues expects an object map as the first argument.`,
+            `(expected: Object<string, any> | (currentValues) => newValues, received: ${typeof newValues}) ${useResetableValues.name}.setValues expects an object map or a function as the first argument.`,
         );
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);
