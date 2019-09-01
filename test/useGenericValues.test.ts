@@ -1,9 +1,9 @@
 import { renderHook, act } from 'react-hooks-testing-library'
-import { useResetableValues } from '../src/useResetableValues';
+import { useGenericValues } from '../src/useGenericValues';
 
 describe("useResetableValues", () => {
   it('can set values', () => {
-    const { result } = renderHook(() => useResetableValues<string>());
+    const { result } = renderHook(() => useGenericValues<string>());
 
     act(() => result.current.setValue("email", "required"));
     expect(result.current.values.email).toEqual("required");
@@ -11,7 +11,7 @@ describe("useResetableValues", () => {
     expect(result.current.values).toMatchObject({"timothy-mic": "happyfeet"});
   });
   it('can reset values', () => {
-    const { result } = renderHook(() => useResetableValues<string>());
+    const { result } = renderHook(() => useGenericValues<string>());
 
     act(() => {
       result.current.setValue("cream", "cream is required");
@@ -22,7 +22,7 @@ describe("useResetableValues", () => {
     expect(result.current.values).toEqual({});
   });
   it('can determine if there are values', () => {
-    const { result } = renderHook(() => useResetableValues<string>());
+    const { result } = renderHook(() => useGenericValues<string>());
 
     act(() => result.current.setValue("email", "required"));
     expect(result.current.hasValue).toEqual(true);
