@@ -62,7 +62,10 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
             ? { ...state, [name]: value }
             : state;
     case ActionTypes.reset:
-        return (action.payload !== state)
+        const newState = typeof action.payload === "function"
+            ? action.payload(state)
+            : action.payload;
+        return (newState !== state)
             ? { ...action.payload as Values<T> }
             : state;
     default:
@@ -81,15 +84,10 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
     const setValue = useCallback((name: allowableKeys, value: T): void => {
         dispatch({ type: ActionTypes.update, payload: { name, value } });
     }, []);
-    // TODO: support set all where we merge with current state
-    const resetValues = useCallback((): void => {
-        dispatch({ type: ActionTypes.reset, payload: initialValues });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    // TODO: support a non overriding variant
     const setValues = useCallback((newValues: Values<T> | SetValuesCallback<T>): void => {
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);
+    const resetValues = useCallback((): void => setValues(initialValues), []);
     // note: this counts 0 and empty string as no value.
     const hasValueCallback = useMemo((): boolean => hasValue(values), [values]);
     return {

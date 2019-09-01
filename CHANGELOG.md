@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * [`useConstraint`] Update the number regex pattern
 
+### Added
+* [`useError`, `useFields`, `useTouch`] Added the ability to set values using a function callback
+
 ## [0.0.7] - 2019-08-24
 ### Removed
 * [`useValidation`] Removed the unused `expectedFields` parameter
