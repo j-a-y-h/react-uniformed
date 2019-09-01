@@ -6,6 +6,13 @@ import {
 export type userSuppliedValue = string | string[] | boolean | number | undefined | null;
 export type Fields = Values<userSuppliedValue>;
 export type MutableFields = MutableValues<userSuppliedValue>;
+interface SetField {
+    (name: string, value: userSuppliedValue): void;
+    (name: string, value: userSuppliedValue, event: EventTarget | null): void;
+}
+export interface UseFieldsHook extends UseResetableValuesHook<userSuppliedValue> {
+    readonly setValue: SetField;
+}
 
 function getResetValue(currentValue: userSuppliedValue): userSuppliedValue {
     switch (typeof currentValue) {
