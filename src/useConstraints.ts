@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { Values, MutableValues, ConstantValues } from "./useResetableValues";
 import {
-    Validator, Validators, SingleValidator, validateValidators, userSuppliedValue,
+    Validator, Validators, SingleValidator, validateValidators,
 } from "./useValidation";
 import { assert, LoggingTypes } from "./utils";
 import { Errors } from "./useErrors";
+import { userSuppliedValue } from "./useFields";
 
 type supportedTypes = "email" | "text" | "url" | "number" | "date";
 // possible values:

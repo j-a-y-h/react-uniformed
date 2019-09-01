@@ -6,10 +6,10 @@ import {
     Values, useResetableValues, MutableValues, PartialValues,
 } from "./useResetableValues";
 import { assert, LoggingTypes } from "./utils";
+import { userSuppliedValue } from "./useFields";
 
 type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
-export type userSuppliedValue = string | string[] | number | undefined | null;
 export interface SingleValidator<T> {
     (values: Values<T>): validSingleValidatorReturnTypes;
 }

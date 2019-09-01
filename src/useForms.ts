@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { Errors, ErrorHandler } from "./useErrors";
 import { useHandlers } from "./useHandlers";
-import { useFields } from "./useFields";
+import { useFields, userSuppliedValue } from "./useFields";
 import {
     useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from "./useTouch";
@@ -12,7 +12,6 @@ import {
     ValidateHandler,
     ValidateAllHandler,
     SingleValidator,
-    userSuppliedValue,
 } from "./useValidation";
 import {
     Values, SetValueCallback, MutableValues, PartialValues,
