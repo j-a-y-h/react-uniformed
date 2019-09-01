@@ -22,7 +22,8 @@ interface UpdatePayload<T> {
     name: string;
     value: T;
 }
-type ActionPayload<T> = Values<T> | UpdatePayload<T>;
+type SetValuesCallback<T> = (currentState: Values<T>) => Values<T>;
+type ActionPayload<T> = Values<T> | UpdatePayload<T> | SetValuesCallback<T>;
 
 enum ActionTypes { update, reset }
 interface Action<T> {
@@ -35,11 +36,16 @@ export interface SetValueCallback<T> {
     (name: allowableKeys, value: T): void;
 }
 
+interface SetValues<T> {
+    (currentState: Values<T>): void;
+    (callback: SetValuesCallback<T>): void;
+}
+
 export interface UseResetableValuesHook<T> {
     readonly values: Values<T>;
     readonly hasValue: boolean;
     readonly setValue: SetValueCallback<T>;
-    readonly setValues: (values: Values<T>) => void;
+    readonly setValues: SetValues<T>;
     readonly resetValues: () => void;
 }
 export function hasValue<T>(values: Values<T>): boolean {
@@ -81,7 +87,7 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     // TODO: support a non overriding variant
-    const setValues = useCallback((newValues: Values<T>): void => {
+    const setValues = useCallback((newValues: Values<T> | SetValuesCallback<T>): void => {
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);
     // note: this counts 0 and empty string as no value.
