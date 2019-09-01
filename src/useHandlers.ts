@@ -113,5 +113,6 @@ export function useSettersAsRefEventHandler(
     return ref;
 }
 
-// TODO: add a useValueTransform hook
-//   useValueTransform(Number, (s) => String(s).trim());
+// TODO: add a useValueTransform hook or useNormalization
+// useValueTransform(Number, (s) => String(s).trim());
+//
