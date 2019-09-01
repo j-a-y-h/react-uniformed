@@ -10,9 +10,9 @@ interface Logger {
 }
 
 // eslint-disable-next-line import/prefer-default-export
+/* eslint-disable no-console */
 function assertion(condition: boolean, type: LoggingTypes, message: string, logger: Logger): void {
     if (!condition) {
-        /* eslint-disable no-console */
         logger(`${projectName}: [${type}] ${message}`);
     }
 }
