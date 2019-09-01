@@ -74,13 +74,12 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
     }
 }
 
-// TODO: change name
-export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetableValuesHook<T> {
+export function useGenericValues<T>(initialValues: Values<T> = {}): UseResetableValuesHook<T> {
     // TODO: support initializer function as the initial value
     assert.error(
         !initialValues || typeof initialValues === "object",
         LoggingTypes.typeError,
-        `(expected: Object<string, any> | undefined, received: ${typeof initialValues}) ${useResetableValues.name} expects an object map as the first argument or zero arguments.`,
+        `(expected: Object<string, any> | undefined, received: ${typeof initialValues}) ${useGenericValues.name} expects an object map as the first argument or zero arguments.`,
     );
     const [values, dispatch] = useReducer<ReducerType<T>>(reducer, initialValues);
     const setValue = useCallback((name: allowableKeys, value: T): void => {
@@ -90,7 +89,7 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
         assert.error(
             newValues && (typeof newValues === "object" || typeof newValues === "function"),
             LoggingTypes.invalidArgument,
-            `(expected: Object<string, any> | (currentValues) => newValues, received: ${typeof newValues}) ${useResetableValues.name}.setValues expects an object map or a function as the only argument.`,
+            `(expected: Object<string, any> | (currentValues) => newValues, received: ${typeof newValues}) ${useGenericValues.name}.setValues expects an object map or a function as the only argument.`,
         );
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);

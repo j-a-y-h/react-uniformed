@@ -15,7 +15,7 @@ import {
 } from "./useValidation";
 import {
     Values, SetValueCallback, MutableValues, PartialValues,
-} from "./useResetableValues";
+} from "./useGenericValues";
 
 export interface UseFormsHook {
     readonly errors: Errors | PartialValues<Validators, Error>;

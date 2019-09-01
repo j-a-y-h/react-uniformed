@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Values, MutableValues, ConstantValues } from "./useResetableValues";
+import { Values, MutableValues, ConstantValues } from "./useGenericValues";
 import {
     Validator, Validators, SingleValidator, validateValidators,
 } from "./useValidation";

@@ -3,8 +3,8 @@ import {
     validErrorValues, Errors, useErrors, ErrorHandler,
 } from "./useErrors";
 import {
-    Values, useResetableValues, MutableValues, PartialValues,
-} from "./useResetableValues";
+    Values, useGenericValues, MutableValues, PartialValues,
+} from "./useGenericValues";
 import { assert, LoggingTypes } from "./utils";
 import { userSuppliedValue } from "./useFields";
 
@@ -138,7 +138,7 @@ export function useValidation(
         setValue: setValidationState,
         hasValue: isValidating,
         setValues: setValidationStates,
-    } = useResetableValues();
+    } = useGenericValues();
     // create a validate by input name function
     const validateByName = useCallback(async (
         name: string, value: userSuppliedValue,

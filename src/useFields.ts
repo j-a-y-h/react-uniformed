@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import {
-    useResetableValues, UseResetableValuesHook, Values, MutableValues,
-} from "./useResetableValues";
+    useGenericValues, UseResetableValuesHook, Values, MutableValues,
+} from "./useGenericValues";
 
 export type userSuppliedValue = string | string[] | boolean | number | undefined | null;
 export type Fields = Values<userSuppliedValue>;
@@ -24,7 +24,7 @@ function getResetValue(currentValue: userSuppliedValue): userSuppliedValue {
 // eslint-disable-next-line import/prefer-default-export
 export function useFields(initialValues?: Fields): UseResetableValuesHook<userSuppliedValue> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { resetValues: _, setValues, ...resetableValues } = useResetableValues(initialValues);
+    const { resetValues: _, setValues, ...resetableValues } = useGenericValues(initialValues);
     const resetValues = useCallback((): void => {
         setValues((currentState): Fields => {
             const nonNullInitialValues: MutableFields = { ...initialValues } || {};

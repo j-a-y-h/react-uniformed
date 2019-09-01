@@ -3,7 +3,7 @@ import {
 } from "react";
 import { assert, LoggingTypes } from "./utils";
 import { ValidateAllHandler } from "./useValidation";
-import { Values } from "./useResetableValues";
+import { Values } from "./useGenericValues";
 
 interface Handler<T, K extends T[], Z> {
     (...args: K): Z;

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useResetableValues, Values } from "./useResetableValues";
+import { useGenericValues, Values } from "./useGenericValues";
 
 export type Touches = Values<boolean>;
 export interface TouchHandler {
@@ -22,7 +22,7 @@ export function useTouch(): UseTouchHook {
         setValue: setTouch,
         resetValues: resetTouches,
         setValues: setTouches,
-    } = useResetableValues<boolean>();
+    } = useGenericValues<boolean>();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const touchField = useCallback((name: string): void => setTouch(name, true), []);
     return {

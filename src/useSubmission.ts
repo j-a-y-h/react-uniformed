@@ -1,5 +1,5 @@
 import { useState, useCallback, SyntheticEvent } from "react";
-import { hasValue } from "./useResetableValues";
+import { hasValue } from "./useGenericValues";
 import { Errors } from "./useErrors";
 import { assert, LoggingTypes } from "./utils";
 

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useResetableValues, Values } from "./useResetableValues";
+import { useGenericValues, Values } from "./useGenericValues";
 import { assert, LoggingTypes } from "./utils";
 
 export type validErrorValues = string;
@@ -30,7 +30,7 @@ export function useErrors(): UseErrorsHook {
         values: errors,
         resetValues: resetErrors,
         hasValue: hasErrors,
-    } = useResetableValues<validErrorValues>();
+    } = useGenericValues<validErrorValues>();
     const setError = useCallback((name: string, error: validErrorValues): void => {
         assertErrorType(name, error);
         setValue(name, error);
