@@ -85,8 +85,14 @@ export function useResetableValues<T>(initialValues: Values<T> = {}): UseResetab
         dispatch({ type: ActionTypes.update, payload: { name, value } });
     }, []);
     const setValues = useCallback((newValues: Values<T> | SetValuesCallback<T>): void => {
+        assert.error(
+            newValues && typeof newValues === "object",
+            LoggingTypes.invalidArgument,
+            `(expected: Object<string, any>, received: ${typeof newValues}) ${useResetableValues.name}.setValues expects an object map as the first argument.`,
+        );
         dispatch({ type: ActionTypes.reset, payload: newValues });
     }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const resetValues = useCallback((): void => setValues(initialValues), []);
     // note: this counts 0 and empty string as no value.
     const hasValueCallback = useMemo((): boolean => hasValue(values), [values]);
