@@ -67,7 +67,7 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
             ? action.payload(state)
             : action.payload;
         return (newState !== state)
-            ? { ...action.payload as Values<T> }
+            ? { ...newState as Values<T> }
             : state;
     default:
         throw new Error();
