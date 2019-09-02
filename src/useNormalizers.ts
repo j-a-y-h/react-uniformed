@@ -46,7 +46,7 @@ const normalizer = useNormalizers(
 
 normalizer("name[0][location]", "asfd", currentValues, element);
 
-const normalizer = useNormalizers(nestedObjects);
+const normalizer = useNormalizers(nestedObjects());
 const {} = useForms({onSubmit, normalizer});
 */
 type NormalizeSetValue = Readonly<{
@@ -62,13 +62,58 @@ export type UseNormalizersOption = Readonly<{
     names: string | RegExp | (string | RegExp)[],
     normalizer: NormalizerHandler;
 }>;
+function buildIndex(currentValue, valueToSet, path, shadowCopy) {
+    /*
+ex: user[0][name]
+        {
+            user: [
+                {name: any}
+            ]
+        }
+    */
+    const rawKey = path.shift();
+    if (!rawKey) {
+        return valueToSet;
+    }
+    const key = rawKey.replace(/(^\[\s*['"]?|['"]?\s*\]$)/g, "");
+    let mergedValue = currentValue;
+    let newIndex = key;
+    if (key !== rawKey) {
+        const arrayIndex = Number(key);
+        if (!Number.isNaN(arrayIndex)) {
+            // handle array
+            newIndex = arrayIndex;
+            mergedValue = Object.assign([], shadowCopy);
+        } else {
+            // handle object
+            mergedValue = Object.assign({}, shadowCopy);
+        }
+    }
+    mergedValue[newIndex] = buildIndex(
+        mergedValue,
+        valueToSet,
+        path,
+        shadowCopy && shadowCopy[newIndex]
+    );
+    return mergedValue;
+}
 export function normalizeNestedObjects(): NormalizerHandler {
     return ({ name, value, currentValues }: NormalizeSetValue) => {
+        const nestedKeys = name.match(/(\w+|\[\w+\]|\['[^']+'\]|\["[^"]+"\])/gy);
+        const keys = nestedKeys ? Array.from(nestedKeys) : [name];
+        if (keys.length === 1) {
+            // abort normalization
+            return value;
+        } else {
+            const currentValueCopy = { [name]: currentValues[name] };
+            return buildIndex(currentValueCopy, value, nestedKeys, currentValueCopy);
+        }
     };
- }
+}
 export function useNormalizers(
     ...normalizers: (NormalizerHandler | UseNormalizersOption)[]
 ): NormalizerHandler {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const memoNormalizers = useMemo(() => normalizers, []);
     const normalize = useCallback(({ name, value, currentValues, element }: NormalizeSetValue) => {
         const nameMatches = (matcher: string | RegExp): boolean => {
