@@ -68,17 +68,6 @@ export function useSettersAsEventHandler(
     }, [handler]);
 }
 
-// TODO: remove
-export function useValidatorWithValues<T>(
-    validate: ValidateAllHandler<T>, values: Values<T>,
-): () => void {
-    assert.error(
-        typeof validate === "function",
-        LoggingTypes.typeError,
-        `(expected: function, received: ${typeof validate}) ${useValidatorWithValues.name} expects a function as the first argument.`,
-    );
-    return useCallback((): void => { validate(values); }, [validate, values]);
-}
 
 export function useSettersAsRefEventHandler(
     ...args: useEventHandlersWithRefProps<UseEventHandlersWithRefProps[] | eventLikeHandlers[]>
