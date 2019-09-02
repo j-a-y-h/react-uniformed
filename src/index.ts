@@ -8,4 +8,4 @@ export { useSubmission } from "./useSubmission";
 export { useTouch } from "./useTouch";
 export { useValidation } from "./useValidation";
 export { useConstraints } from "./useConstraints";
-export { useNormalizers } from "./useNormalizers";
+export { useNormalizers, normalizeNestedObjects } from "./useNormalizers";

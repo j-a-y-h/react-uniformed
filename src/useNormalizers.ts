@@ -55,6 +55,6 @@ export type UseNormalizersOption = Readonly<{
     names: string | RegExp | (string | RegExp)[],
     normalizers: NormalizerHandler | NormalizerHandler[];
 }>;
-function nestedObjects(): NormalizerHandler {  }
+export function normalizeNestedObjects(): NormalizerHandler {  }
 function convertValues() {  }
 export function useNormalizers() {  }
