@@ -1,3 +1,5 @@
+import { useMemo, useCallback } from "react";
+
 /*
 if a normalizer is set
    then all calls to setValue, setValues are routed through the normalizer
@@ -47,14 +49,52 @@ normalizer("name[0][location]", "asfd", currentValues, element);
 const normalizer = useNormalizers(nestedObjects);
 const {} = useForms({onSubmit, normalizer});
 */
+type NormalizeSetValue = Readonly<{
+    name: string,
+    value: any,
+    currentValues: any,
+    element?: any | null,
+}>;
 interface NormalizerHandler {
-    (name: string, value: any, currentValues: any): any;
-    (name: string, value: any, currentValues: any, element?: any | null): any;
+    (valuesUpdate: NormalizeSetValue): any;
 }
 export type UseNormalizersOption = Readonly<{
     names: string | RegExp | (string | RegExp)[],
-    normalizers: NormalizerHandler | NormalizerHandler[];
+    normalizer: NormalizerHandler;
 }>;
-export function normalizeNestedObjects(): NormalizerHandler {  }
-function convertValues() {  }
-export function useNormalizers() {  }
+export function normalizeNestedObjects(): NormalizerHandler {
+    return ({ name, value, currentValues }: NormalizeSetValue) => {
+    };
+ }
+export function useNormalizers(
+    ...normalizers: (NormalizerHandler | UseNormalizersOption)[]
+): NormalizerHandler {
+    const memoNormalizers = useMemo(() => normalizers, []);
+    const normalize = useCallback(({ name, value, currentValues, element }: NormalizeSetValue) => {
+        const nameMatches = (matcher: string | RegExp): boolean => {
+            return matcher instanceof RegExp ? matcher.test(name) : matcher === name;
+        };
+        // pipe the value through the normalizers
+        return memoNormalizers.reduce((currentValue, normalizerObj) => {
+            let normalizer: NormalizerHandler | undefined;
+            if (typeof normalizerObj === "function") {
+                // apply the normalizer to all
+                normalizer = normalizerObj;
+            } else {
+                // apply to only matching names
+                const { names, normalizer: handler } = normalizerObj;
+                const matches = Array.isArray(names)
+                    ? names.some(nameMatches)
+                    : nameMatches(names);
+                if (matches) {
+                    // name matches so apply
+                    normalizer = handler;
+                }
+            }
+            return normalizer
+                ? normalizer({ name, value: currentValue, currentValues, element })
+                : currentValue;
+        }, value);
+    }, []);
+    return normalize;
+ }
