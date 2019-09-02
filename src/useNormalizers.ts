@@ -104,6 +104,28 @@ function buildIndex({ currentValue, valueToSet, path, shadowCopy }: {
     });
     return mergedValue;
 }
+
+/**
+ * Used to add nested object support to useFields or useForms. This
+ * function supports nesting with brackets. E.g. referencing an
+ * array value indexed at 0 `arrayName[0]`; referencing an object
+ * value indexed at country `locations[country]`.
+ * @return {NormalizerHandler} Returns a normalizer handler
+ * @example
+ *    // jsx
+ *    <input name="user[0]" value="John">
+ *    // field value
+ *    {user: ["John"]}
+ *
+ *    // jsx
+ *    <input name="user[0][name]" value="John">
+ *    // field value
+ *    {user: [{
+ *        name: "John"
+ *    }]}
+ *
+ *    <input name="user['string keys with spaces']"
+ */
 export function normalizeNestedObjects(): NormalizerHandler {
     return ({ name, value, currentValues }: NormalizeSetValue) => {
         const nestedKeys = name.match(/(\w+|\[\w+\]|\['[^']+'\]|\["[^"]+"\])/gy);
