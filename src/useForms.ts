@@ -39,6 +39,7 @@ interface UseFormParameters {
     readonly onSubmit: (values: Fields) => void | Promise<void>;
 }
 
+// TODO: rename file to useForm.ts
 // TODO: support nested objects, and arrays
 // useHandlers(validateAll, onSubmit)
 export function useForm({

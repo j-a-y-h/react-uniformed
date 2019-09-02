@@ -68,6 +68,7 @@ export function useSettersAsEventHandler(
     }, [handler]);
 }
 
+// TODO: remove
 export function useValidatorWithValues<T>(
     validate: ValidateAllHandler<T>, values: Values<T>,
 ): () => void {
@@ -116,3 +117,75 @@ export function useSettersAsRefEventHandler(
 // TODO: add a useValueTransform hook or useNormalization
 // useValueTransform(Number, (s) => String(s).trim());
 //
+/*
+
+Problems:
+ 1) I need values just in case it is a nested object
+ 2) validateByName may not work with nestedObjects
+
+independent hook
+
+    const { setValue, values, submit } = useForm({
+        onSubmit: data => alert(JSON.stringify(data)),
+    });
+    // define your normalization
+    const [normalizeValidateByName, normalizeSetValue] = useNormalization({
+        handlers: [validateByName, setVaue],
+        names: {
+            "fruits": [Convert(String), NormalizeArray],
+            "users.name": NestedObject,
+            "users[0][name]": NestedObject,
+        },
+    });
+    const [normalizeValidateByName, normalizeSetValue] = useNormalization({
+        handlers: [validateByName, setVaue],
+        normalizers: [
+            NestedObject(""),
+            ConvertToArray("fruits"),
+            ConvertAll({
+                names: ["name", "name2"],
+                converter: (name, value, evtTarget) => {}
+            })
+        ],
+    });
+
+useSettersAsEventHandler hook
+
+    const { setValue, values, submit } = useForm({
+        onSubmit: data => alert(JSON.stringify(data)),
+    });
+    // define your normalization
+    const normalizers = useNormalization({
+        "fruits": [Convert(String), NormalizeArray],
+        "users.name": NestedObject,
+        "users[0][name]": NestedObject,
+    });
+    const handleChange = useSettersAsEventHandler({
+        normalizers,
+        handlers: setValue
+    });
+
+
+useField hook
+useValidation hook
+
+    // define your normalizers
+    const normalizers = useNormalization({
+        "fruits": [Convert(String), NormalizeArray],
+        "users.name": NestedObject,
+        "users[0][name]": NestedObject,
+    });
+    const normalizers = useNormalization(
+        [/fruits.*\/, NestedObject],
+        ConvertToArray,
+        ConvertAll((name, value, evtTarget) => {})
+    );
+    const { setValue, values, submit } = useForm({
+        normalizers,
+        onSubmit: data => alert(JSON.stringify(data)),
+    });
+
+
+    useField(initialValues, normalizers);
+    useValidation(validators, normalizers);
+*/
