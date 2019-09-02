@@ -1,4 +1,5 @@
 import { useMemo, useCallback } from "react";
+import { userSuppliedValue } from "./useFields";
 
 /*
 if a normalizer is set
@@ -62,9 +63,15 @@ export type UseNormalizersOption = Readonly<{
     names: string | RegExp | (string | RegExp)[],
     normalizer: NormalizerHandler;
 }>;
-function buildIndex(currentValue, valueToSet, path, shadowCopy) {
+
+function buildIndex({ currentValue, valueToSet, path, shadowCopy }: {
+    currentValue: any,
+    valueToSet: userSuppliedValue,
+    path: string[],
+    shadowCopy: any,
+}): any {
     /*
-ex: user[0][name]
+        ex: user[0][name]
         {
             user: [
                 {name: any}
@@ -77,7 +84,7 @@ ex: user[0][name]
     }
     const key = rawKey.replace(/(^\[\s*['"]?|['"]?\s*\]$)/g, "");
     let mergedValue = currentValue;
-    let newIndex = key;
+    let newIndex: string | number = key;
     if (key !== rawKey) {
         const arrayIndex = Number(key);
         if (!Number.isNaN(arrayIndex)) {
@@ -89,12 +96,12 @@ ex: user[0][name]
             mergedValue = Object.assign({}, shadowCopy);
         }
     }
-    mergedValue[newIndex] = buildIndex(
-        mergedValue,
+    mergedValue[newIndex] = buildIndex({
+        currentValue: mergedValue,
         valueToSet,
         path,
-        shadowCopy && shadowCopy[newIndex]
-    );
+        shadowCopy: shadowCopy && shadowCopy[newIndex]
+    });
     return mergedValue;
 }
 export function normalizeNestedObjects(): NormalizerHandler {
@@ -106,7 +113,12 @@ export function normalizeNestedObjects(): NormalizerHandler {
             return value;
         } else {
             const currentValueCopy = { [name]: currentValues[name] };
-            return buildIndex(currentValueCopy, value, nestedKeys, currentValueCopy);
+            return buildIndex({
+                currentValue: currentValueCopy,
+                valueToSet: value,
+                path: keys,
+                shadowCopy: currentValueCopy
+            });
         }
     };
 }
