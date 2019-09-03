@@ -1,14 +1,16 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {
     useGenericValues, UseResetableValuesHook, Values, MutableValues,
 } from "./useGenericValues";
+import { NormalizerHandler } from "./useNormalizers";
 
 export type userSuppliedValue = string | string[] | boolean | number | undefined | null;
 export type Fields = Values<userSuppliedValue>;
+export type NestableFields = Values<userSuppliedValue | Fields>;
 export type MutableFields = MutableValues<userSuppliedValue>;
 interface SetField {
     (name: string, value: userSuppliedValue): void;
-    (name: string, value: userSuppliedValue, event: EventTarget | null): void;
+    (name: string, value: userSuppliedValue, eventTarget: EventTarget | null): void;
 }
 export interface UseFieldsHook extends UseResetableValuesHook<userSuppliedValue> {
     readonly setValue: SetField;
@@ -29,9 +31,32 @@ function getResetValue(currentValue: userSuppliedValue): userSuppliedValue {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export function useFields(initialValues?: Fields): UseResetableValuesHook<userSuppliedValue> {
+export function useFields(
+    initialValues?: NestableFields,
+    normalizer?: NormalizerHandler,
+): UseResetableValuesHook<userSuppliedValue> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { resetValues: _, setValues, ...resetableValues } = useGenericValues(initialValues);
+    const {
+        resetValues: _,
+        setValues,
+        setValue: setGenericValue,
+        ...resetableValues
+    } = useGenericValues(initialValues);
+    const setValue = useMemo(() => {
+        if (typeof normalizer === "function") {
+            return (name: string, value: userSuppliedValue, eventTarget: EventTarget | null): void => {
+                setValues((currentValues: Fields): Fields => {
+                    return {
+                        ...currentValues,
+                        [name]: normalizer({ name, value, currentValues, eventTarget }),
+                    };
+                });
+            };
+        } else {
+            return setGenericValue;
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const resetValues = useCallback((): void => {
         setValues((currentState): Fields => {
             const nonNullInitialValues: MutableFields = { ...initialValues } || {};
@@ -45,5 +70,5 @@ export function useFields(initialValues?: Fields): UseResetableValuesHook<userSu
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    return { ...resetableValues, setValues, resetValues };
+    return { ...resetableValues, setValues, resetValues, setValue };
 }

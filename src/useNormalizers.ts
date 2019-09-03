@@ -1,14 +1,14 @@
-import { useMemo, useCallback } from "react";
-import { userSuppliedValue } from "./useFields";
+import { useCallback } from "react";
+import { userSuppliedValue, Fields } from "./useFields";
 
 type NormalizeSetValue = Readonly<{
     name: string,
-    value: any,
-    currentValues: any,
-    element?: any | null,
+    value: userSuppliedValue,
+    currentValues: Fields,
+    eventTarget?: EventTarget | null,
 }>;
 export interface NormalizerHandler {
-    (valuesUpdate: NormalizeSetValue): any;
+    (valuesUpdate: NormalizeSetValue): Fields;
 }
 export type UseNormalizersOption = Readonly<{
     names: string | RegExp | (string | RegExp)[],
