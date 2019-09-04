@@ -1,22 +1,24 @@
 import { useCallback, useMemo } from "react";
 import {
-    useGenericValues, UseResetableValuesHook, Values, MutableValues,
+    useGenericValues, UseResetableValuesHook,
 } from "./useGenericValues";
 import { NormalizerHandler } from "./useNormalizers";
 
-export type userSuppliedValue = string | string[] | boolean | number | undefined | null;
-export type Fields = Values<userSuppliedValue>;
-export type NestableFields = Values<userSuppliedValue | Fields>;
-export type MutableFields = MutableValues<userSuppliedValue>;
+export type FieldValue = any;
+
+export type MutableFields = Partial<{
+    [key: string]: FieldValue;
+}>;
+export type Fields = Readonly<MutableFields>;
+
 interface SetField {
-    (name: string, value: userSuppliedValue): void;
-    (name: string, value: userSuppliedValue, eventTarget: EventTarget | null): void;
+    (name: string, value: FieldValue, eventTarget?: EventTarget | null): void;
 }
-export interface UseFieldsHook extends UseResetableValuesHook<userSuppliedValue> {
+export interface UseFieldsHook extends Omit<UseResetableValuesHook<FieldValue>, "setValue"> {
     readonly setValue: SetField;
 }
 
-function getResetValue(currentValue: userSuppliedValue): userSuppliedValue {
+function getResetValue(currentValue: FieldValue): FieldValue {
     switch (typeof currentValue) {
     case "number":
         return 0;
@@ -32,19 +34,19 @@ function getResetValue(currentValue: userSuppliedValue): userSuppliedValue {
 
 // eslint-disable-next-line import/prefer-default-export
 export function useFields(
-    initialValues?: NestableFields,
+    initialValues?: Fields,
     normalizer?: NormalizerHandler,
-): UseResetableValuesHook<userSuppliedValue> {
+): UseFieldsHook {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {
         resetValues: _,
         setValues,
         setValue: setGenericValue,
         ...resetableValues
-    } = useGenericValues(initialValues);
+    } = useGenericValues<Fields>(initialValues);
     const setValue = useMemo(() => {
         if (typeof normalizer === "function") {
-            return (name: string, value: userSuppliedValue, eventTarget: EventTarget | null): void => {
+            return (name: string, value: FieldValue, eventTarget?: EventTarget | null): void => {
                 setValues((currentValues: Fields): Fields => {
                     return {
                         ...currentValues,

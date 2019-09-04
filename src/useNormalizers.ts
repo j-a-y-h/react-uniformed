@@ -1,14 +1,14 @@
 import { useCallback } from "react";
-import { userSuppliedValue, Fields } from "./useFields";
+import { Fields, MutableFields, FieldValue } from "./useFields";
 
 type NormalizeSetValue = Readonly<{
     name: string,
-    value: userSuppliedValue,
+    value: FieldValue,
     currentValues: Fields,
     eventTarget?: EventTarget | null,
 }>;
 export interface NormalizerHandler {
-    (valuesUpdate: NormalizeSetValue): Fields;
+    (valuesUpdate: NormalizeSetValue): FieldValue;
 }
 export type UseNormalizersOption = Readonly<{
     names: string | RegExp | (string | RegExp)[],
@@ -16,11 +16,11 @@ export type UseNormalizersOption = Readonly<{
 }>;
 
 function createNestedObject({ currentValue, valueToSet, path, shadowCopy }: {
-    currentValue: any,
-    valueToSet: userSuppliedValue,
+    currentValue: Fields,
+    valueToSet: FieldValue,
     path: string[],
-    shadowCopy: any,
-}): any {
+    shadowCopy?: FieldValue,
+}): FieldValue {
     /*
         ex: user[0][name]
         {
@@ -34,7 +34,7 @@ function createNestedObject({ currentValue, valueToSet, path, shadowCopy }: {
         return valueToSet;
     }
     const key = rawKey.replace(/(^\[\s*['"]?|['"]?\s*\]$)/g, "");
-    let mergedValue = currentValue;
+    let mergedValue: MutableFields = currentValue;
     let newIndex: string | number = key;
     if (key !== rawKey) {
         const arrayIndex = Number(key);
@@ -51,7 +51,7 @@ function createNestedObject({ currentValue, valueToSet, path, shadowCopy }: {
         currentValue: mergedValue,
         valueToSet,
         path,
-        shadowCopy: shadowCopy && shadowCopy[newIndex]
+        shadowCopy: shadowCopy ? shadowCopy[newIndex]! : undefined,
     });
     return mergedValue;
 }
@@ -78,7 +78,7 @@ function createNestedObject({ currentValue, valueToSet, path, shadowCopy }: {
  *    <input name="user['string keys with spaces']"
  */
 export function normalizeNestedObjects(): NormalizerHandler {
-    return ({ name, value, currentValues }: NormalizeSetValue) => {
+    return ({ name, value, currentValues }: NormalizeSetValue): FieldValue => {
         const nestedKeys = name.match(/(\w+|\[\w+\]|\['[^']+'\]|\["[^"]+"\])/gy);
         const keys = nestedKeys ? Array.from(nestedKeys) : [name];
         if (keys.length === 1) {
@@ -129,12 +129,12 @@ export function normalizeNestedObjects(): NormalizerHandler {
 export function useNormalizers(
     ...normalizers: (NormalizerHandler | UseNormalizersOption)[]
 ): NormalizerHandler {
-    const normalize = useCallback(({ name, value, currentValues, element }: NormalizeSetValue) => {
+    const normalize = useCallback(({ name, value, currentValues, eventTarget }: NormalizeSetValue) => {
         const nameMatches = (matcher: string | RegExp): boolean => {
             return matcher instanceof RegExp ? matcher.test(name) : matcher === name;
         };
         // pipe the value through the normalizers
-        return normalizers.reduce((currentValue, normalizerObj) => {
+        return normalizers.reduce((currentValue: FieldValue, normalizerObj): FieldValue => {
             let normalizer: NormalizerHandler | undefined;
             if (typeof normalizerObj === "function") {
                 // apply the normalizer to all
@@ -151,7 +151,7 @@ export function useNormalizers(
                 }
             }
             return normalizer
-                ? normalizer({ name, value: currentValue, currentValues, element })
+                ? normalizer({ name, value: currentValue, currentValues, eventTarget })
                 : currentValue;
         }, value);
         // eslint-disable-next-line react-hooks/exhaustive-deps

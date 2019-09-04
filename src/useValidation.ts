@@ -6,7 +6,7 @@ import {
     Values, useGenericValues, MutableValues, PartialValues,
 } from "./useGenericValues";
 import { assert, LoggingTypes } from "./utils";
-import { userSuppliedValue, Fields } from "./useFields";
+import { FieldValue, Fields } from "./useFields";
 
 type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
@@ -14,7 +14,7 @@ export interface SingleValidator<T> {
     (values: Values<T>): validSingleValidatorReturnTypes;
 }
 export interface Validator {
-    (value?: userSuppliedValue): validValidatorReturnTypes;
+    (value?: FieldValue): validValidatorReturnTypes;
 }
 export type Validators = Values<Validator>;
 export interface ValidateHandler<T, K = string> {
@@ -77,16 +77,16 @@ export async function validateValidators(
 }
 
 export function useValidation(
-    validator: SingleValidator<userSuppliedValue>
-): UseValidatorHook<userSuppliedValue>;
+    validator: SingleValidator<FieldValue>
+): UseValidatorHook<FieldValue>;
 
 export function useValidation<T extends Validators>(
     validator: T
-): UseValidatorHookPartial<userSuppliedValue, T>;
+): UseValidatorHookPartial<FieldValue, T>;
 
 export function useValidation<T extends Validators>(
-    validator: T | SingleValidator<userSuppliedValue>
-): UseValidatorHookPartial<userSuppliedValue, T> | UseValidatorHook<userSuppliedValue>;
+    validator: T | SingleValidator<FieldValue>
+): UseValidatorHookPartial<FieldValue, T> | UseValidatorHook<FieldValue>;
 
 /**
  * A hook for performing validation.
@@ -125,8 +125,8 @@ export function useValidation<T extends Validators>(
  * console.log(errors);
  */
 export function useValidation(
-    validator: Validators | SingleValidator<userSuppliedValue>,
-): UseValidatorHookPartial<userSuppliedValue, Validators> | UseValidatorHook<userSuppliedValue> {
+    validator: Validators | SingleValidator<FieldValue>,
+): UseValidatorHookPartial<FieldValue, Validators> | UseValidatorHook<FieldValue> {
     const {
         setError, errors, hasErrors, resetErrors, setErrors,
     } = useErrors();
@@ -141,7 +141,7 @@ export function useValidation(
     } = useGenericValues();
     // create a validate by input name function
     const validateByName = useCallback(async (
-        name: string, value: userSuppliedValue,
+        name: string, value: FieldValue,
     ): Promise<validErrorValues> => {
         let error: validErrorValues;
         setValidationState(name, true);

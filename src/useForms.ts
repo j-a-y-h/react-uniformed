@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { Errors, ErrorHandler } from "./useErrors";
 import { useHandlers } from "./useHandlers";
-import { useFields, userSuppliedValue, Fields } from "./useFields";
+import { useFields, FieldValue, Fields } from "./useFields";
 import {
     useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from "./useTouch";
@@ -25,17 +25,17 @@ export interface UseFormsHook {
     readonly setError: ErrorHandler;
     readonly setTouch: TouchHandler;
     readonly touchField: TouchFieldHandler;
-    readonly setValue: SetValueCallback<userSuppliedValue>;
+    readonly setValue: SetValueCallback<FieldValue>;
     readonly submitCount: number;
     readonly submit: SubmitHandler;
     readonly touches: Touches;
-    readonly validateByName: ValidateHandler<userSuppliedValue>;
-    readonly validate: ValidateAllHandler<userSuppliedValue>;
+    readonly validateByName: ValidateHandler<FieldValue>;
+    readonly validate: ValidateAllHandler<FieldValue>;
     readonly reset: () => void;
 }
 interface UseFormParameters {
     readonly defaultValues?: Fields;
-    readonly validators?: Validators | SingleValidator<userSuppliedValue>;
+    readonly validators?: Validators | SingleValidator<FieldValue>;
     readonly onSubmit: (values: Fields) => void | Promise<void>;
 }
 
