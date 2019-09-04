@@ -100,6 +100,17 @@ describe("useConstraints", () => {
         expect(result.current.minLength("bad number")).toEqual(SUCCESS);
         expect(result.current.minLength("bad")).toEqual(SUCCESS);
     });
+    it("supports minLength and maxLength range contraint", () => {
+        const { result } = renderHook(() => useConstraints({
+            lengthRange: { minLength: 3, maxLength: 7 },
+        }));
+        expect(result.current.lengthRange(3)).not.toEqual(SUCCESS);
+        expect(result.current.lengthRange("b")).not.toEqual(SUCCESS);
+        expect(result.current.lengthRange("test")).toEqual(SUCCESS);
+        expect(result.current.lengthRange(8675309)).not.toEqual(SUCCESS);
+        expect(result.current.lengthRange("cookies")).toEqual(SUCCESS);
+        expect(result.current.lengthRange("mountains")).not.toEqual(SUCCESS);
+    });
     it("supports max constraint", () => {
         const { result } = renderHook(() => useConstraints({
             max: { max: 3 },
@@ -119,7 +130,17 @@ describe("useConstraints", () => {
         expect(result.current.min(3333)).toEqual(SUCCESS);
         expect(result.current.min("5")).toEqual(SUCCESS);
         expect(result.current.min(3)).toEqual(SUCCESS);
-     });
+    });
+    it("supports min and max range constraint", () => {
+        const { result } = renderHook(() => useConstraints({
+            range: { min: 5, max: 15},
+        }));
+        console.warn(result);
+        expect(result.current.range(3)).not.toEqual(SUCCESS);
+        expect(result.current.range(7)).toEqual(SUCCESS);
+        expect(result.current.range(17)).not.toEqual(SUCCESS);
+
+    });
     it("supports required constraints", () => {
         const { result } = renderHook(() => useConstraints({
             required: { required: true },
