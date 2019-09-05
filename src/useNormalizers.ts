@@ -1,26 +1,22 @@
 import { useCallback } from "react";
-import { Fields, FieldValue, MutableFields } from "./useFields";
+import {
+    Fields, FieldValue, MutableFields, NormalizerHandler, NormalizeSetValue,
+} from "./useFields";
 
-type NormalizeSetValue = Readonly<{
-    name: string,
-    value: FieldValue,
-    currentValues: Fields,
-    eventTarget?: EventTarget | null,
-}>;
-export interface NormalizerHandler {
-    (valuesUpdate: NormalizeSetValue): FieldValue;
-}
 export type UseNormalizersOption = Readonly<{
-    names: string | RegExp | (string | RegExp)[],
+    names: string | RegExp | (string | RegExp)[];
     normalizer: NormalizerHandler;
 }>;
 
-function createNestedObject({ currentValue, valueToSet, path, shadowCopy }: {
-    currentValue: Fields,
-    valueToSet: FieldValue,
-    path: string[],
+function createNestedObject({
+    currentValue, valueToSet, path, shadowCopy,
+}: {
+    currentValue: Fields;
+    valueToSet: FieldValue;
+    path: string[];
     // TODO: find a better solution than any
-    shadowCopy?: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    shadowCopy?: any;
 }): FieldValue {
     /*
         ex: user[0][name]
@@ -45,7 +41,7 @@ function createNestedObject({ currentValue, valueToSet, path, shadowCopy }: {
             mergedValue = Object.assign([], shadowCopy);
         } else {
             // handle object
-            mergedValue = Object.assign({}, shadowCopy);
+            mergedValue = { ...shadowCopy };
         }
     }
     mergedValue[newIndex] = createNestedObject({
@@ -62,6 +58,7 @@ function createNestedObject({ currentValue, valueToSet, path, shadowCopy }: {
  * function supports nesting with brackets. E.g. referencing an
  * array value indexed at 0 `arrayName[0]`; referencing an object
  * value indexed at country `locations[country]`.
+ *
  * @return {NormalizerHandler} Returns a normalizer handler
  * @example
  *    // jsx
@@ -85,15 +82,14 @@ export function normalizeNestedObjects(): NormalizerHandler {
         if (keys.length === 1) {
             // abort normalization
             return value;
-        } else {
-            const currentValueCopy = { [name]: currentValues[name] };
-            return createNestedObject({
-                currentValue: currentValueCopy,
-                valueToSet: value,
-                path: keys,
-                shadowCopy: currentValueCopy
-            });
         }
+        const currentValueCopy = { [name]: currentValues[name] };
+        return createNestedObject({
+            currentValue: currentValueCopy,
+            valueToSet: value,
+            path: keys,
+            shadowCopy: currentValueCopy,
+        });
     };
 }
 
@@ -101,6 +97,7 @@ export function normalizeNestedObjects(): NormalizerHandler {
  * Creates a single normalizer function from the specified list of normalizers.
  * note: order matters when passing normalizers. This means that the results or value
  * of the first normalizer is passed to the next normalizer.
+ *
  * @param {(NormalizerHandler | UseNormalizersOption)[]} normalizers if you
  * pass a normalizer handler then it will apply to all fields. You can specify
  * a specific list of fields by passing in
@@ -130,10 +127,13 @@ export function normalizeNestedObjects(): NormalizerHandler {
 export function useNormalizers(
     ...normalizers: (NormalizerHandler | UseNormalizersOption)[]
 ): NormalizerHandler {
-    const normalize = useCallback(({ name, value, currentValues, eventTarget }: NormalizeSetValue) => {
-        const nameMatches = (matcher: string | RegExp): boolean => {
-            return matcher instanceof RegExp ? matcher.test(name) : matcher === name;
-        };
+    const normalize = useCallback(({
+        name, value, currentValues, eventTarget,
+    }: NormalizeSetValue) => {
+        const nameMatches = (matcher: string | RegExp): boolean => (matcher instanceof RegExp
+            ? matcher.test(name)
+            : matcher === name
+        );
         // pipe the value through the normalizers
         return normalizers.reduce((currentValue: FieldValue, normalizerObj): FieldValue => {
             let normalizer: NormalizerHandler | undefined;
@@ -152,7 +152,9 @@ export function useNormalizers(
                 }
             }
             return normalizer
-                ? normalizer({ name, value: currentValue, currentValues, eventTarget })
+                ? normalizer({
+                    name, value: currentValue, currentValues, eventTarget,
+                })
                 : currentValue;
         }, value);
         // eslint-disable-next-line react-hooks/exhaustive-deps

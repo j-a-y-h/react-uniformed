@@ -2,8 +2,8 @@ import { useCallback, useMemo } from "react";
 import {
     useGenericValues, UseResetableValuesHook,
 } from "./useGenericValues";
-import { NormalizerHandler } from "./useNormalizers";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FieldValue = string | number | boolean | undefined | MutableFields | any[];
 
 export type MutableFields = Partial<{
@@ -16,6 +16,16 @@ interface SetField {
 }
 export interface UseFieldsHook extends Omit<UseResetableValuesHook<FieldValue>, "setValue"> {
     readonly setValue: SetField;
+}
+
+export type NormalizeSetValue = Readonly<{
+    name: string;
+    value: FieldValue;
+    currentValues: Fields;
+    eventTarget?: EventTarget | null;
+}>;
+export interface NormalizerHandler {
+    (valuesUpdate: NormalizeSetValue): FieldValue;
 }
 
 function getResetValue(currentValue: FieldValue): FieldValue {
@@ -37,9 +47,7 @@ export function useFields(
     initialValues?: Fields,
     normalizer?: NormalizerHandler,
 ): UseFieldsHook {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {
-        resetValues: _,
         setValues,
         setValue: setGenericValue,
         ...resetableValues
@@ -47,16 +55,15 @@ export function useFields(
     const setValue = useMemo(() => {
         if (typeof normalizer === "function") {
             return (name: string, value: FieldValue, eventTarget?: EventTarget | null): void => {
-                setValues((currentValues: Fields): Fields => {
-                    return {
-                        ...currentValues,
-                        [name]: normalizer({ name, value, currentValues, eventTarget }),
-                    };
-                });
+                setValues((currentValues: Fields): Fields => ({
+                    ...currentValues,
+                    [name]: normalizer({
+                        name, value, currentValues, eventTarget,
+                    }),
+                }));
             };
-        } else {
-            return setGenericValue;
         }
+        return setGenericValue;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const resetValues = useCallback((): void => {
@@ -72,5 +79,7 @@ export function useFields(
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    return { ...resetableValues, setValues, resetValues, setValue };
+    return {
+        ...resetableValues, setValues, resetValues, setValue,
+    };
 }
