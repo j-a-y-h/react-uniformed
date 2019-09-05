@@ -44,7 +44,6 @@ type UseFormParameters = Readonly<{
 }>;
 
 // TODO: rename file to useForm.ts
-// TODO: support nested objects, and arrays
 // useHandlers(validateAll, onSubmit)
 export function useForm({
     defaultValues, validators = {}, onSubmit, normalizers,
@@ -91,7 +90,8 @@ export function useForm({
         setValue,
         reset,
         validateByName,
-        // TODO: fix compatability with useSettersAsEventHandlers (validate is always one render behind)
+        // TODO: fix compatability with useSettersAsEventHandlers
+        // (validate is always one render behind)
         validate,
         isSubmitting,
         submit,
