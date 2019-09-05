@@ -18,7 +18,7 @@ type createNestedObjectProps = Readonly<{
 }>;
 
 function createNestedObject({
-    currentValue, value, path, shadowCopy
+    currentValue, value, path, shadowCopy,
 }: createNestedObjectProps): FieldValue {
     /*
         ex: user[0][name]
@@ -47,7 +47,8 @@ function createNestedObject({
         }
     }
     mergedValue[newIndex] = createNestedObject({
-        value, path,
+        value,
+        path,
         currentValue: mergedValue,
         shadowCopy: shadowCopy && shadowCopy[newIndex],
     });
@@ -77,20 +78,24 @@ function createNestedObject({
  *    <input name="user['string keys with spaces']"
  */
 export function normalizeNestedObjects(): NormalizerHandler {
-    return ({ name, value, currentValues, normalizeName }: NormalizeSetValue): FieldValue => {
+    return ({
+        name, value, currentValues, normalizeName,
+    }: NormalizeSetValue): FieldValue => {
         const nestedKeys = name.match(/(\w+|\[\w+\]|\['[^']+'\]|\["[^"]+"\])/gy);
         const path = nestedKeys ? Array.from(nestedKeys) : [name];
         if (path.length === 1) {
             // abort normalization
             return value;
         }
-        // note: the exclamation point is due to keys.length always being greater than 1
+        // note: the as string is due to keys.length always being greater than 1
         //   at this point in the code
-        const topKey = path.shift()!;
+        const topKey = path.shift() as string;
         const currentValue = currentValues[topKey] as Fields;
         normalizeName(topKey);
         return createNestedObject({
-            value, path, currentValue,
+            value,
+            path,
+            currentValue,
             shadowCopy: currentValue,
         });
     };
