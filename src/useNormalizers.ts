@@ -83,7 +83,8 @@ export function normalizeNestedObjects(): NormalizerHandler {
             // abort normalization
             return value;
         }
-        const currentValueCopy = { [name]: currentValues[name] };
+        const topKey = keys[0];
+        const currentValueCopy = { [topKey]: currentValues[topKey] };
         return createNestedObject({
             currentValue: currentValueCopy,
             valueToSet: value,
