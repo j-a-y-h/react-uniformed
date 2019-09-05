@@ -23,6 +23,7 @@ export type NormalizeSetValue = Readonly<{
     value: FieldValue;
     currentValues: Fields;
     eventTarget?: EventTarget | null;
+    normalizeName: (normalizedName: string) => string;
 }>;
 export interface NormalizerHandler {
     (valuesUpdate: NormalizeSetValue): FieldValue;
@@ -55,12 +56,17 @@ export function useFields(
     const setValue = useMemo(() => {
         if (typeof normalizer === "function") {
             return (name: string, value: FieldValue, eventTarget?: EventTarget | null): void => {
-                setValues((currentValues: Fields): Fields => ({
-                    ...currentValues,
-                    [name]: normalizer({
+                setValues((currentValues: Fields): Fields => {
+                    let normalizedName = name;
+                    const normalizedValue = normalizer({
                         name, value, currentValues, eventTarget,
-                    }),
-                }));
+                        normalizeName: (newName: string) => normalizedName = newName,
+                    });
+                    return {
+                        ...currentValues,
+                        [normalizedName]: normalizedValue,
+                    };
+                });
             };
         }
         return setGenericValue;

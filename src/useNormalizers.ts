@@ -76,15 +76,18 @@ function createNestedObject({
  *    <input name="user['string keys with spaces']"
  */
 export function normalizeNestedObjects(): NormalizerHandler {
-    return ({ name, value, currentValues }: NormalizeSetValue): FieldValue => {
+    return ({ name, value, currentValues, normalizeName }: NormalizeSetValue): FieldValue => {
         const nestedKeys = name.match(/(\w+|\[\w+\]|\['[^']+'\]|\["[^"]+"\])/gy);
         const keys = nestedKeys ? Array.from(nestedKeys) : [name];
         if (keys.length === 1) {
             // abort normalization
             return value;
         }
-        const topKey = keys[0];
-        const currentValueCopy = { [topKey]: currentValues[topKey] };
+        // note: the exclamation point is due to keys.length always being greater than 1
+        //   at this point in the code
+        const topKey = keys.shift()!;
+        const currentValueCopy = currentValues[topKey] as Fields;
+        normalizeName(topKey);
         return createNestedObject({
             currentValue: currentValueCopy,
             valueToSet: value,
@@ -129,7 +132,7 @@ export function useNormalizers(
     ...normalizers: (NormalizerHandler | UseNormalizersOption)[]
 ): NormalizerHandler {
     const normalize = useCallback(({
-        name, value, currentValues, eventTarget,
+        name, value, ...opts
     }: NormalizeSetValue) => {
         const nameMatches = (matcher: string | RegExp): boolean => (matcher instanceof RegExp
             ? matcher.test(name)
@@ -153,9 +156,7 @@ export function useNormalizers(
                 }
             }
             return normalizer
-                ? normalizer({
-                    name, value: currentValue, currentValues, eventTarget,
-                })
+                ? normalizer({ name, value: currentValue, ...opts })
                 : currentValue;
         }, value);
         // eslint-disable-next-line react-hooks/exhaustive-deps
