@@ -1,7 +1,9 @@
 import { useCallback } from "react";
 import { Errors, ErrorHandler } from "./useErrors";
 import { useHandlers } from "./useHandlers";
-import { useFields, FieldValue, Fields, NormalizerHandler } from "./useFields";
+import {
+    useFields, FieldValue, Fields, NormalizerHandler,
+} from "./useFields";
 import {
     useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from "./useTouch";
@@ -89,6 +91,7 @@ export function useForm({
         setValue,
         reset,
         validateByName,
+        // TODO: fix compatability with useSettersAsEventHandlers (validate is always one render behind)
         validate,
         isSubmitting,
         submit,
