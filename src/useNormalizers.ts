@@ -8,16 +8,18 @@ export type UseNormalizersOption = Readonly<{
     normalizer: NormalizerHandler;
 }>;
 
-function createNestedObject({
-    currentValue, valueToSet, path, shadowCopy,
-}: {
+type createNestedObjectProps = Readonly<{
     currentValue: Fields;
-    valueToSet: FieldValue;
+    value: FieldValue;
     path: string[];
     // TODO: find a better solution than any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     shadowCopy?: any;
-}): FieldValue {
+}>;
+
+function createNestedObject({
+    currentValue, value, path, shadowCopy
+}: createNestedObjectProps): FieldValue {
     /*
         ex: user[0][name]
         {
@@ -28,7 +30,7 @@ function createNestedObject({
     */
     const rawKey = path.shift();
     if (!rawKey) {
-        return valueToSet;
+        return value;
     }
     const key = rawKey.replace(/(^\[\s*['"]?|['"]?\s*\]$)/g, "");
     let mergedValue: MutableFields = currentValue;
@@ -45,10 +47,9 @@ function createNestedObject({
         }
     }
     mergedValue[newIndex] = createNestedObject({
+        value, path,
         currentValue: mergedValue,
-        valueToSet,
-        path,
-        shadowCopy: shadowCopy ? shadowCopy[newIndex] : undefined,
+        shadowCopy: shadowCopy && shadowCopy[newIndex],
     });
     return mergedValue;
 }
@@ -78,21 +79,19 @@ function createNestedObject({
 export function normalizeNestedObjects(): NormalizerHandler {
     return ({ name, value, currentValues, normalizeName }: NormalizeSetValue): FieldValue => {
         const nestedKeys = name.match(/(\w+|\[\w+\]|\['[^']+'\]|\["[^"]+"\])/gy);
-        const keys = nestedKeys ? Array.from(nestedKeys) : [name];
-        if (keys.length === 1) {
+        const path = nestedKeys ? Array.from(nestedKeys) : [name];
+        if (path.length === 1) {
             // abort normalization
             return value;
         }
         // note: the exclamation point is due to keys.length always being greater than 1
         //   at this point in the code
-        const topKey = keys.shift()!;
-        const currentValueCopy = currentValues[topKey] as Fields;
+        const topKey = path.shift()!;
+        const currentValue = currentValues[topKey] as Fields;
         normalizeName(topKey);
         return createNestedObject({
-            currentValue: currentValueCopy,
-            valueToSet: value,
-            path: keys,
-            shadowCopy: currentValueCopy,
+            value, path, currentValue,
+            shadowCopy: currentValue,
         });
     };
 }
