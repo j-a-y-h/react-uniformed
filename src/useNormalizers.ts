@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { Fields, MutableFields, FieldValue } from "./useFields";
+import { Fields, FieldValue, MutableFields } from "./useFields";
 
 type NormalizeSetValue = Readonly<{
     name: string,
@@ -19,7 +19,8 @@ function createNestedObject({ currentValue, valueToSet, path, shadowCopy }: {
     currentValue: Fields,
     valueToSet: FieldValue,
     path: string[],
-    shadowCopy?: FieldValue,
+    // TODO: find a better solution than any
+    shadowCopy?: any,
 }): FieldValue {
     /*
         ex: user[0][name]
@@ -51,7 +52,7 @@ function createNestedObject({ currentValue, valueToSet, path, shadowCopy }: {
         currentValue: mergedValue,
         valueToSet,
         path,
-        shadowCopy: shadowCopy ? shadowCopy[newIndex]! : undefined,
+        shadowCopy: shadowCopy ? shadowCopy[newIndex] : undefined,
     });
     return mergedValue;
 }
@@ -157,4 +158,4 @@ export function useNormalizers(
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return normalize;
- }
+}

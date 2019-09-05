@@ -4,7 +4,7 @@ import {
 } from "./useGenericValues";
 import { NormalizerHandler } from "./useNormalizers";
 
-export type FieldValue = any;
+export type FieldValue = string | number | boolean | undefined | MutableFields | any[];
 
 export type MutableFields = Partial<{
     [key: string]: FieldValue;
@@ -43,7 +43,7 @@ export function useFields(
         setValues,
         setValue: setGenericValue,
         ...resetableValues
-    } = useGenericValues<Fields>(initialValues);
+    } = useGenericValues(initialValues);
     const setValue = useMemo(() => {
         if (typeof normalizer === "function") {
             return (name: string, value: FieldValue, eventTarget?: EventTarget | null): void => {
