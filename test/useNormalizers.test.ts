@@ -62,8 +62,7 @@ describe("normalizeNestedObjects", () => {
         const normalizeName = (newKey: string): void => {
             keyToChange = newKey;
         };
-        const normalizer = normalizeNestedObjects();
-        normalizer({
+        normalizeNestedObjects()({
             normalizeName,
             currentValues: {},
             name: key,
@@ -72,13 +71,10 @@ describe("normalizeNestedObjects", () => {
         expect(keyToChange).toEqual("user");
     });
     it("handles non-nested objects", () => {
-        let key = "name";
-        const normalizeName = (): void => { };
-        const normalizer = normalizeNestedObjects();
-        const results = normalizer({
-            normalizeName,
+        const results = normalizeNestedObjects()({
+            normalizeName: (): void => { },
             currentValues: {},
-            name: key,
+            name: "name",
             value: "John",
         });
         expect(results).toEqual("John");
@@ -108,5 +104,40 @@ describe("useNormalizers", () => {
             value: "John",
         });
         expect(results).toEqual("John123456789");
+    });
+    it("Skips normalizer if name doesn't match", () => {
+        const hook = renderHook(() => useNormalizers(
+            {
+                name: /name$/i,
+                normalizer: ({ value }) => `${value}123`,
+            },
+            {
+                name: "email",
+                normalizer: ({ value }) => `${value}456`,
+            },
+            {
+                name: ["name", /name$/i],
+                normalizer: ({ value }) => `${value}789`,
+            }
+        ));
+        const results = hook.result.current({
+            normalizeName(): void { },
+            currentValues: {},
+            name: "name",
+            value: "John",
+        });
+        expect(results).toEqual("John123789");
+    });
+    it("Accepts normalizer functions as arguments", () => {
+        const hook = renderHook(() => useNormalizers(
+            normalizeNestedObjects(),
+        ));
+        const results = hook.result.current({
+            normalizeName(): void { },
+            currentValues: {},
+            name: "name[john]",
+            value: "John",
+        });
+        expect(results).toEqual({ john: "John" });
     });
 });
