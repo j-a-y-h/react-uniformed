@@ -47,10 +47,10 @@ describe("normalizeNestedObjects", () => {
             value: "John Doe",
         });
         expect(results).toMatchObject({
-            dontTouchThis: "",
+            dontTouchThis: "leave this alone",
             team: {
                 leavemeAlone: {
-                    first: "",
+                    first: "please don't change this",
                 },
                 first: "John Doe"
             }
@@ -70,5 +70,17 @@ describe("normalizeNestedObjects", () => {
             value: 55,
         });
         expect(keyToChange).toEqual("user");
+    });
+    it("handles non-nested objects", () => {
+        let key = "name";
+        const normalizeName = (): void => { };
+        const normalizer = normalizeNestedObjects();
+        const results = normalizer({
+            normalizeName,
+            currentValues: {},
+            name: key,
+            value: "John",
+        });
+        expect(results).toEqual("John");
     });
 });
