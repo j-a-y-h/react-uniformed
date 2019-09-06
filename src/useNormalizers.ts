@@ -4,7 +4,7 @@ import {
 } from "./useFields";
 
 export type UseNormalizersOption = Readonly<{
-    names: string | RegExp | (string | RegExp)[];
+    name: string | RegExp | (string | RegExp)[];
     normalizer: NormalizerHandler;
 }>;
 
@@ -114,7 +114,7 @@ export function normalizeNestedObjects(): NormalizerHandler {
  *
  * useNormalizers(
  *    // apply to all fields
- *    normalizeNestedObjects,
+ *    normalizeNestedObjects(),
  *    {
  *      // apply to only fields ending in name (eg: firstName, lastName)
  *      name: /name$/i,
@@ -150,7 +150,7 @@ export function useNormalizers(
                 normalizer = normalizerObj;
             } else {
                 // apply to only matching names
-                const { names, normalizer: handler } = normalizerObj;
+                const { name: names, normalizer: handler } = normalizerObj;
                 const matches = Array.isArray(names)
                     ? names.some(nameMatches)
                     : nameMatches(names);

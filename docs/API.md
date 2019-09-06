@@ -112,7 +112,7 @@ of the first normalizer is passed to the next normalizer.
 ```js
 useNormalizers(
    // apply to all fields
-   normalizeNestedObjects,
+   normalizeNestedObjects(),
    {
      // apply to only fields ending in name (eg: firstName, lastName)
      name: /name$/i,
