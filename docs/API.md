@@ -4,6 +4,17 @@
 <dt><a href="#useConstraints">useConstraints(rules)</a> ⇒</dt>
 <dd><p>A declarative way of validating inputs based upon HTML 5 constraints</p>
 </dd>
+<dt><a href="#normalizeNestedObjects">normalizeNestedObjects()</a> ⇒ <code>NormalizerHandler</code></dt>
+<dd><p>Used to add nested object support to useFields or useForms. This
+function supports nesting with brackets. E.g. referencing an
+array value indexed at 0 <code>arrayName[0]</code>; referencing an object
+value indexed at country <code>locations[country]</code>.</p>
+</dd>
+<dt><a href="#useNormalizers">useNormalizers(normalizers)</a> ⇒ <code>NormalizerHandler</code></dt>
+<dd><p>Creates a single normalizer function from the specified list of normalizers.
+note: order matters when passing normalizers. This means that the results or value
+of the first normalizer is passed to the next normalizer.</p>
+</dd>
 <dt><a href="#useValidation">useValidation(validator)</a> ⇒</dt>
 <dd><p>A hook for performing validation.</p>
 </dd>
@@ -56,6 +67,68 @@ being a function that accepts value as the only argument.
  // then you can bind the validator with the values so that the handler
  // can be used with events
  const handleBlur = useValidationWithValues(validator, values);
+```
+<a name="normalizeNestedObjects"></a>
+
+## normalizeNestedObjects() ⇒ <code>NormalizerHandler</code>
+Used to add nested object support to useFields or useForms. This
+function supports nesting with brackets. E.g. referencing an
+array value indexed at 0 `arrayName[0]`; referencing an object
+value indexed at country `locations[country]`.
+
+**Kind**: global function  
+**Returns**: <code>NormalizerHandler</code> - Returns a normalizer handler  
+**Example**  
+```js
+// jsx
+   <input name="user[0]" value="John">
+   // field value
+   {user: ["John"]}
+
+   // jsx
+   <input name="user[0][name]" value="John">
+   // field value
+   {user: [{
+       name: "John"
+   }]}
+
+   <input name="user['string keys with spaces']"
+```
+<a name="useNormalizers"></a>
+
+## useNormalizers(normalizers) ⇒ <code>NormalizerHandler</code>
+Creates a single normalizer function from the specified list of normalizers.
+note: order matters when passing normalizers. This means that the results or value
+of the first normalizer is passed to the next normalizer.
+
+**Kind**: global function  
+**Returns**: <code>NormalizerHandler</code> - returns a normalizer handler  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| normalizers | <code>Array.&lt;(NormalizerHandler\|UseNormalizersOption)&gt;</code> | if you pass a normalizer handler then it will apply to all fields. You can specify a specific list of fields by passing in |
+
+**Example**  
+```js
+useNormalizers(
+   // apply to all fields
+   normalizeNestedObjects,
+   {
+     // apply to only fields ending in name (eg: firstName, lastName)
+     name: /name$/i,
+     normalizer: ({value}) => !value ? value : value.toUpperCase(),
+   },
+   {
+     // apply to only the date field
+     name: "date",
+     normalizer: ({value}) => !value ? value : value.replace(/-/g, "/"),
+   },
+   {
+     // apply to username or slug field
+     name: ["username", "slug"],
+     normalizer: ({value}) => !value ? value : value.toLowerCase(),
+   }
+)
 ```
 <a name="useValidation"></a>
 
