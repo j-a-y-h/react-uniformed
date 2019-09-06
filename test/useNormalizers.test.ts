@@ -1,5 +1,5 @@
-// import { renderHook, act } from 'react-hooks-testing-library'
-import { normalizeNestedObjects } from "../src/useNormalizers";
+import { renderHook } from 'react-hooks-testing-library'
+import { normalizeNestedObjects, useNormalizers } from "../src/useNormalizers";
 
 describe("normalizeNestedObjects", () => {
     it("normalizes nested arrays", () => {
@@ -82,5 +82,31 @@ describe("normalizeNestedObjects", () => {
             value: "John",
         });
         expect(results).toEqual("John");
+    });
+});
+
+describe("useNormalizers", () => {
+    it("Pipes value in order", () => {
+        const hook = renderHook(() => useNormalizers(
+            {
+                name: /name$/i,
+                normalizer: ({ value }) => `${value}123`,
+            },
+            {
+                name: "name",
+                normalizer: ({ value }) => `${value}456`,
+            },
+            {
+                name: ["name", /name$/i],
+                normalizer: ({ value }) => `${value}789`,
+            }
+        ));
+        const results = hook.result.current({
+            normalizeName(): void { },
+            currentValues: {},
+            name: "name",
+            value: "John",
+        });
+        expect(results).toEqual("John123456789");
     });
 });
