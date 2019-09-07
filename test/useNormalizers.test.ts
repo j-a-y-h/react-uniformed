@@ -79,6 +79,18 @@ describe("normalizeNestedObjects", () => {
         });
         expect(results).toEqual("John");
     });
+    it("handles keys with spaces", () => {
+        let key = `user['name with space'][" double quotes "]`;
+        const normalizeName = (): void => {};
+        const normalizer = normalizeNestedObjects();
+        const results: any = normalizer({
+            normalizeName,
+            currentValues: {},
+            name: key,
+            value: 55,
+        });
+        expect(results).toMatchObject({ 'name with space': { " double quotes ": 55 } });
+    });
 });
 
 describe("useNormalizers", () => {
