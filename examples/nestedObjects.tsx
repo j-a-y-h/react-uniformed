@@ -4,9 +4,7 @@ import {useForm, useSettersAsEventHandler, normalizeNestedObjects} from "../src"
 export default function Form() {
   const { submit, setValue, values } = useForm({
     defaultValues: {
-      users: [
-        {name: "", email: ""}
-      ]
+      users: [{name: "", email: ""}]
     },
     normalizers: normalizeNestedObjects(),
     onSubmit: data => alert(JSON.stringify(data))
