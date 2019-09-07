@@ -64,18 +64,21 @@ function createNestedObject({
  * @return {NormalizerHandler} Returns a normalizer handler
  * @example
  *    // jsx
- *    <input name="user[0]" value="John">
+ *    <input name="users[0]" value="John">
  *    // field value
- *    {user: ["John"]}
+ *    {users: ["John"]}
  *
  *    // jsx
- *    <input name="user[0][name]" value="John">
+ *    <input name="users[0][name]" value="John">
  *    // field value
- *    {user: [{
+ *    {users: [{
  *        name: "John"
  *    }]}
  *
- *    <input name="user['string keys with spaces']"
+ *    // jsx
+ *    <input name="user['string keys with spaces']" value="John">
+ *    // field value
+ *    {user: {"string keys with spaces": "John"}}
  */
 export function normalizeNestedObjects(): NormalizerHandler {
     return ({
