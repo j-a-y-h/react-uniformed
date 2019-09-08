@@ -3,7 +3,8 @@
 <div align="center"><p align="center">
 
 [![travis](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)
-[![Coverage Status](https://coveralls.io/repos/github/j-a-y-h/react-uniformed/badge.svg?branch=coveralls)](https://coveralls.io/github/j-a-y-h/react-uniformed?branch=coveralls)
+[![Downloads](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)
+[![Coverage Status](https://coveralls.io/repos/github/j-a-y-h/react-uniformed/badge.svg?branch=develop)](https://coveralls.io/github/j-a-y-h/react-uniformed?branch=develop)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE)
 [![npm](https://badgen.net/bundlephobia/minzip/react-uniformed)](https://badgen.net/bundlephobia/minzip/react-uniformed)
 

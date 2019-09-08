@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.0.9] - 2019-09-08
 ### Added
 * [`useNormalizers`] added a hook (`useNormalizers`) for normalizing input values
 * [`normalizeNestedObjects`] added a `useNormalizer` compatible function that handles nested objects and arrays

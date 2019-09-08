@@ -4,7 +4,7 @@ import {
 } from "./useGenericValues";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FieldValue = string | number | boolean | undefined | MutableFields | any[];
+export type FieldValue = string | number | boolean | undefined | null | MutableFields | any[];
 
 export type MutableFields = Partial<{
     [key: string]: FieldValue;
