@@ -15,9 +15,8 @@
 
 ##### Overview
 * ‍️💆🏾‍♂️ Simple API
-* 🐐  Fast / Scalable
+* 🐐  Lightweight / Fast / Scalable
 * 🙅🏻‍♀️ Zero dependencies
-* 💌 < 4k gzipped
 * 📜 HTML standard validation
 * 🚀 Controlled & Uncontrolled inputs support
 
