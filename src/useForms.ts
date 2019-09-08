@@ -36,7 +36,7 @@ export type UseFormsHook = Readonly<{
     reset: () => void;
 }>
 type UseFormParameters = Readonly<{
-    normalizers?: NormalizerHandler;
+    normalizer?: NormalizerHandler;
     // TODO: change to initialValues
     defaultValues?: Fields;
     validators?: Validators | SingleValidator<FieldValue>;
@@ -46,9 +46,9 @@ type UseFormParameters = Readonly<{
 // TODO: rename file to useForm.ts
 // useHandlers(validateAll, onSubmit)
 export function useForm({
-    defaultValues, validators = {}, onSubmit, normalizers,
+    defaultValues, validators = {}, onSubmit, normalizer,
 }: UseFormParameters): UseFormsHook {
-    const { values, setValue, resetValues } = useFields(defaultValues, normalizers);
+    const { values, setValue, resetValues } = useFields(defaultValues, normalizer);
     const {
         touches, resetTouches, setTouch, touchField, setTouches,
     } = useTouch();

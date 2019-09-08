@@ -6,7 +6,7 @@ export default function Form() {
     defaultValues: {
       users: [{name: "", email: ""}]
     },
-    normalizers: normalizeNestedObjects(),
+    normalizer: normalizeNestedObjects(),
     onSubmit: data => alert(JSON.stringify(data))
   });
   const handleChange = useSettersAsEventHandler(setValue);
