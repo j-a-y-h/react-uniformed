@@ -7,18 +7,7 @@ export default function Form() {
     });
     const handleChange = useSettersAsEventHandler(setValue);
     return (
-        <form>
-            <h3>Favorite Fruits</h3>
-            <div>
-                <label>
-                    Apple
-                    <input type="checkbox" value="apple" name="fruits" />
-                </label>
-                <label>
-                    Peach
-                    <input type="checkbox" value="peach" name="fruits" />
-                </label>
-            </div>
+        <form onSubmit={submit}>
             <h3>Preferred Drink</h3>
             <div>
                 <label>
