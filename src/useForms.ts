@@ -1,7 +1,9 @@
 import { useCallback } from "react";
 import { Errors, ErrorHandler } from "./useErrors";
 import { useHandlers } from "./useHandlers";
-import { useFields, userSuppliedValue, Fields } from "./useFields";
+import {
+    useFields, FieldValue, Fields, NormalizerHandler,
+} from "./useFields";
 import {
     useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from "./useTouch";
@@ -17,34 +19,36 @@ import {
     SetValueCallback, MutableValues, PartialValues,
 } from "./useGenericValues";
 
-export interface UseFormsHook {
-    readonly errors: Errors | PartialValues<Validators, Error>;
-    readonly hasErrors: boolean;
-    readonly isSubmitting: boolean;
-    readonly values: Fields;
-    readonly setError: ErrorHandler;
-    readonly setTouch: TouchHandler;
-    readonly touchField: TouchFieldHandler;
-    readonly setValue: SetValueCallback<userSuppliedValue>;
-    readonly submitCount: number;
-    readonly submit: SubmitHandler;
-    readonly touches: Touches;
-    readonly validateByName: ValidateHandler<userSuppliedValue>;
-    readonly validate: ValidateAllHandler<userSuppliedValue>;
-    readonly reset: () => void;
-}
-interface UseFormParameters {
-    readonly defaultValues?: Fields;
-    readonly validators?: Validators | SingleValidator<userSuppliedValue>;
-    readonly onSubmit: (values: Fields) => void | Promise<void>;
-}
+export type UseFormsHook = Readonly<{
+    errors: Errors | PartialValues<Validators, Error>;
+    hasErrors: boolean;
+    isSubmitting: boolean;
+    values: Fields;
+    setError: ErrorHandler;
+    setTouch: TouchHandler;
+    touchField: TouchFieldHandler;
+    setValue: SetValueCallback<FieldValue>;
+    submitCount: number;
+    submit: SubmitHandler;
+    touches: Touches;
+    validateByName: ValidateHandler<FieldValue>;
+    validate: ValidateAllHandler<FieldValue>;
+    reset: () => void;
+}>
+type UseFormParameters = Readonly<{
+    normalizer?: NormalizerHandler;
+    // TODO: change to initialValues
+    defaultValues?: Fields;
+    validators?: Validators | SingleValidator<FieldValue>;
+    onSubmit: (values: Fields) => void | Promise<void>;
+}>;
 
-// TODO: support nested objects, and arrays
+// TODO: rename file to useForm.ts
 // useHandlers(validateAll, onSubmit)
 export function useForm({
-    defaultValues, validators = {}, onSubmit,
+    defaultValues, validators = {}, onSubmit, normalizer,
 }: UseFormParameters): UseFormsHook {
-    const { values, setValue, resetValues } = useFields(defaultValues);
+    const { values, setValue, resetValues } = useFields(defaultValues, normalizer);
     const {
         touches, resetTouches, setTouch, touchField, setTouches,
     } = useTouch();
@@ -86,6 +90,8 @@ export function useForm({
         setValue,
         reset,
         validateByName,
+        // TODO: fix compatability with useSettersAsEventHandlers
+        // (validate is always one render behind)
         validate,
         isSubmitting,
         submit,

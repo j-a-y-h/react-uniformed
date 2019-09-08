@@ -2,15 +2,13 @@ import {
     SyntheticEvent, useCallback, Ref,
 } from "react";
 import { assert, LoggingTypes } from "./utils";
-import { ValidateAllHandler } from "./useValidation";
-import { Values } from "./useGenericValues";
 
 interface Handler<T, K extends T[], Z> {
     (...args: K): Z;
 }
-type reactOrNativeEvent = SyntheticEvent | Event;
-type keyValueEvent<T> = [string, T, reactOrNativeEvent];
-type eventLikeHandlers = Handler<string | reactOrNativeEvent, keyValueEvent<string>, void>
+export type reactOrNativeEvent = SyntheticEvent | Event;
+type keyValueEvent<T> = [string, T, EventTarget | null];
+type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEvent<string>, void>
 interface UseEventHandlersWithRefProps {
     readonly event: keyof HTMLElementEventMap;
     // TODO: change to setters to match the function signature
@@ -42,7 +40,7 @@ export function useHandlers<T, K extends T[]>(
 export function useSettersAsEventHandler(
     ...handlers: eventLikeHandlers[]
 ): ReactOrNativeEventListener {
-    const handler = useHandlers<string | reactOrNativeEvent, keyValueEvent<string>>(...handlers);
+    const handler = useHandlers<string | EventTarget | null, keyValueEvent<string>>(...handlers);
     return useCallback((evt: reactOrNativeEvent): void => {
         assert.error(
             evt && !!evt.target,
@@ -63,21 +61,11 @@ export function useSettersAsEventHandler(
              * }
              */
             (target as HTMLInputElement).value,
-            evt,
+            target,
         );
     }, [handler]);
 }
 
-export function useValidatorWithValues<T>(
-    validate: ValidateAllHandler<T>, values: Values<T>,
-): () => void {
-    assert.error(
-        typeof validate === "function",
-        LoggingTypes.typeError,
-        `(expected: function, received: ${typeof validate}) ${useValidatorWithValues.name} expects a function as the first argument.`,
-    );
-    return useCallback((): void => { validate(values); }, [validate, values]);
-}
 
 export function useSettersAsRefEventHandler(
     ...args: useEventHandlersWithRefProps<UseEventHandlersWithRefProps[] | eventLikeHandlers[]>
@@ -112,6 +100,3 @@ export function useSettersAsRefEventHandler(
     }, [event, eventHandler]);
     return ref;
 }
-
-// TODO: add a useValueTransform hook
-//   useValueTransform(Number, (s) => String(s).trim());

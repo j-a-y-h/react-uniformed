@@ -5,7 +5,7 @@ import {
 } from "./useValidation";
 import { assert, LoggingTypes } from "./utils";
 import { Errors } from "./useErrors";
-import { userSuppliedValue, Fields } from "./useFields";
+import { FieldValue, Fields } from "./useFields";
 
 type supportedTypes = "email" | "text" | "url" | "number" | "date";
 // possible values:
@@ -81,7 +81,7 @@ export const supportedProperties: supportedConstraints[] = [
     "min",
 ];
 
-function hasValue(value?: userSuppliedValue): value is string {
+function hasValue(value?: FieldValue): value is string {
     return value === 0 || Boolean(value);
 }
 
@@ -109,16 +109,16 @@ function getRuleValue(rules: Constraints, name: supportedConstraints): constrain
 }
 
 const propertyValidators = {
-    required(_: Constraints, required: constraintValues, value?: userSuppliedValue): boolean {
+    required(_: Constraints, required: constraintValues, value?: FieldValue): boolean {
         return !required || hasValue(value);
     },
-    maxLength(_: Constraints, maxLength: constraintValues, value?: userSuppliedValue): boolean {
+    maxLength(_: Constraints, maxLength: constraintValues, value?: FieldValue): boolean {
         return !hasValue(value) || (typeof value === "string" && value.length <= Number(maxLength));
     },
-    minLength(_: Constraints, minLength: constraintValues, value?: userSuppliedValue): boolean {
+    minLength(_: Constraints, minLength: constraintValues, value?: FieldValue): boolean {
         return !hasValue(value) || (typeof value === "string" && value.length >= Number(minLength));
     },
-    max(rules: Constraints, max: constraintValues, value?: userSuppliedValue): boolean {
+    max(rules: Constraints, max: constraintValues, value?: FieldValue): boolean {
         if (!hasValue(value)) {
             return true;
         }
@@ -127,7 +127,7 @@ const propertyValidators = {
             ? new Date(value) <= new Date(max as string | number)
             : Number(value) <= Number(max);
     },
-    min(rules: Constraints, min: constraintValues, value?: userSuppliedValue): boolean {
+    min(rules: Constraints, min: constraintValues, value?: FieldValue): boolean {
         if (!hasValue(value)) {
             return true;
         }
@@ -136,7 +136,7 @@ const propertyValidators = {
             ? new Date(value) >= new Date(min as string | number)
             : Number(value) >= Number(min);
     },
-    type(_: Constraints, type: constraintValues, value: userSuppliedValue = ""): boolean {
+    type(_: Constraints, type: constraintValues, value: FieldValue = ""): boolean {
         if (!hasValue(value)) {
             return true;
         }
@@ -158,7 +158,7 @@ const propertyValidators = {
         default: return true;
         }
     },
-    pattern(_: Constraints, pattern: constraintValues, value: userSuppliedValue = ""): boolean {
+    pattern(_: Constraints, pattern: constraintValues, value: FieldValue = ""): boolean {
         return !hasValue(value) || (!(pattern instanceof RegExp) || pattern.test(value));
     },
 };
@@ -215,7 +215,7 @@ function validateRule(name: string, rules: Constraints): void {
         );
     }
 }
-function validateUsingContraints(rules: Constraints, value?: userSuppliedValue): string {
+function validateUsingContraints(rules: Constraints, value?: FieldValue): string {
     // check required
     const erroredProperty = supportedProperties.find((property): boolean => {
         let hasError = false;
@@ -248,7 +248,7 @@ function mapConstraintsToValidators(rules: ConstraintValidators): Validators {
         }
         // eslint-disable-next-line no-param-reassign
         validationMap[name] = (typeof currentValidator !== "function")
-            ? (value?: userSuppliedValue): string => (
+            ? (value?: FieldValue): string => (
                 validateUsingContraints(currentValidator, value)
             )
             : currentValidator;
@@ -262,11 +262,11 @@ export function useConstraints<T extends ConstraintValidators>(
     rules: T
 ): ConstantValues<T, Validator>;
 
-export function useConstraints(rules: SyncedConstraint): SingleValidator<userSuppliedValue>;
+export function useConstraints(rules: SyncedConstraint): SingleValidator<FieldValue>;
 
 export function useConstraints<T extends ConstraintValidators>(
     rules: SyncedConstraint | T
-): ConstantValues<T, Validator> | SingleValidator<userSuppliedValue>;
+): ConstantValues<T, Validator> | SingleValidator<FieldValue>;
 
 /**
  * A declarative way of validating inputs based upon HTML 5 constraints
@@ -312,8 +312,8 @@ export function useConstraints<T extends ConstraintValidators>(
  */
 export function useConstraints(
     rules: ConstraintValidators | SyncedConstraint,
-): Validators | SingleValidator<userSuppliedValue> {
-    return useMemo((): Validators | SingleValidator<userSuppliedValue> => {
+): Validators | SingleValidator<FieldValue> {
+    return useMemo((): Validators | SingleValidator<FieldValue> => {
         if (typeof rules === "function") {
             return (values: Fields): Promise<Errors> => {
                 const constraints = rules(values);
