@@ -81,18 +81,21 @@ value indexed at country `locations[country]`.
 **Example**  
 ```js
 // jsx
-   <input name="user[0]" value="John">
+   <input name="users[0]" value="John">
    // field value
-   {user: ["John"]}
+   {users: ["John"]}
 
    // jsx
-   <input name="user[0][name]" value="John">
+   <input name="users[0][name]" value="John">
    // field value
-   {user: [{
+   {users: [{
        name: "John"
    }]}
 
-   <input name="user['string keys with spaces']"
+   // jsx
+   <input name="user['string keys with spaces']" value="John">
+   // field value
+   {user: {"string keys with spaces": "John"}}
 ```
 <a name="useNormalizers"></a>
 
