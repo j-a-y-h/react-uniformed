@@ -43,7 +43,6 @@ type UseFormParameters = Readonly<{
     onSubmit: (values: Fields) => void | Promise<void>;
 }>;
 
-// TODO: rename file to useForm.ts
 // useHandlers(validateAll, onSubmit)
 export function useForm({
     defaultValues, validators = {}, onSubmit, normalizer,
