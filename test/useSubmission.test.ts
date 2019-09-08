@@ -1,10 +1,46 @@
 import { renderHook, act } from 'react-hooks-testing-library';
 import { useSubmission } from '../src';
 
+function sleep(timeout: number) {
+    return new Promise((res) => {
+        setTimeout(res, timeout);
+    });
+}
+
 describe("useSubmission", () => {
-    it.todo("supports async validators");
-    it.todo("supports async submit handlers");
     it.todo("doesn't allow invalid arguments");
+    it("supports async validators", () => {
+        const onSubmit = jest.fn(() => { });
+        let { result, waitForNextUpdate } = renderHook(() => useSubmission({
+            validator: async () => {
+                await sleep(500);
+                return { name: "test is an error" };
+            },
+            onSubmit,
+        }));
+        act(() => {
+            result.current.submit();
+        });
+        waitForNextUpdate().then(() => {
+            expect(result.current.submitCount).toBe(0);
+            expect(onSubmit.mock.calls.length).toBe(0);
+        });
+        ({ result, waitForNextUpdate } = renderHook(() => useSubmission({
+            validator: async () => {
+                await sleep(500);
+                return {};
+            },
+            onSubmit,
+        })));
+        act(() => {
+            result.current.submit();
+        });
+        waitForNextUpdate().then(() => {
+            expect(result.current.submitCount).toBe(1);
+            expect(onSubmit.mock.calls.length).toBe(1);
+        });
+    });
+    it("supports async submit handlers", () => {});
     it("only submits after the form is error free", () => {
         const onSubmit = jest.fn(() => { });
         const { result, waitForNextUpdate } = renderHook(() => useSubmission({
