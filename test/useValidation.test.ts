@@ -1,5 +1,5 @@
 import { renderHook, act } from 'react-hooks-testing-library';
-import { useValidation } from '../src/useValidation';
+import { useValidation } from '../src';
 
 describe("useValidation", () => {
     const ERROR = "__required__";
