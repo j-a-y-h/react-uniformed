@@ -1,7 +1,8 @@
 import { renderHook, act } from 'react-hooks-testing-library'
 import { useGenericValues } from '../src/useGenericValues';
 
-describe("useResetableValues", () => {
+describe("useGenericValues", () => {
+  it.todo("supports initial values");
   it('can set values', () => {
     const { result } = renderHook(() => useGenericValues<string>());
 

@@ -40,7 +40,7 @@ describe("useSubmission", () => {
             expect(onSubmit.mock.calls.length).toBe(1);
         });
     });
-    it("supports async submit handlers", () => {});
+    it.todo("supports async submit handlers");
     it("only submits after the form is error free", () => {
         const onSubmit = jest.fn(() => { });
         const { result, waitForNextUpdate } = renderHook(() => useSubmission({
