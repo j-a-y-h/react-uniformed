@@ -1,5 +1,5 @@
 import { renderHook, act } from 'react-hooks-testing-library'
-import { useFields } from '../src';
+import { useFields, normalizeNestedObjects } from '../src';
 
 describe("useFields", () => {
   it('can set values', () => {
@@ -78,5 +78,38 @@ describe("useFields", () => {
     });
   });
   it("supports normalizers", () => {
+    const { result } = renderHook(() => useFields(
+      {users: [{name: "", email: ""}]},
+      normalizeNestedObjects()
+    ));
+    // test nested objects normalizer
+    act(() => {
+      result.current.setValue("users[0][name]", "john");
+      result.current.setValue("users[0][email]", "john@example.com");
+    });
+    expect(result.current.values).toEqual({
+      users: [{
+        name: "john", email: "john@example.com"
+      }]
+    });
+
+    // test that it will support for adding arbitrary fields
+    act(() => {
+      result.current.setValue("users[1][name]", "doe");
+      result.current.setValue("users[1][email]", "doe@example.com");
+      result.current.setValue("users[1][age]", 15);
+    });
+    expect(result.current.values).toEqual({
+      users: [
+        { name: "john", email: "john@example.com" },
+        { name: "doe", email: "doe@example.com", age: 15 },
+      ]
+    });
+
+    // test value reset
+    act(() => {
+      result.current.resetValues();
+    });
+    expect(result.current.values).toEqual({users: [{name: "", email: ""}]});
   });
 });
