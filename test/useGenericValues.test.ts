@@ -2,7 +2,6 @@ import { renderHook, act } from 'react-hooks-testing-library'
 import { useGenericValues } from '../src/useGenericValues';
 
 describe("useGenericValues", () => {
-  it.todo("supports initial values");
   it('can set values', () => {
     const { result } = renderHook(() => useGenericValues<string>());
 
@@ -29,5 +28,29 @@ describe("useGenericValues", () => {
     expect(result.current.hasValue).toEqual(true);
     act(() => result.current.resetValues());
     expect(result.current.hasValue).toEqual(false);
+  });
+  it("supports initial values", () => {
+    const initialValue = {
+      name: "john",
+      email: "email@example.com",
+    };
+    const { result } = renderHook(() => useGenericValues<string>(initialValue));
+
+    act(() => {
+      result.current.setValue("name", "cream is required");
+      result.current.setValue("email", "please pick a soda");
+      result.current.setValue("unknown", "didn't set a value");
+    });
+    expect(result.current.values).not.toEqual({});
+    expect(result.current.values).toEqual({
+      name: "cream is required",
+      email: "please pick a soda",
+      unknown: "didn't set a value",
+    });
+
+    act(() => {
+      result.current.resetValues();
+    });
+    expect(result.current.values).toEqual(initialValue);
   });
 });
