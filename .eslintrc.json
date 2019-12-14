@@ -35,7 +35,7 @@
         }
 	},
 	"rules": {
-		"indent": ["error", 4],
+		"indent": ["error", 2],
 		"jsdoc/require-jsdoc": "off",
 		"jsdoc/require-param-type": "off",
 		"jsdoc/require-returns-type": "off",
@@ -45,7 +45,7 @@
 		"react-hooks/exhaustive-deps": "warn",
 		"@typescript-eslint/explicit-function-return-type": "error",
 		"@typescript-eslint/no-explicit-any": "error",
-		"quotes": ["error", "double", {
+		"quotes": ["error", "single", {
 			"avoidEscape": true
 		}],
 		"no-shadow": ["error", {
