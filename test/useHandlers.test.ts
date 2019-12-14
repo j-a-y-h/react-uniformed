@@ -34,37 +34,46 @@ describe("useSettersAsEventHandler", () => {
   });
 });
 describe("useSettersAsRefEventHandler", () => {
-  it("sets event handlers on ref elements", () => {
-    const argumentsPassed: string[] = [];
-    const first = jest.fn().mockImplementation((...args) => argumentsPassed.push(...args));
-    const second = jest.fn().mockImplementation((...args) => argumentsPassed.push(...args));
-    const { result } = renderHook(() => useSettersAsRefEventHandler(first, second));
-    const name = "testing";
-    const value = "testing value";
+  it("sets change event handlers on ref elements", () => {
+    const { result } = renderHook(() => useSettersAsRefEventHandler(jest.fn()));
     const target = {
-      name,
-      value,
-      addEventListener: jest.fn()
+      addEventListener: jest.fn(),
     };
     // @ts-ignore
     result.current(target as any);
-    expect(argumentsPassed).toEqual([name, value, target, name, value, target]);
+    expect(target.addEventListener).toHaveBeenCalledTimes(1);
+    expect(target.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
   });
-  it("", () => {
-    const argumentsPassed: string[] = [];
-    const first = jest.fn().mockImplementation((...args) => argumentsPassed.push(...args));
-    const second = jest.fn().mockImplementation((...args) => argumentsPassed.push(...args));
-    const { result } = renderHook(() => useSettersAsRefEventHandler(first, second));
-    const
-    const name = "testing";
-    const value = "testing value";
+  it("supports any event listeners", () => {
+    const { result } = renderHook(() => useSettersAsRefEventHandler({
+      handlers: [jest.fn()],
+      event: "click",
+    }));
     const target = {
-      name,
-      value,
-      addEventListener: jest.fn()
+      addEventListener: jest.fn(),
     };
     // @ts-ignore
     result.current(target as any);
-    expect(argumentsPassed).toEqual([name, value, target, name, value, target]);
+    expect(target.addEventListener).toHaveBeenCalledTimes(1);
+    expect(target.addEventListener).toHaveBeenCalledWith("click", expect.any(Function));
   });
+  it.todo("correct calls event handlers"
+  // ,
+    // () => {
+    // const argumentsPassed: string[] = [];
+    // const first = jest.fn().mockImplementation((...args) => argumentsPassed.push(...args));
+    // const second = jest.fn().mockImplementation((...args) => argumentsPassed.push(...args));
+    // const { result } = renderHook(() => useSettersAsRefEventHandler(first, second));
+    // const name = "testing";
+    // const value = "testing value";
+    // const target = {
+    //   name,
+    //   value,
+    //   addEventListener: jest.fn()
+    // };
+    // // @ts-ignore
+    // result.current(target as any);
+    // expect(argumentsPassed).toEqual([name, value, target, name, value, target]);
+    // }
+  );
 });
