@@ -2,7 +2,7 @@ import {
     SyntheticEvent, useCallback, Ref,
 } from "react";
 import { assert, LoggingTypes } from "./utils";
-
+// TODO: switch all code to 2 spaces instead of 4
 interface Handler<T, K extends T[], Z> {
     (...args: K): Z;
 }
@@ -10,9 +10,9 @@ export type reactOrNativeEvent = SyntheticEvent | Event;
 type keyValueEvent<T> = [string, T, EventTarget | null];
 type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEvent<string>, void>
 interface UseEventHandlersWithRefProps {
-    readonly event: keyof HTMLElementEventMap;
+    readonly event?: keyof HTMLElementEventMap;
     // TODO: change to setters to match the function signature
-    readonly handlers: eventLikeHandlers[] | eventLikeHandlers;
+    readonly handlers: eventLikeHandlers[];
 }
 type useEventHandlersWithRefProps<T> = T extends UseEventHandlersWithRefProps[]
     ? [UseEventHandlersWithRefProps]
@@ -66,7 +66,6 @@ export function useSettersAsEventHandler(
     }, [handler]);
 }
 
-
 export function useSettersAsRefEventHandler(
     ...args: useEventHandlersWithRefProps<UseEventHandlersWithRefProps[] | eventLikeHandlers[]>
 ): Ref<EventTarget> {
@@ -76,26 +75,19 @@ export function useSettersAsRefEventHandler(
         // provided a event handler list
         handlers = args as eventLikeHandlers[];
     } else {
+        const [options] = args;
         // provided an object
         assert.error(
-            args[0] && typeof args[0] === "object",
+            options && typeof options === "object",
             LoggingTypes.typeError,
-            `(expected: {event: string, handlers: function[]}, received: ${typeof args[0]}) ${useSettersAsRefEventHandler.name} expects a list of functions or an object with event and handlers as properties.`,
+            `(expected: {event: string, handlers: function[]}, received: ${typeof options}) ${useSettersAsRefEventHandler.name} expects a list of functions or an object with event and handlers as properties.`,
         );
-        const {
-            event: firstEvent,
-            handlers: firstHandlers,
-        } = args[0];
+        const { event: firstEvent } = options;
+        ({ handlers } = options);
         event = firstEvent || event;
-        handlers = Array.isArray(firstHandlers) ? firstHandlers : [firstHandlers];
     }
     const eventHandler = useSettersAsEventHandler(...handlers);
     const ref = useCallback((input: EventTarget): void => {
-        assert.error(
-            input && typeof input.addEventListener === "function",
-            LoggingTypes.typeError,
-            `(expected: EventTarget, received: ${typeof input}) ${useSettersAsRefEventHandler.name} ref requires an EventTarget.`,
-        );
         input.addEventListener(event, eventHandler);
     }, [event, eventHandler]);
     return ref;
