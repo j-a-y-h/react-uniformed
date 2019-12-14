@@ -1,15 +1,14 @@
 import React from "react";
-import { useForm, useSettersAsEventHandler, useConstraints } from "../src";
+import { useForm, useSettersAsEventHandler } from "../src";
 
 export default function Form() {
-  const validators = useConstraints({
-    name: { required: true, minLength: 1, maxLength: 55 },
-    email: { required: true, type: "email" },
-    phone: { pattern: /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/ },
-    website: { type: "url" },
-  });
   const { setValue, validateByName, values, errors, submit } = useForm({
-    validators,
+    constraints: {
+      name: { required: true, minLength: 1, maxLength: 55 },
+      email: { required: true, type: "email" },
+      phone: { pattern: /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/ },
+      website: { type: "url" },
+    },
     onSubmit: data => alert(JSON.stringify(data)),
   });
   const handleChange = useSettersAsEventHandler(setValue);

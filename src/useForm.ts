@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Errors, ErrorHandler } from "./useErrors";
 import { useHandlers } from "./useHandlers";
 import {
@@ -16,8 +16,9 @@ import {
     SingleValidator,
 } from "./useValidation";
 import {
-    SetValueCallback, MutableValues, PartialValues,
+    SetValueCallback, MutableValues, PartialValues, hasValue,
 } from "./useGenericValues";
+import { ConstraintValidators, SyncedConstraint, useConstraints } from "./useConstraints";
 
 export type UseFormsHook = Readonly<{
     errors: Errors | PartialValues<Validators, Error>;
@@ -37,25 +38,35 @@ export type UseFormsHook = Readonly<{
 }>
 type UseFormParameters = Readonly<{
     normalizer?: NormalizerHandler;
-    // TODO: change to initialValues
-    defaultValues?: Fields;
+    constraints?: ConstraintValidators | SyncedConstraint;
+    initialValues?: Fields;
     validators?: Validators | SingleValidator<FieldValue>;
     onSubmit: (values: Fields) => void | Promise<void>;
 }>;
 
-// TODO: rename file to useForm.ts
 // useHandlers(validateAll, onSubmit)
 export function useForm({
-    defaultValues, validators = {}, onSubmit, normalizer,
+    onSubmit,
+    initialValues,
+    normalizer,
+    validators = {},
+    constraints = {},
 }: UseFormParameters): UseFormsHook {
-    const { values, setValue, resetValues } = useFields(defaultValues, normalizer);
+    const { values, setValue, resetValues } = useFields(initialValues, normalizer);
+    const constraintsHook = useConstraints(constraints);
     const {
         touches, resetTouches, setTouch, touchField, setTouches,
     } = useTouch();
+    // picks between constraints or validators
+    const validatorsInput = useMemo(() => (typeof validators === "function" || hasValue(validators)
+        ? validators
+        : constraintsHook
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    ), []);
     // I want to decouple validator from use form
     const {
         validate, validateByName, errors, resetErrors, setError, hasErrors,
-    } = useValidation(validators);
+    } = useValidation(validatorsInput);
     const submissionValidator = useCallback(async (): Promise<Errors> => {
         const validationErrors = await validate(values);
         const newTouches = Object.keys(validationErrors).reduce((

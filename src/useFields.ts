@@ -36,7 +36,7 @@ function getResetValue(currentValue: FieldValue): FieldValue {
     case "boolean":
         return false;
     case "object":
-        return Array.isArray(currentValue) ? [] : "";
+        return Array.isArray(currentValue) ? [] : undefined;
     case "string":
     default:
         return "";
@@ -79,8 +79,9 @@ export function useFields(
     }, []);
     const resetValues = useCallback((): void => {
         setValues((currentState): Fields => {
-            const nonNullInitialValues: MutableFields = { ...initialValues } || {};
+            const nonNullInitialValues: MutableFields = { ...initialValues };
             return Object.keys(currentState).reduce((newState, key) => {
+                // if no initial value then set it to the default reset value
                 if (!({}).hasOwnProperty.call(newState, key)) {
                     // eslint-disable-next-line no-param-reassign
                     newState[key] = getResetValue(currentState[key]);
