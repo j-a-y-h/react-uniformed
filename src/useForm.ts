@@ -37,11 +37,11 @@ export type UseFormsHook = Readonly<{
   reset: () => void;
 }>
 type UseFormParameters = Readonly<{
-    normalizer?: NormalizerHandler;
-    constraints?: ConstraintValidators | SyncedConstraint;
-    initialValues?: Fields;
-    validators?: Validators | SingleValidator<FieldValue>;
-    onSubmit: (values: Fields) => void | Promise<void>;
+  normalizer?: NormalizerHandler;
+  constraints?: ConstraintValidators | SyncedConstraint;
+  initialValues?: Fields;
+  validators?: Validators | SingleValidator<FieldValue>;
+  onSubmit: (values: Fields) => void | Promise<void>;
 }>;
 
 // useHandlers(validateAll, onSubmit)

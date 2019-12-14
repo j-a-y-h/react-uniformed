@@ -4,20 +4,20 @@ import { Errors } from './useErrors';
 import { assert, LoggingTypes } from './utils';
 
 export interface SubmissionHandler {
-    (): void | Promise<void>;
+  (): void | Promise<void>;
 }
 export interface SubmitHandler {
-    (event?: SyntheticEvent): void;
+  (event?: SyntheticEvent): void;
 }
 export interface UseSubmissionProps {
-    readonly onSubmit: SubmissionHandler;
-    readonly validator: () => Promise<Errors> | Errors;
+  readonly onSubmit: SubmissionHandler;
+  readonly validator: () => Promise<Errors> | Errors;
 }
 
 export interface UseSubmissionHook {
-    readonly isSubmitting: boolean;
-    readonly submitCount: number;
-    readonly submit: SubmitHandler;
+  readonly isSubmitting: boolean;
+  readonly submitCount: number;
+  readonly submit: SubmitHandler;
 }
 
 // async handlers should return promises

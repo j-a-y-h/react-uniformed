@@ -11,35 +11,35 @@ import { FieldValue, Fields } from './useFields';
 type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
 type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
 export interface SingleValidator<T> {
-    (values: Values<T>): validSingleValidatorReturnTypes;
+  (values: Values<T>): validSingleValidatorReturnTypes;
 }
 export interface Validator {
-    (value?: FieldValue): validValidatorReturnTypes;
+  (value?: FieldValue): validValidatorReturnTypes;
 }
 export type Validators = Values<Validator>;
 export interface ValidateHandler<T, K = string> {
-    (name: K, value: T): Promise<validErrorValues>;
+  (name: K, value: T): Promise<validErrorValues>;
 }
 export interface ValidateAllHandler<T, K = Values<T>> {
-    (valuesMap: K): Promise<Errors>;
+  (valuesMap: K): Promise<Errors>;
 }
 interface UseValidatorHook<T> {
-    readonly errors: Errors;
-    readonly hasErrors: boolean;
-    readonly setError: ErrorHandler;
-    readonly validateByName: ValidateHandler<T>;
-    readonly validate: ValidateAllHandler<T>;
-    readonly isValidating: boolean;
-    readonly resetErrors: () => void;
+  readonly errors: Errors;
+  readonly hasErrors: boolean;
+  readonly setError: ErrorHandler;
+  readonly validateByName: ValidateHandler<T>;
+  readonly validate: ValidateAllHandler<T>;
+  readonly isValidating: boolean;
+  readonly resetErrors: () => void;
 }
 interface UseValidatorHookPartial<T, K> {
-    readonly errors: PartialValues<K, Error>;
-    readonly hasErrors: boolean;
-    readonly setError: ErrorHandler<keyof K>;
-    readonly validateByName: ValidateHandler<T, keyof K>;
-    readonly validate: ValidateAllHandler<T, PartialValues<K, T>>;
-    readonly isValidating: boolean;
-    readonly resetErrors: () => void;
+  readonly errors: PartialValues<K, Error>;
+  readonly hasErrors: boolean;
+  readonly setError: ErrorHandler<keyof K>;
+  readonly validateByName: ValidateHandler<T, keyof K>;
+  readonly validate: ValidateAllHandler<T, PartialValues<K, T>>;
+  readonly isValidating: boolean;
+  readonly resetErrors: () => void;
 }
 
 function defaultValidator(): validValidatorReturnTypes {
@@ -77,15 +77,15 @@ export async function validateValidators(
 }
 
 export function useValidation(
-    validator: SingleValidator<FieldValue>
+  validator: SingleValidator<FieldValue>
 ): UseValidatorHook<FieldValue>;
 
 export function useValidation<T extends Validators>(
-    validator: T
+  validator: T
 ): UseValidatorHookPartial<FieldValue, T>;
 
 export function useValidation<T extends Validators>(
-    validator: T | SingleValidator<FieldValue>
+  validator: T | SingleValidator<FieldValue>
 ): UseValidatorHookPartial<FieldValue, T> | UseValidatorHook<FieldValue>;
 
 /**

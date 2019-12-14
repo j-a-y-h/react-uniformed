@@ -14,51 +14,51 @@ type supportedTypes = 'email' | 'text' | 'url' | 'number' | 'date';
 export const supportedTypesSet = new Set(['text', 'email', 'url', 'number', 'date']);
 
 interface Constraints {
-    /**
-     * A minLength used for non number values
-     */
-    readonly minLength?: number | [number, string];
-    /**
-     * A maxLength used for non number values
-     */
-    readonly maxLength?: number | [number, string];
-    /**
-     * A min boundary used for type numbers
-     */
-    readonly min?: number | string | [number | string, string];
-    /**
-     * A max boundary used for type numbers
-     */
-    readonly max?: number | string | [number | string, string];
-    /**
-     * Determines if the field is required
-     *
-     * @default false
-     */
-    readonly required?: boolean | string | [boolean, string];
-    /**
-     * A RegExp pattern used for validation
-     */
-    readonly pattern?: RegExp | [RegExp, string];
-    /**
-     * The type of input.
-     * currently supported values are **text**, **email**, **url**.
-     * email and url types are validated using the appropriate regex
-     *
-     * @default text
-     */
-    readonly type?: supportedTypes | [string, string];
+  /**
+   * A minLength used for non number values
+   */
+  readonly minLength?: number | [number, string];
+  /**
+   * A maxLength used for non number values
+   */
+  readonly maxLength?: number | [number, string];
+  /**
+   * A min boundary used for type numbers
+   */
+  readonly min?: number | string | [number | string, string];
+  /**
+   * A max boundary used for type numbers
+   */
+  readonly max?: number | string | [number | string, string];
+  /**
+   * Determines if the field is required
+   *
+   * @default false
+   */
+  readonly required?: boolean | string | [boolean, string];
+  /**
+   * A RegExp pattern used for validation
+   */
+  readonly pattern?: RegExp | [RegExp, string];
+  /**
+   * The type of input.
+   * currently supported values are **text**, **email**, **url**.
+   * email and url types are validated using the appropriate regex
+   *
+   * @default text
+   */
+  readonly type?: supportedTypes | [string, string];
 }
 type supportedConstraints = keyof Constraints;
 type constraintValues = boolean | number | RegExp | string | Date;
 type RequiredConstraint<T extends supportedConstraints> = {
-    [P in T]-?: constraintValues;
+  [P in T]-?: constraintValues;
 };
 
 export type ConstraintValidators = Values<Constraints | Validator>;
 
 export interface SyncedConstraint {
-    (values: Fields): ConstraintValidators;
+  (values: Fields): ConstraintValidators;
 }
 
 const defaultMessage = {
@@ -259,13 +259,13 @@ function mapConstraintsToValidators(rules: ConstraintValidators): Validators {
 /* eslint-disable import/prefer-default-export */
 
 export function useConstraints<T extends ConstraintValidators>(
-    rules: T
+  rules: T
 ): ConstantValues<T, Validator>;
 
 export function useConstraints(rules: SyncedConstraint): SingleValidator<FieldValue>;
 
 export function useConstraints<T extends ConstraintValidators>(
-    rules: SyncedConstraint | T
+  rules: SyncedConstraint | T
 ): ConstantValues<T, Validator> | SingleValidator<FieldValue>;
 
 /**

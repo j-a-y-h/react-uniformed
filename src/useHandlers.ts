@@ -4,21 +4,21 @@ import {
 import { assert, LoggingTypes } from './utils';
 // TODO: switch all code to 2 spaces instead of 4
 interface Handler<T, K extends T[], Z> {
-    (...args: K): Z;
+  (...args: K): Z;
 }
 export type reactOrNativeEvent = SyntheticEvent | Event;
 type keyValueEvent<T> = [string, T, EventTarget | null];
 type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEvent<string>, void>
 interface UseEventHandlersWithRefProps {
-    readonly event?: keyof HTMLElementEventMap;
-    // TODO: change to setters to match the function signature
-    readonly handlers: eventLikeHandlers[];
+  readonly event?: keyof HTMLElementEventMap;
+  // TODO: change to setters to match the function signature
+  readonly handlers: eventLikeHandlers[];
 }
 type useEventHandlersWithRefProps<T> = T extends UseEventHandlersWithRefProps[]
-    ? [UseEventHandlersWithRefProps]
-    : eventLikeHandlers[];
+  ? [UseEventHandlersWithRefProps]
+  : eventLikeHandlers[];
 interface ReactOrNativeEventListener {
-    (event: Event | SyntheticEvent): void;
+  (event: Event | SyntheticEvent): void;
 }
 
 export function useHandlers<T, K extends T[]>(

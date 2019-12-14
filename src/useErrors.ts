@@ -5,14 +5,14 @@ import { assert, LoggingTypes } from './utils';
 export type validErrorValues = string;
 export type Errors = Values<validErrorValues>;
 export interface ErrorHandler<T = string> {
-    (name: T, error: validErrorValues): void;
+  (name: T, error: validErrorValues): void;
 }
 export interface UseErrorsHook {
-    readonly errors: Errors;
-    readonly hasErrors: boolean;
-    readonly setError: ErrorHandler;
-    readonly setErrors: (errors: Errors) => void;
-    readonly resetErrors: () => void;
+  readonly errors: Errors;
+  readonly hasErrors: boolean;
+  readonly setError: ErrorHandler;
+  readonly setErrors: (errors: Errors) => void;
+  readonly resetErrors: () => void;
 }
 
 function assertErrorType(name: string, error: validErrorValues): void {

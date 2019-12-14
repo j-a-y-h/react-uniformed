@@ -1,12 +1,12 @@
 const projectName = 'react-uniformed';
 
 export enum LoggingTypes {
-    invalidArgument = 'InvalidArgument',
-    typeError = 'TypeError',
-    constraintError = 'ConstraintError',
+  invalidArgument = 'InvalidArgument',
+  typeError = 'TypeError',
+  constraintError = 'ConstraintError',
 }
 interface Logger {
-    (message?: string, ...optionalParams: string[]): void;
+  (message?: string, ...optionalParams: string[]): void;
 }
 
 // eslint-disable-next-line import/prefer-default-export

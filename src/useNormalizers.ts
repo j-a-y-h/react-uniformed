@@ -4,17 +4,17 @@ import {
 } from './useFields';
 
 export type UseNormalizersOption = Readonly<{
-    name: string | RegExp | (string | RegExp)[];
-    normalizer: NormalizerHandler;
+  name: string | RegExp | (string | RegExp)[];
+  normalizer: NormalizerHandler;
 }>;
 
 type createNestedObjectProps = Readonly<{
-    currentValue: Fields;
-    value: FieldValue;
-    path: string[];
-    // TODO: find a better solution than any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    shadowCopy?: any;
+  currentValue: Fields;
+  value: FieldValue;
+  path: string[];
+  // TODO: find a better solution than any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  shadowCopy?: any;
 }>;
 
 function createNestedObject({

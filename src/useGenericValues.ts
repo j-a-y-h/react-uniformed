@@ -6,47 +6,47 @@ import { LoggingTypes, assert } from './utils';
 type allowableKeys = string;
 
 export interface Values<T> {
-    readonly [name: string]: T;
+  readonly [name: string]: T;
 }
 export type ConstantValues<T, V> = Readonly<{
-    [P in keyof T]: V
+  [P in keyof T]: V
 }>;
 export type PartialValues<T, V> = Readonly<Partial<{
-    [P in keyof T]: V
+  [P in keyof T]: V
 }>>;
 export interface MutableValues<T> {
-    [name: string]: T;
+  [name: string]: T;
 }
 
 interface UpdatePayload<T> {
-    name: string;
-    value: T;
+  name: string;
+  value: T;
 }
 type SetValuesCallback<T> = (currentState: Values<T>) => Values<T>;
 type ActionPayload<T> = Values<T> | UpdatePayload<T> | SetValuesCallback<T>;
 
 enum ActionTypes { update, reset }
 interface Action<T> {
-    readonly type: ActionTypes;
-    readonly payload: ActionPayload<T>;
+  readonly type: ActionTypes;
+  readonly payload: ActionPayload<T>;
 }
 
 type ReducerType<T> = Reducer<Values<T>, Action<T>>;
 export interface SetValueCallback<T> {
-    (name: allowableKeys, value: T): void;
+  (name: allowableKeys, value: T): void;
 }
 
 interface SetValues<T> {
-    (currentState: Values<T>): void;
-    (callback: SetValuesCallback<T>): void;
+  (currentState: Values<T>): void;
+  (callback: SetValuesCallback<T>): void;
 }
 
 export interface UseResetableValuesHook<T> {
-    readonly values: Values<T>;
-    readonly hasValue: boolean;
-    readonly setValue: SetValueCallback<T>;
-    readonly setValues: SetValues<T>;
-    readonly resetValues: () => void;
+  readonly values: Values<T>;
+  readonly hasValue: boolean;
+  readonly setValue: SetValueCallback<T>;
+  readonly setValues: SetValues<T>;
+  readonly resetValues: () => void;
 }
 export function hasValue<T>(values: Values<T>): boolean {
   return !values || typeof values !== 'object' || Object.keys(values).some((key): boolean => Boolean(values[key]));

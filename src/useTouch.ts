@@ -3,17 +3,17 @@ import { useGenericValues, Values } from './useGenericValues';
 
 export type Touches = Values<boolean>;
 export interface TouchHandler {
-    (name: string, touched: boolean): void;
+  (name: string, touched: boolean): void;
 }
 export interface TouchFieldHandler {
-    (name: string): void;
+  (name: string): void;
 }
 export interface UseTouchHook {
-    readonly touches: Touches;
-    readonly setTouch: TouchHandler;
-    readonly touchField: TouchFieldHandler;
-    readonly resetTouches: () => void;
-    readonly setTouches: (touches: Touches) => void;
+  readonly touches: Touches;
+  readonly setTouch: TouchHandler;
+  readonly touchField: TouchFieldHandler;
+  readonly resetTouches: () => void;
+  readonly setTouches: (touches: Touches) => void;
 }
 
 export function useTouch(): UseTouchHook {

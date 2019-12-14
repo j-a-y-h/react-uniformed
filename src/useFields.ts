@@ -7,26 +7,26 @@ import {
 export type FieldValue = string | number | boolean | undefined | null | MutableFields | any[];
 
 export type MutableFields = Partial<{
-    [key: string]: FieldValue;
+  [key: string]: FieldValue;
 }>;
 export type Fields = Readonly<MutableFields>;
 
 interface SetField {
-    (name: string, value: FieldValue, eventTarget?: EventTarget | null): void;
+  (name: string, value: FieldValue, eventTarget?: EventTarget | null): void;
 }
 export interface UseFieldsHook extends Omit<UseResetableValuesHook<FieldValue>, 'setValue'> {
-    readonly setValue: SetField;
+  readonly setValue: SetField;
 }
 
 export type NormalizeSetValue = Readonly<{
-    name: string;
-    value: FieldValue;
-    currentValues: Fields;
-    eventTarget?: EventTarget | null;
-    normalizeName: (normalizedName: string) => void;
+  name: string;
+  value: FieldValue;
+  currentValues: Fields;
+  eventTarget?: EventTarget | null;
+  normalizeName: (normalizedName: string) => void;
 }>;
 export interface NormalizerHandler {
-    (valuesUpdate: NormalizeSetValue): FieldValue;
+  (valuesUpdate: NormalizeSetValue): FieldValue;
 }
 
 function getResetValue(currentValue: FieldValue): FieldValue {
