@@ -1,7 +1,7 @@
-import { useCallback } from "react";
+import { useCallback } from 'react';
 import {
-    Fields, FieldValue, MutableFields, NormalizerHandler, NormalizeSetValue,
-} from "./useFields";
+  Fields, FieldValue, MutableFields, NormalizerHandler, NormalizeSetValue,
+} from './useFields';
 
 export type UseNormalizersOption = Readonly<{
     name: string | RegExp | (string | RegExp)[];
@@ -18,9 +18,9 @@ type createNestedObjectProps = Readonly<{
 }>;
 
 function createNestedObject({
-    currentValue, value, path, shadowCopy,
+  currentValue, value, path, shadowCopy,
 }: createNestedObjectProps): FieldValue {
-    /*
+  /*
         ex: user[0][name]
         {
             user: [
@@ -28,31 +28,31 @@ function createNestedObject({
             ]
         }
     */
-    const rawKey = path.shift();
-    if (!rawKey) {
-        return value;
+  const rawKey = path.shift();
+  if (!rawKey) {
+    return value;
+  }
+  const key = rawKey.replace(/(^\[\s*['"]?|['"]?\s*\]$)/g, '');
+  let mergedValue: MutableFields = currentValue;
+  let newIndex: string | number = key;
+  if (key !== rawKey) {
+    const arrayIndex = Number(key);
+    if (!Number.isNaN(arrayIndex)) {
+      // handle array
+      newIndex = arrayIndex;
+      mergedValue = Object.assign([], shadowCopy);
+    } else {
+      // handle object
+      mergedValue = { ...shadowCopy };
     }
-    const key = rawKey.replace(/(^\[\s*['"]?|['"]?\s*\]$)/g, "");
-    let mergedValue: MutableFields = currentValue;
-    let newIndex: string | number = key;
-    if (key !== rawKey) {
-        const arrayIndex = Number(key);
-        if (!Number.isNaN(arrayIndex)) {
-            // handle array
-            newIndex = arrayIndex;
-            mergedValue = Object.assign([], shadowCopy);
-        } else {
-            // handle object
-            mergedValue = { ...shadowCopy };
-        }
-    }
-    mergedValue[newIndex] = createNestedObject({
-        value,
-        path,
-        currentValue: mergedValue,
-        shadowCopy: shadowCopy && shadowCopy[newIndex],
-    });
-    return mergedValue;
+  }
+  mergedValue[newIndex] = createNestedObject({
+    value,
+    path,
+    currentValue: mergedValue,
+    shadowCopy: shadowCopy && shadowCopy[newIndex],
+  });
+  return mergedValue;
 }
 
 /**
@@ -81,27 +81,27 @@ function createNestedObject({
  *    {user: {"string keys with spaces": "John"}}
  */
 export function normalizeNestedObjects(): NormalizerHandler {
-    return ({
-        name, value, currentValues, normalizeName,
-    }: NormalizeSetValue): FieldValue => {
-        const nestedKeys = name.match(/(\w+|\[\w+\]|\['[^']+'\]|\["[^"]+"\])/gy);
-        const path = nestedKeys ? Array.from(nestedKeys) : [name];
-        if (path.length === 1) {
-            // abort normalization
-            return value;
-        }
-        // note: the as string is due to keys.length always being greater than 1
-        //   at this point in the code
-        const topKey = path.shift() as string;
-        const currentValue = currentValues[topKey] as Fields;
-        normalizeName(topKey);
-        return createNestedObject({
-            value,
-            path,
-            currentValue,
-            shadowCopy: currentValue,
-        });
-    };
+  return ({
+    name, value, currentValues, normalizeName,
+  }: NormalizeSetValue): FieldValue => {
+    const nestedKeys = name.match(/(\w+|\[\w+\]|\['[^']+'\]|\["[^"]+"\])/gy);
+    const path = nestedKeys ? Array.from(nestedKeys) : [name];
+    if (path.length === 1) {
+      // abort normalization
+      return value;
+    }
+    // note: the as string is due to keys.length always being greater than 1
+    //   at this point in the code
+    const topKey = path.shift() as string;
+    const currentValue = currentValues[topKey] as Fields;
+    normalizeName(topKey);
+    return createNestedObject({
+      value,
+      path,
+      currentValue,
+      shadowCopy: currentValue,
+    });
+  };
 }
 
 /**
@@ -136,37 +136,37 @@ export function normalizeNestedObjects(): NormalizerHandler {
  * )
  */
 export function useNormalizers(
-    ...normalizers: (NormalizerHandler | UseNormalizersOption)[]
+  ...normalizers: (NormalizerHandler | UseNormalizersOption)[]
 ): NormalizerHandler {
-    const normalize = useCallback(({
-        name, value, ...opts
-    }: NormalizeSetValue) => {
-        const nameMatches = (matcher: string | RegExp): boolean => (matcher instanceof RegExp
-            ? matcher.test(name)
-            : matcher === name
-        );
-        // pipe the value through the normalizers
-        return normalizers.reduce((currentValue: FieldValue, normalizerObj): FieldValue => {
-            let normalizer: NormalizerHandler | undefined;
-            if (typeof normalizerObj === "function") {
-                // apply the normalizer to all
-                normalizer = normalizerObj;
-            } else {
-                // apply to only matching names
-                const { name: names, normalizer: handler } = normalizerObj;
-                const matches = Array.isArray(names)
-                    ? names.some(nameMatches)
-                    : nameMatches(names);
-                if (matches) {
-                    // name matches so apply
-                    normalizer = handler;
-                }
-            }
-            return normalizer
-                ? normalizer({ name, value: currentValue, ...opts })
-                : currentValue;
-        }, value);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    return normalize;
+  const normalize = useCallback(({
+    name, value, ...opts
+  }: NormalizeSetValue) => {
+    const nameMatches = (matcher: string | RegExp): boolean => (matcher instanceof RegExp
+      ? matcher.test(name)
+      : matcher === name
+    );
+    // pipe the value through the normalizers
+    return normalizers.reduce((currentValue: FieldValue, normalizerObj): FieldValue => {
+      let normalizer: NormalizerHandler | undefined;
+      if (typeof normalizerObj === 'function') {
+        // apply the normalizer to all
+        normalizer = normalizerObj;
+      } else {
+        // apply to only matching names
+        const { name: names, normalizer: handler } = normalizerObj;
+        const matches = Array.isArray(names)
+          ? names.some(nameMatches)
+          : nameMatches(names);
+        if (matches) {
+          // name matches so apply
+          normalizer = handler;
+        }
+      }
+      return normalizer
+        ? normalizer({ name, value: currentValue, ...opts })
+        : currentValue;
+    }, value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return normalize;
 }
