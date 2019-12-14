@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * [`useForm`] Renamed `defaultValues` parameter to `initialValues`
+* [`useSettersAsRefEventHandler`] `event` is optional when using the hook with options.
+* [`useSettersAsRefEventHandler`] `handlers` must be called with an array of function when using the hook with options.
 
 ## [0.0.9] - 2019-09-08
 ### Added
