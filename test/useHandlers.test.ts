@@ -43,6 +43,17 @@ describe("useSettersAsRefEventHandler", () => {
     result.current(target as any);
     expect(target.addEventListener).toHaveBeenCalledTimes(1);
     expect(target.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
+    // test with the other api that uses an object for the options
+    const { result: result2 } = renderHook(() => useSettersAsRefEventHandler({
+      handlers: [jest.fn()],
+    }));
+    const target2 = {
+      addEventListener: jest.fn(),
+    };
+    // @ts-ignore
+    result2.current(target2 as any);
+    expect(target2.addEventListener).toHaveBeenCalledTimes(1);
+    expect(target2.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
   });
   it("supports any event listeners", () => {
     const { result } = renderHook(() => useSettersAsRefEventHandler({
