@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+* [`useForm`] adds `useConstraints` support via the optional `constraints` parameter
+
+### Changed
+* [`useForm`] Renamed `defaultValues` parameter to `initialValues`
+* [`useSettersAsRefEventHandler`] `event` is optional when using the hook with options.
+* [`useSettersAsRefEventHandler`] `handlers` must be called with an array of function when using the hook with options.
 
 ## [0.0.9] - 2019-09-08
 ### Added

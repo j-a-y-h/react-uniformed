@@ -1,29 +1,28 @@
 import React from "react";
-import { useForm, useSettersAsEventHandler, useConstraints } from "../src";
+import { useForm, useSettersAsEventHandler } from "../src";
 
 export default function Form() {
-    const validators = useConstraints({
-        name: {
-            required: "Name is required.",
-            minLength: [1, "Please enter a valid name."],
-            maxLength: [55, "Name is too long!"]
-        },
-        email: {
-            required: "Email is required.",
-            type: ["email", "Please enter a valid email address."]
-        },
-        phone: {
-            pattern: [
-                /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
-                "Please enter a valid phone number or leave the field blank."
-            ]
-        },
-        website: {
-            type: ["url", "Please enter a valid website url or leave the field blank."]
-        },
-    });
     const { setValue, validateByName, values, errors, submit } = useForm({
-        validators,
+        constraints: {
+            name: {
+                required: "Name is required.",
+                minLength: [1, "Please enter a valid name."],
+                maxLength: [55, "Name is too long!"]
+            },
+            email: {
+                required: "Email is required.",
+                type: ["email", "Please enter a valid email address."]
+            },
+            phone: {
+                pattern: [
+                    /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
+                    "Please enter a valid phone number or leave the field blank."
+                ]
+            },
+            website: {
+                type: ["url", "Please enter a valid website url or leave the field blank."]
+            },
+        },
         onSubmit: data => alert(JSON.stringify(data)),
     });
     const handleChange = useSettersAsEventHandler(setValue);

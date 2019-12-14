@@ -1,5 +1,5 @@
 import { renderHook } from 'react-hooks-testing-library'
-import { normalizeNestedObjects, useNormalizers } from "../src/useNormalizers";
+import { normalizeNestedObjects, useNormalizers } from "../src";
 
 describe("normalizeNestedObjects", () => {
     it("normalizes nested arrays", () => {

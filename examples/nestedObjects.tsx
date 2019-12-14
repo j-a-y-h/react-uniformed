@@ -3,7 +3,7 @@ import {useForm, useSettersAsEventHandler, normalizeNestedObjects} from "../src"
 
 export default function Form() {
   const { submit, setValue, values } = useForm({
-    defaultValues: {
+    initialValues: {
       users: [{name: "", email: ""}]
     },
     normalizer: normalizeNestedObjects(),

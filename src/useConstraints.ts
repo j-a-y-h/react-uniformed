@@ -57,7 +57,7 @@ type RequiredConstraint<T extends supportedConstraints> = {
 
 export type ConstraintValidators = Values<Constraints | Validator>;
 
-interface SyncedConstraint {
+export interface SyncedConstraint {
     (values: Fields): ConstraintValidators;
 }
 

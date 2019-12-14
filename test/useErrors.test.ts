@@ -1,5 +1,5 @@
 import { renderHook, act } from 'react-hooks-testing-library'
-import { useErrors } from "../src/useErrors"
+import { useErrors } from "../src"
 
 describe("useErrors", () => {
   it('can set errors', () => {

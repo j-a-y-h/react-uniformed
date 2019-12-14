@@ -73,24 +73,22 @@ return (
 ## Validation
 Add validation to your form by setting the `validators` property in `useForm` and start validation by calling `validateByName` or `validate`. Then read the validation state from the `errors` object.
 ```javascript
-import {useForm, useSettersAsEventHandler, useConstraints} from "react-uniformed";
-
-// Use HTML5 style validation
-const validators = useConstraints({
-    name: { required: true, minLength: 1, maxLength: 55 },
-    // email & url types are validated using HTML standard regex
-    email: { required: true, type: "email" },
-    date: {
-        // set the error message for required by using a non empty string
-        required: "Date is required",
-        type: "date",
-        // set the error message and constraint using an array
-        min: [Date.now(), "Date must be today or later"]
-    }
-});
+import {useForm, useSettersAsEventHandler} from "react-uniformed";
 
 const { setValue, validateByName, errors } = useForm({
-    validators,
+    // Use HTML5 style validation
+    constraints: {
+        name: { required: true, minLength: 1, maxLength: 55 },
+        // email & url types are validated using HTML standard regex
+        email: { required: true, type: "email" },
+        date: {
+            // set the error message for required by using a non empty string
+            required: "Date is required",
+            type: "date",
+            // set the error message and constraint using an array
+            min: [Date.now(), "Date must be today or later"]
+        }
+    },
     onSubmit: data => console.log(JSON.stringify(data)),
 });
 

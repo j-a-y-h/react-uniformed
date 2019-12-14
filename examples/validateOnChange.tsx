@@ -1,12 +1,11 @@
 import React from "react";
-import { useForm, useSettersAsEventHandler, useConstraints } from "../src";
+import { useForm, useSettersAsEventHandler } from "../src";
 
 export default function Form() {
-    const validators = useConstraints({
-        email: { required: true, type: "email" },
-    });
     const { setValue, validateByName, values, errors, submit } = useForm({
-        validators,
+        constraints: {
+            email: { required: true, type: "email" },
+        },
         onSubmit: data => alert(JSON.stringify(data)),
     });
     const handleChange = useSettersAsEventHandler(setValue, validateByName);
