@@ -70,13 +70,11 @@ export function useSettersAsRefEventHandler(
     ...args: useEventHandlersWithRefProps<UseEventHandlersWithRefProps[] | eventLikeHandlers[]>
 ): Ref<EventTarget> {
     let event: keyof HTMLElementEventMap = "change";
-    let handlers: eventLikeHandlers[];
-    if (typeof args[0] === "function") {
-        // provided a event handler list
-        handlers = args as eventLikeHandlers[];
-    } else {
-        const [options] = args;
+    // provided a event handler list
+    let handlers: eventLikeHandlers[] = args as eventLikeHandlers[];
+    if (typeof args[0] !== "function") {
         // provided an object
+        const [options] = args;
         assert.error(
             options && typeof options === "object",
             LoggingTypes.typeError,
