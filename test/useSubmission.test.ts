@@ -13,7 +13,7 @@ describe("useSubmission", () => {
         const onSubmit = jest.fn(() => { });
         let { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: async () => {
-                await sleep(500);
+                await sleep(250);
                 return { name: "test is an error" };
             },
             onSubmit,
@@ -26,7 +26,7 @@ describe("useSubmission", () => {
         });
         ({ result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: async () => {
-                await sleep(500);
+                await sleep(250);
                 return {};
             },
             onSubmit,
@@ -84,5 +84,20 @@ describe("useSubmission", () => {
         await waitForNextUpdate().then(() => {
             expect(result.current.submitCount).toBe(4);
         });
+    });
+    it("determines when submission is happening", async () => {
+        let { result, waitForNextUpdate } = renderHook(() => useSubmission({
+            // @ts-ignore
+            validator: () => ({}),
+            onSubmit: () => {},
+        }));
+        expect(result.current.isSubmitting).toBe(false);
+        act(() => {
+            result.current.submit();
+        });
+        await waitForNextUpdate();
+        expect(result.current.isSubmitting).toBe(true);
+        await waitForNextUpdate();
+        expect(result.current.isSubmitting).toBe(false);
     });
 });
