@@ -2,6 +2,8 @@ import {
   SyntheticEvent, useCallback, Ref,
 } from 'react';
 import { assert, LoggingTypes } from './utils';
+import { FieldValue, Fields } from './useFields';
+import { ValidateAllHandler } from './useValidation';
 // TODO: switch all code to 2 spaces instead of 4
 interface Handler<T, K extends T[], Z> {
   (...args: K): Z;
@@ -89,4 +91,13 @@ export function useSettersAsRefEventHandler(
     input.addEventListener(event, eventHandler);
   }, [event, eventHandler]);
   return ref;
+}
+
+export function useValidateAsSetter(validate: ValidateAllHandler<FieldValue>, values: Fields) {
+  return useCallback((name, value) => {
+    validate({
+      ...values,
+      [name]: value,
+    });
+  }, [values, validate]);
 }

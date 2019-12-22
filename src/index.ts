@@ -2,7 +2,7 @@ export { useForm } from './useForm';
 export { useFields } from './useFields';
 export { useErrors } from './useErrors';
 export {
-  useHandlers, useSettersAsEventHandler, useSettersAsRefEventHandler,
+  useHandlers, useSettersAsEventHandler, useSettersAsRefEventHandler, useValidateAsSetter
 } from './useHandlers';
 export { useSubmission } from './useSubmission';
 export { useTouch } from './useTouch';
