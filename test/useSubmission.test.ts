@@ -1,19 +1,12 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useSubmission } from '../src';
 
-function sleep(timeout: number) {
-    return new Promise((res) => {
-        setTimeout(res, timeout);
-    });
-}
-
 describe("useSubmission", () => {
     it.todo("doesn't allow invalid arguments");
     it("supports async validators", async () => {
         const onSubmit = jest.fn(() => { });
         let { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: async () => {
-                await sleep(500);
                 return { name: "test is an error" };
             },
             onSubmit,
@@ -26,7 +19,6 @@ describe("useSubmission", () => {
         expect(onSubmit.mock.calls.length).toBe(0);
         ({ result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: async () => {
-                await sleep(500);
                 return {};
             },
             onSubmit,
