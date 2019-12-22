@@ -19,9 +19,9 @@ function assertion(condition: boolean, type: LoggingTypes, message: string, logg
 
 export const assert = {
   error(condition: boolean, type: LoggingTypes, message: string): void {
-    assertion(condition, type, message, console.error);
+    assertion(condition, type, message, (...msg) => console.error(...msg));
   },
   warning(condition: boolean, type: LoggingTypes, message: string): void {
-    assertion(condition, type, message, console.warn);
+    assertion(condition, type, message, (...msg) => console.warn(...msg));
   },
 };
