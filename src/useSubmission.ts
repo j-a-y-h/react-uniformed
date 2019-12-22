@@ -2,6 +2,7 @@ import { useState, useCallback, SyntheticEvent } from 'react';
 import { hasValue } from './useGenericValues';
 import { Errors } from './useErrors';
 import { assert, LoggingTypes } from './utils';
+import { useInvokeCount } from './useUtils';
 
 export interface SubmissionHandler {
   (): void | Promise<void>;
@@ -28,9 +29,7 @@ export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseS
     `(expected: function, function, received: ${typeof validator}, ${typeof onSubmit}) ${useSubmission.name} expects the properties named validator and onSubmit to be functions.`,
   );
   const [isSubmitting, setSubmitting] = useState(false);
-  // TODO: extract submit count to a util function
-  //   that users can wrap their submit functions or submit function
-  const [submitCount, setSubmitCount] = useState(0);
+  const [wrappedOnSubmit, submitCount] = useInvokeCount(onSubmit);
   const submit = useCallback(async (event?: SyntheticEvent): Promise<void> => {
     if (event) {
       event.preventDefault();
@@ -40,10 +39,9 @@ export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseS
     setSubmitting(true);
     const errors = await validator();
     if (!hasValue(errors)) {
-      await onSubmit();
-      setSubmitCount((currentCount): number => currentCount + 1);
+      await wrappedOnSubmit();
     }
     setSubmitting(false);
-  }, [validator, onSubmit]);
+  }, [validator, wrappedOnSubmit]);
   return { isSubmitting, submitCount, submit };
 }
