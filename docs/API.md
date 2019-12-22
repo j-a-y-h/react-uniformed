@@ -4,6 +4,12 @@
 <dt><a href="#useConstraints">useConstraints(rules)</a> ⇒</dt>
 <dd><p>A declarative way of validating inputs based upon HTML 5 constraints</p>
 </dd>
+<dt><a href="#useValidateAsSetter">useValidateAsSetter(validate, values)</a> ⇒</dt>
+<dd><p>Creates a function that accepts a name and value as parameters.
+When the returned function is invoked, it will call the specified
+validate function with the specified values merged in with the name
+and value passed to the invoked function.</p>
+</dd>
 <dt><a href="#normalizeNestedObjects">normalizeNestedObjects()</a> ⇒ <code>NormalizerHandler</code></dt>
 <dd><p>Used to add nested object support to useFields or useForms. This
 function supports nesting with brackets. E.g. referencing an
@@ -67,6 +73,31 @@ being a function that accepts value as the only argument.
  // then you can bind the validator with the values so that the handler
  // can be used with events
  const handleBlur = useValidationWithValues(validator, values);
+```
+<a name="useValidateAsSetter"></a>
+
+## useValidateAsSetter(validate, values) ⇒
+Creates a function that accepts a name and value as parameters.
+When the returned function is invoked, it will call the specified
+validate function with the specified values merged in with the name
+and value passed to the invoked function.
+
+**Kind**: global function  
+**Returns**: a function that can be invoked with a name and value.  
+
+| Param | Description |
+| --- | --- |
+| validate | a validation function that accepts an object of values |
+| values | a values object |
+
+**Example**  
+```js
+// used with useForms
+const {validate, values, setValue} = useForms(...);
+const validateAll = useValidateAsSetter(validate, values);
+// now you can use validate with onChange events and keep the validation
+// up to date.
+const onChange = useSettersAsEventHandler(setValue, validateAll);
 ```
 <a name="normalizeNestedObjects"></a>
 

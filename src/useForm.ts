@@ -101,8 +101,6 @@ export function useForm({
     setValue,
     reset,
     validateByName,
-    // TODO: fix compatability with useSettersAsEventHandlers
-    // (validate is always one render behind)
     validate,
     isSubmitting,
     submit,

@@ -4,7 +4,7 @@ import {
 import { assert, LoggingTypes } from './utils';
 import { FieldValue, Fields } from './useFields';
 import { ValidateAllHandler } from './useValidation';
-// TODO: switch all code to 2 spaces instead of 4
+
 interface Handler<T, K extends T[], Z> {
   (...args: K): Z;
 }
@@ -93,6 +93,22 @@ export function useSettersAsRefEventHandler(
   return ref;
 }
 
+/**
+ * Creates a function that accepts a name and value as parameters.
+ * When the returned function is invoked, it will call the specified
+ * validate function with the specified values merged in with the name
+ * and value passed to the invoked function.
+ * @param validate a validation function that accepts an object of values
+ * @param values a values object
+ * @return a function that can be invoked with a name and value.
+ * @example
+ * // used with useForms
+ * const {validate, values, setValue} = useForms(...);
+ * const validateAll = useValidateAsSetter(validate, values);
+ * // now you can use validate with onChange events and keep the validation
+ * // up to date.
+ * const onChange = useSettersAsEventHandler(setValue, validateAll);
+ */
 export function useValidateAsSetter(
   validate: ValidateAllHandler<FieldValue>,
   values: Fields,
