@@ -84,7 +84,6 @@ describe("useSubmission", () => {
         act(() => {
             result.current.submit();
         });
-        await waitForNextUpdate();
         expect(result.current.isSubmitting).toBe(true);
         await waitForNextUpdate();
         expect(result.current.isSubmitting).toBe(false);
