@@ -74,4 +74,18 @@ describe("useSubmission", () => {
         await waitForNextUpdate();
         expect(result.current.submitCount).toBe(4);
     });
+    it("determines when submission is happening", async () => {
+        let { result, waitForNextUpdate } = renderHook(() => useSubmission({
+            // @ts-ignore
+            validator: () => ({}),
+            onSubmit: () => {},
+        }));
+        expect(result.current.isSubmitting).toBe(false);
+        act(() => {
+            result.current.submit();
+        });
+        expect(result.current.isSubmitting).toBe(true);
+        await waitForNextUpdate();
+        expect(result.current.isSubmitting).toBe(false);
+    });
 });

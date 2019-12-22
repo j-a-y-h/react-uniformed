@@ -1,7 +1,7 @@
-import { useState, useCallback, SyntheticEvent } from 'react';
+import { useCallback, SyntheticEvent } from 'react';
 import { hasValue } from './useGenericValues';
 import { Errors } from './useErrors';
-import { assert, LoggingTypes } from './utils';
+import { useInvokeCount, useInvoking } from './useFunctionUtils';
 
 export interface SubmissionHandler {
   (): void | Promise<void>;
@@ -20,26 +20,50 @@ export interface UseSubmissionHook {
   readonly submit: SubmitHandler;
 }
 
-// async handlers should return promises
+/**
+ * Handles the form submission. Calls the specified validator and only
+ * calls the onSubmit function if the validator returns error free.
+ *
+ * @param param the props the pass in
+ * @param param.validator the specified validator. If your validation logic is async,
+ * then you should return a promise in your function otherwise this won't work as expected.
+ * @param param.onSubmit the specified onSubmit handler. If your onSubmit handler is async,
+ * then you should return a promise in your function otherwise this won't work as expected.
+ * @return {{isSubmitting: boolean, submitCount: number, submit: Function}} returns a
+ * handler for onSubmit events, a count of how many times submit was called, and the
+ * state of the submission progress.
+ * @example
+ *
+ *   // this example is if you are not using the useForm hook. Note: the useForm hook
+ *   // handles all of this.
+ *
+ *   const {values} = useFields();
+ *   // bind a onSubmit handler with the current form values
+ *   const onSubmit = useCallback(() => {
+ *     console.log(values);
+ *   }, [values]);
+ *   // bind the validator with the values
+ *   const validator = useCallback(() => {
+ *     return {}; // this is saying there are no errors
+ *   }, [values]);
+ *   // create the submission handler
+ *   const { isSubmitting, submit, submitCount } = useSubmission({
+ *     onSubmit, validator
+ *   });
+ */
 export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseSubmissionHook {
-  assert.error(
-    typeof validator === 'function' && typeof onSubmit === 'function',
-    LoggingTypes.typeError,
-    `(expected: function, function, received: ${typeof validator}, ${typeof onSubmit}) ${useSubmission.name} expects the properties named validator and onSubmit to be functions.`,
-  );
-  const [isSubmitting, setSubmitting] = useState(false);
-  const [submitCount, setSubmitCount] = useState(0);
-  const submit = useCallback(async (event?: SyntheticEvent): Promise<void> => {
+  // track submission count
+  const [wrappedOnSubmit, submitCount] = useInvokeCount(onSubmit);
+  const rawSubmissionHandler = useCallback(async (event?: SyntheticEvent): Promise<void> => {
     if (event) {
       event.preventDefault();
     }
-    setSubmitting(true);
     const errors = await validator();
     if (!hasValue(errors)) {
-      await onSubmit();
-      setSubmitCount((currentCount): number => currentCount + 1);
+      await wrappedOnSubmit();
     }
-    setSubmitting(false);
-  }, [validator, onSubmit]);
+  }, [validator, wrappedOnSubmit]);
+  // track if is submitting
+  const [submit, isSubmitting] = useInvoking(rawSubmissionHandler);
   return { isSubmitting, submitCount, submit };
 }
