@@ -46,13 +46,17 @@ type UseFormParameters = Readonly<{
 
 /**
  * A hook for managing form states.
- * @param {UseFormParameters} props
- * @param {function(Fields): void | Promise<void>} props.onSubmit a callback function for form submissions
+ *
+ * @param {UseFormParameters} props the props api
+ * @param {function(Fields): void | Promise<void>} props.onSubmit
+ *  a callback function for form submissions
  * @param {Fields} props.initialValues the initial form values
- * @param {NormalizerHandler} props.normalizer a handler that translates form values before setting values
- * @param {Validators | SingleValidator<FieldValue>} props.validators the validators used to validate values
- * @param {ConstraintValidators | SyncedConstraint} props.constraints the constraints used
- * @return {UseFormsHook}
+ * @param {NormalizerHandler} props.normalizer
+ *  a handler that translates form values before setting values
+ * @param {Validators | SingleValidator<FieldValue>} props.validators
+ *  the validators used to validate values
+ * @param {ConstraintValidators | SyncedConstraint} props.constraints the constraints api
+ * @return {UseFormsHook} the APIs used to manage the state of a function.
  * @see {@link useConstraints}
  * @see {@link useValidation}
  * @see {@link useSubmission}
