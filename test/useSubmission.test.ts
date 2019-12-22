@@ -1,19 +1,12 @@
-import { renderHook, act } from 'react-hooks-testing-library';
+import { renderHook, act } from '@testing-library/react-hooks';
 import { useSubmission } from '../src';
-
-function sleep(timeout: number) {
-    return new Promise((res) => {
-        setTimeout(res, timeout);
-    });
-}
 
 describe("useSubmission", () => {
     it.todo("doesn't allow invalid arguments");
-    it("supports async validators", () => {
+    it("supports async validators", async () => {
         const onSubmit = jest.fn(() => { });
         let { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: async () => {
-                await sleep(500);
                 return { name: "test is an error" };
             },
             onSubmit,
@@ -21,13 +14,11 @@ describe("useSubmission", () => {
         act(() => {
             result.current.submit();
         });
-        waitForNextUpdate().then(() => {
-            expect(result.current.submitCount).toBe(0);
-            expect(onSubmit.mock.calls.length).toBe(0);
-        });
+        await waitForNextUpdate();
+        expect(result.current.submitCount).toBe(0);
+        expect(onSubmit.mock.calls.length).toBe(0);
         ({ result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: async () => {
-                await sleep(500);
                 return {};
             },
             onSubmit,
@@ -35,13 +26,12 @@ describe("useSubmission", () => {
         act(() => {
             result.current.submit();
         });
-        waitForNextUpdate().then(() => {
-            expect(result.current.submitCount).toBe(1);
-            expect(onSubmit.mock.calls.length).toBe(1);
-        });
+        await waitForNextUpdate();
+        expect(result.current.submitCount).toBe(1);
+        expect(onSubmit.mock.calls.length).toBe(1);
     });
     it.todo("supports async submit handlers");
-    it("only submits after the form is error free", () => {
+    it("only submits after the form is error free", async () => {
         const onSubmit = jest.fn(() => { });
         const { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: () => ({ name: "this is an error" }),
@@ -53,12 +43,11 @@ describe("useSubmission", () => {
             result.current.submit();
             result.current.submit();
         });
-        waitForNextUpdate().then(() => {
-            expect(result.current.submitCount).toBe(0);
-            expect(onSubmit.mock.calls.length).toBe(0);
-        });
+        await waitForNextUpdate();
+        expect(result.current.submitCount).toBe(0);
+        expect(onSubmit.mock.calls.length).toBe(0);
     });
-    it("calls preventDefault when submitting", () => {
+    it("calls preventDefault when submitting", async () => {
         const { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: () => ({}),
             onSubmit: () => { },
@@ -68,11 +57,10 @@ describe("useSubmission", () => {
             // @ts-ignore
             result.current.submit({ preventDefault });
         });
-        waitForNextUpdate().then(() => {
-            expect(preventDefault.mock.calls.length).toBe(1);
-        });
+        await waitForNextUpdate();
+        expect(preventDefault.mock.calls.length).toBe(1);
     });
-    it("supports a submission count", () => {
+    it("supports a submission count", async () => {
         const { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: () => ({}),
             onSubmit: () => { },
@@ -83,8 +71,21 @@ describe("useSubmission", () => {
             result.current.submit();
             result.current.submit();
         });
-        waitForNextUpdate().then(() => {
-            expect(result.current.submitCount).toBe(4);
+        await waitForNextUpdate();
+        expect(result.current.submitCount).toBe(4);
+    });
+    it("determines when submission is happening", async () => {
+        let { result, waitForNextUpdate } = renderHook(() => useSubmission({
+            // @ts-ignore
+            validator: () => ({}),
+            onSubmit: () => {},
+        }));
+        expect(result.current.isSubmitting).toBe(false);
+        act(() => {
+            result.current.submit();
         });
+        expect(result.current.isSubmitting).toBe(true);
+        await waitForNextUpdate();
+        expect(result.current.isSubmitting).toBe(false);
     });
 });

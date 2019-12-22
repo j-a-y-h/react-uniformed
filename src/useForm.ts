@@ -67,6 +67,7 @@ export function useForm({
   const {
     validate, validateByName, errors, resetErrors, setError, hasErrors,
   } = useValidation(validatorsInput);
+  // create a submission validator handler
   const submissionValidator = useCallback(async (): Promise<Errors> => {
     const validationErrors = await validate(values);
     const newTouches = Object.keys(validationErrors).reduce((
@@ -79,13 +80,16 @@ export function useForm({
     setTouches(newTouches);
     return validationErrors;
   }, [validate, values, setTouches]);
+  // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches);
+  // create a submit handler
   const handleSubmit: SubmissionHandler = useCallback(async (): Promise<void> => {
     // note: give the handler every value so that we don't have to worry about
     // it later
     await onSubmit(values);
     reset();
   }, [onSubmit, values, reset]);
+  // use submission hook
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit: handleSubmit,
     validator: submissionValidator,
