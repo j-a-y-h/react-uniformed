@@ -1,4 +1,4 @@
-import { renderHook, act } from 'react-hooks-testing-library';
+import { renderHook, act } from '@testing-library/react-hooks';
 import { useTouch } from '../src';
 
 describe("useTouch", () => {
@@ -12,12 +12,12 @@ describe("useTouch", () => {
         expect(current.touches).toMatchObject({});
     });
     it("supports setting a field to touch via a function with one parameter", async () => {
-        const { result, waitForNextUpdate } = renderHook(() => useTouch());
+        // @ts-ignore
+        const { result } = renderHook(() => useTouch());
+        expect(result.current.touches.name).toEqual(undefined);
         act(() => {
             result.current.touchField("name");
         });
-        await waitForNextUpdate().then(() => {
-            expect(result.current.touches.name).toEqual(true);
-        });
+        expect(result.current.touches.name).toEqual(true);
     });
 });
