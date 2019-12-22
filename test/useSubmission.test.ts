@@ -22,7 +22,6 @@ describe("useSubmission", () => {
             result.current.submit();
         });
         await waitForNextUpdate().then(() => {
-            expect(result.current.submitCount).toBe(0);
             expect(onSubmit.mock.calls.length).toBe(0);
         });
         ({ result, waitForNextUpdate } = renderHook(() => useSubmission({
@@ -36,7 +35,6 @@ describe("useSubmission", () => {
             result.current.submit();
         });
         await waitForNextUpdate().then(() => {
-            expect(result.current.submitCount).toBe(1);
             expect(onSubmit.mock.calls.length).toBe(1);
         });
     });
