@@ -93,7 +93,10 @@ export function useSettersAsRefEventHandler(
   return ref;
 }
 
-export function useValidateAsSetter(validate: ValidateAllHandler<FieldValue>, values: Fields) {
+export function useValidateAsSetter(
+  validate: ValidateAllHandler<FieldValue>,
+  values: Fields,
+): eventLikeHandlers {
   return useCallback((name, value) => {
     validate({
       ...values,
