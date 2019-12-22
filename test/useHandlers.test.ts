@@ -100,10 +100,11 @@ describe('useValidateAsSetter', () => {
     const { result } = renderHook(() => useValidateAsSetter(validate, {test: 66, test2: 59}));
     // @ts-ignore
     result.current();
-    expect(testValue).toContainEqual({
+    expect({
       test: 66,
       test2: 59,
-    });
+      // @ts-ignore
+    }).toMatchObject(testValue);
   });
   it('calls validate with values passed into hook', () => {
     let testValue;

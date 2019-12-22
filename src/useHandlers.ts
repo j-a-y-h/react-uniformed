@@ -98,7 +98,7 @@ export function useValidateAsSetter(
   values: Fields,
 ): eventLikeHandlers {
   return useCallback((name, value) => {
-    validate({
+    validate(!name ? values : {
       ...values,
       [name]: value,
     });
