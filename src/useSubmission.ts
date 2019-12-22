@@ -28,6 +28,7 @@ export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseS
     LoggingTypes.typeError,
     `(expected: function, function, received: ${typeof validator}, ${typeof onSubmit}) ${useSubmission.name} expects the properties named validator and onSubmit to be functions.`,
   );
+  // track submission count
   const [wrappedOnSubmit, submitCount] = useInvokeCount(onSubmit);
   const rawSubmissionHandler = useCallback(async (event?: SyntheticEvent): Promise<void> => {
     if (event) {
@@ -38,6 +39,7 @@ export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseS
       await wrappedOnSubmit();
     }
   }, [validator, wrappedOnSubmit]);
+  // track if is submitting
   const [submit, isSubmitting] = useInvoking(rawSubmissionHandler);
   return { isSubmitting, submitCount, submit };
 }
