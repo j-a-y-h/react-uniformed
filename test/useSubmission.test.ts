@@ -9,7 +9,7 @@ function sleep(timeout: number) {
 
 describe("useSubmission", () => {
     it.todo("doesn't allow invalid arguments");
-    it("supports async validators", () => {
+    it("supports async validators", async () => {
         const onSubmit = jest.fn(() => { });
         let { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: async () => {
@@ -21,7 +21,7 @@ describe("useSubmission", () => {
         act(() => {
             result.current.submit();
         });
-        waitForNextUpdate().then(() => {
+        await waitForNextUpdate().then(() => {
             expect(result.current.submitCount).toBe(0);
             expect(onSubmit.mock.calls.length).toBe(0);
         });
@@ -35,13 +35,13 @@ describe("useSubmission", () => {
         act(() => {
             result.current.submit();
         });
-        waitForNextUpdate().then(() => {
+        await waitForNextUpdate().then(() => {
             expect(result.current.submitCount).toBe(1);
             expect(onSubmit.mock.calls.length).toBe(1);
         });
     });
     it.todo("supports async submit handlers");
-    it("only submits after the form is error free", () => {
+    it("only submits after the form is error free", async () => {
         const onSubmit = jest.fn(() => { });
         const { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: () => ({ name: "this is an error" }),
@@ -53,12 +53,12 @@ describe("useSubmission", () => {
             result.current.submit();
             result.current.submit();
         });
-        waitForNextUpdate().then(() => {
+        await waitForNextUpdate().then(() => {
             expect(result.current.submitCount).toBe(0);
             expect(onSubmit.mock.calls.length).toBe(0);
         });
     });
-    it("calls preventDefault when submitting", () => {
+    it("calls preventDefault when submitting", async () => {
         const { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: () => ({}),
             onSubmit: () => { },
@@ -68,11 +68,11 @@ describe("useSubmission", () => {
             // @ts-ignore
             result.current.submit({ preventDefault });
         });
-        waitForNextUpdate().then(() => {
+        await waitForNextUpdate().then(() => {
             expect(preventDefault.mock.calls.length).toBe(1);
         });
     });
-    it("supports a submission count", () => {
+    it("supports a submission count", async () => {
         const { result, waitForNextUpdate } = renderHook(() => useSubmission({
             validator: () => ({}),
             onSubmit: () => { },
@@ -83,7 +83,7 @@ describe("useSubmission", () => {
             result.current.submit();
             result.current.submit();
         });
-        waitForNextUpdate().then(() => {
+        await waitForNextUpdate().then(() => {
             expect(result.current.submitCount).toBe(4);
         });
     });

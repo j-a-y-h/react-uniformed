@@ -11,12 +11,12 @@ describe("useTouch", () => {
         expect(typeof current.setTouches).toEqual("function");
         expect(current.touches).toMatchObject({});
     });
-    it("supports setting a field to touch via a function with one parameter", () => {
+    it("supports setting a field to touch via a function with one parameter", async () => {
         const { result, waitForNextUpdate } = renderHook(() => useTouch());
         act(() => {
             result.current.touchField("name");
         });
-        waitForNextUpdate().then(() => {
+        await waitForNextUpdate().then(() => {
             expect(result.current.touches.name).toEqual(true);
         });
     });
