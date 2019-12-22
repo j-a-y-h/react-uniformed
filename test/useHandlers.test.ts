@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks'
-import { useHandlers, useSettersAsEventHandler, useSettersAsRefEventHandler } from '../src';
+import { useHandlers, useSettersAsEventHandler, useSettersAsRefEventHandler, useValidateAsSetter } from '../src';
 
 describe("useHandlers", () => {
   it("uses one function to call n number of functions", () => {
