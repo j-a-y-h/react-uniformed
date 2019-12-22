@@ -1,8 +1,8 @@
-import { useState, useCallback, SyntheticEvent } from 'react';
+import { useCallback, SyntheticEvent } from 'react';
 import { hasValue } from './useGenericValues';
 import { Errors } from './useErrors';
 import { assert, LoggingTypes } from './utils';
-import { useInvokeCount } from './useFunctionUtils';
+import { useInvokeCount, useInvoking } from './useFunctionUtils';
 
 export interface SubmissionHandler {
   (): void | Promise<void>;
@@ -28,20 +28,16 @@ export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseS
     LoggingTypes.typeError,
     `(expected: function, function, received: ${typeof validator}, ${typeof onSubmit}) ${useSubmission.name} expects the properties named validator and onSubmit to be functions.`,
   );
-  const [isSubmitting, setSubmitting] = useState(false);
   const [wrappedOnSubmit, submitCount] = useInvokeCount(onSubmit);
-  const submit = useCallback(async (event?: SyntheticEvent): Promise<void> => {
+  const rawSubmissionHandler = useCallback(async (event?: SyntheticEvent): Promise<void> => {
     if (event) {
       event.preventDefault();
     }
-    // TODO: extract isSubmitting to a util hook that users can wrap whenever
-    //   they need it
-    setSubmitting(true);
     const errors = await validator();
     if (!hasValue(errors)) {
       await wrappedOnSubmit();
     }
-    setSubmitting(false);
   }, [validator, wrappedOnSubmit]);
+  const [submit, isSubmitting] = useInvoking(rawSubmissionHandler);
   return { isSubmitting, submitCount, submit };
 }
