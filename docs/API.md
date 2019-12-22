@@ -4,6 +4,13 @@
 <dt><a href="#useConstraints">useConstraints(rules)</a> ⇒</dt>
 <dd><p>A declarative way of validating inputs based upon HTML 5 constraints</p>
 </dd>
+<dt><a href="#useInvokeCount">useInvokeCount(fnc)</a> ⇒</dt>
+<dd><p>Counts the number of times the specified function is invoked.</p>
+</dd>
+<dt><a href="#useInvoking">useInvoking(fnc)</a> ⇒</dt>
+<dd><p>Determines if the specified function is being called. This function
+is only useful for async functions.</p>
+</dd>
 <dt><a href="#normalizeNestedObjects">normalizeNestedObjects()</a> ⇒ <code>NormalizerHandler</code></dt>
 <dd><p>Used to add nested object support to useFields or useForms. This
 function supports nesting with brackets. E.g. referencing an
@@ -14,6 +21,10 @@ value indexed at country <code>locations[country]</code>.</p>
 <dd><p>Creates a single normalizer function from the specified list of normalizers.
 note: order matters when passing normalizers. This means that the results or value
 of the first normalizer is passed to the next normalizer.</p>
+</dd>
+<dt><a href="#useSubmission">useSubmission(param)</a> ⇒ <code>Object</code></dt>
+<dd><p>Handles the form submission. Calls the specified validator and only
+calls the onSubmit function if the validator returns error free.</p>
 </dd>
 <dt><a href="#useValidation">useValidation(validator)</a> ⇒</dt>
 <dd><p>A hook for performing validation.</p>
@@ -68,6 +79,33 @@ being a function that accepts value as the only argument.
  // can be used with events
  const handleBlur = useValidationWithValues(validator, values);
 ```
+<a name="useInvokeCount"></a>
+
+## useInvokeCount(fnc) ⇒
+Counts the number of times the specified function is invoked.
+
+**Kind**: global function  
+**Returns**: an array where the first index is a function and
+the second index is the number of times the function was called.  
+
+| Param | Description |
+| --- | --- |
+| fnc | the specified function |
+
+<a name="useInvoking"></a>
+
+## useInvoking(fnc) ⇒
+Determines if the specified function is being called. This function
+is only useful for async functions.
+
+**Kind**: global function  
+**Returns**: an array where the first index is a function and
+the second index is the state of the invocation for the function.  
+
+| Param | Description |
+| --- | --- |
+| fnc | the specified function |
+
 <a name="normalizeNestedObjects"></a>
 
 ## normalizeNestedObjects() ⇒ <code>NormalizerHandler</code>
@@ -132,6 +170,42 @@ useNormalizers(
      normalizer: ({value}) => !value ? value : value.toLowerCase(),
    }
 )
+```
+<a name="useSubmission"></a>
+
+## useSubmission(param) ⇒ <code>Object</code>
+Handles the form submission. Calls the specified validator and only
+calls the onSubmit function if the validator returns error free.
+
+**Kind**: global function  
+**Returns**: <code>Object</code> - returns a
+handler for onSubmit events, a count of how many times submit was called, and the
+state of the submission progress.  
+
+| Param | Description |
+| --- | --- |
+| param |  |
+| param.validator | the specified validator. If your validation logic is async, then you should return a promise in your function otherwise this won't work as expected. |
+| param.onSubmit | the specified onSubmit handler. If your onSubmit handler is async, then you should return a promise in your function otherwise this won't work as expected. |
+
+**Example**  
+```js
+// this example is if you are not using the useForm hook. Note: the useForm hook
+  // handles all of this.
+
+  const {values} = useFields();
+  // bind a onSubmit handler with the current form values
+  const onSubmit = useCallback(() => {
+    console.log(values);
+  }, [values]);
+  // bind the validator with the values
+  const validator = useCallback(() => {
+    return {}; // this is saying there are no errors
+  }, [values]);
+  // create the submission handler
+  const { isSubmitting, submit, submitCount } = useSubmission({
+    onSubmit, validator
+  });
 ```
 <a name="useValidation"></a>
 
