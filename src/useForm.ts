@@ -44,7 +44,59 @@ type UseFormParameters = Readonly<{
   onSubmit: (values: Fields) => void | Promise<void>;
 }>;
 
-// useHandlers(validateAll, onSubmit)
+/**
+ * A hook for managing form states.
+ * @param {UseFormParameters} props
+ * @param {function(Fields): void | Promise<void>} props.onSubmit a callback function for form submissions
+ * @param {Fields} props.initialValues the initial form values
+ * @param {NormalizerHandler} props.normalizer a handler that translates form values before setting values
+ * @param {Validators | SingleValidator<FieldValue>} props.validators the validators used to validate values
+ * @param {ConstraintValidators | SyncedConstraint} props.constraints the constraints used
+ * @return {UseFormsHook}
+ * @see {@link useConstraints}
+ * @see {@link useValidation}
+ * @see {@link useSubmission}
+ * @see {@link useFields}
+ * @see {@link useSettersAsEventHandler}
+ * @see {@link useSettersAsRefEventHandler}
+ * @see {@link useValidateAsSetter}
+ * @example
+ *
+ * const { submit, setValue, values } = useForm({
+ *   onSubmit: data => alert(JSON.stringify(data))
+ * });
+ * const handleChange = useSettersAsEventHandler(setValue);
+ *
+ * // jsx
+ * <form onSubmit={submit}>
+ *    <input
+ *       name="name"
+ *       value={values.name}
+ *       onChange={handleChange}
+ *    />
+ * </form>
+ *
+ * @example
+ * // using validate in change events
+ *
+ * const { submit, setValue, validate, values } = useForm({
+ *   onSubmit: data => alert(JSON.stringify(data))
+ * });
+ * // Although this will work, you should avoid validating all inputs on change b/c
+ * // it may cost you in performance.
+ * const validateAllOnChange = useValidateAsSetter(validate, values);
+ * // this will set the value of inputs on change and validate all form inputs
+ * const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
+ *
+ * // jsx
+ * <form onSubmit={submit}>
+ *   <input
+ *     name="name"
+ *     value={values.name}
+ *     onChange={handleChange}
+ *   />
+ * </form>
+ */
 export function useForm({
   onSubmit,
   initialValues,

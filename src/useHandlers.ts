@@ -98,9 +98,9 @@ export function useSettersAsRefEventHandler(
  * When the returned function is invoked, it will call the specified
  * validate function with the specified values merged in with the name
  * and value passed to the invoked function.
- * @param validate a validation function that accepts an object of values
- * @param values a values object
- * @return a function that can be invoked with a name and value.
+ * @param {ValidateAllHandler<FieldValue>} validate a validation function that accepts an object of values
+ * @param {Fields} values a values object
+ * @return {eventLikeHandlers} a function that can be invoked with a name and value.
  * @example
  * // used with useForms
  * const {validate, values, setValue} = useForms(...);
