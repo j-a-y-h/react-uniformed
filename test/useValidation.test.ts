@@ -12,20 +12,18 @@ describe("useValidation", () => {
         act(() => {
             result.current.validateByName("name", "");
         });
-        waitForNextUpdate().then(() => {
-            expect(result.current.errors.name).toEqual(ERROR);
-        });
+        await waitForNextUpdate();
+        expect(result.current.errors.name).toEqual(ERROR);
     });
-    it("returns validate", () => {
+    it("returns validate", async () => {
         const { result, waitForNextUpdate } = renderHook(() => useValidation({
             name: () => ERROR,
         }));
         act(() => {
             result.current.validate({ name: "asfdkasjdkl" });
         });
-        waitForNextUpdate().then(() => {
-            expect(result.current.errors.name).toEqual(ERROR);
-        });
+        await waitForNextUpdate();
+        expect(result.current.errors.name).toEqual(ERROR);
     });
     it("accepts a validation function", async () => {
         const { result, waitForNextUpdate } = renderHook(() => useValidation((values) => {
