@@ -4,28 +4,34 @@
 		"es6": true
 	},
 	"extends":  [
+		"eslint:recommended",
         "airbnb",
         "plugin:import/errors",
         "plugin:import/warnings",
-        "plugin:import/typescript",
+		"plugin:import/typescript",
+		"plugin:@typescript-eslint/eslint-recommended",
 		"plugin:@typescript-eslint/recommended",
+		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"plugin:jsdoc/recommended"
     ],
 	"globals": {
 		"Atomics": "readonly",
 		"SharedArrayBuffer": "readonly"
 	},
+	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaFeatures": {
 			"jsx": true
 		},
 		"ecmaVersion": 2018,
-		"sourceType": "module"
+		"sourceType": "module",
+		"project": "./tsconfig.json"
 	},
 	"plugins": [
 		"react",
 		"react-hooks",
-		"jsdoc"
+		"jsdoc",
+		"@typescript-eslint"
 	],
 	"settings": {
 		"jsdoc": {
@@ -35,17 +41,17 @@
         }
 	},
 	"rules": {
-		"indent": ["error", 4],
+		"indent": ["error", 2],
 		"jsdoc/require-jsdoc": "off",
 		"jsdoc/require-param-type": "off",
 		"jsdoc/require-returns-type": "off",
 		"jsdoc/no-undefined-types": "off",
 		"import/prefer-default-export": "off",
 		"react-hooks/rules-of-hooks": "error",
-		"react-hooks/exhaustive-deps": "warn",
+		"react-hooks/exhaustive-deps": "error",
 		"@typescript-eslint/explicit-function-return-type": "error",
 		"@typescript-eslint/no-explicit-any": "error",
-		"quotes": ["error", "double", {
+		"quotes": ["error", "single", {
 			"avoidEscape": true
 		}],
 		"no-shadow": ["error", {
