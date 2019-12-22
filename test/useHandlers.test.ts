@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks'
-import { useHandlers, useSettersAsEventHandler, useSettersAsRefEventHandler } from '../src';
+import { useHandlers, useSettersAsEventHandler, useSettersAsRefEventHandler, useValidateAsSetter } from '../src';
 
 describe("useHandlers", () => {
   it("uses one function to call n number of functions", () => {
@@ -88,5 +88,45 @@ describe("useSettersAsRefEventHandler", () => {
     // @ts-ignore
     result.current(target as any);
     expect(argumentsPassed).toEqual([name, value, target, name, value, target]);
+  });
+});
+
+describe('useValidateAsSetter', () => {
+  it('supports calls without function parameters', () => {
+    let testValue;
+    const validate: any = (val: any) => {
+      testValue = val;
+    };
+    const { result } = renderHook(() => useValidateAsSetter(validate, {test: 66, test2: 59}));
+    // @ts-ignore
+    result.current();
+    expect({
+      test: 66,
+      test2: 59,
+      // @ts-ignore
+    }).toMatchObject(testValue);
+  });
+  it('calls validate with values passed into hook', () => {
+    let testValue;
+    const validate: any = (val: any) => {
+      testValue = val;
+    };
+    const { result } = renderHook(() => useValidateAsSetter(validate, {test: 66, test2: 59}));
+    // @ts-ignore
+    result.current("dont-test", 7);
+    expect(testValue).toMatchObject({
+      test: 66,
+      test2: 59,
+    });
+  });
+  it('calls validate with value from the function param', () => {
+    let testValue;
+    const validate: any = ({ test }: any) => {
+      testValue = test;
+    };
+    const { result } = renderHook(() => useValidateAsSetter(validate, {test: 66}));
+    // @ts-ignore
+    result.current("test", 7);
+    expect(testValue).toEqual(7);
   });
 });

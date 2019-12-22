@@ -2,7 +2,9 @@ import {
   SyntheticEvent, useCallback, Ref,
 } from 'react';
 import { assert, LoggingTypes } from './utils';
-// TODO: switch all code to 2 spaces instead of 4
+import { FieldValue, Fields } from './useFields';
+import { ValidateAllHandler } from './useValidation';
+
 interface Handler<T, K extends T[], Z> {
   (...args: K): Z;
 }
@@ -89,4 +91,36 @@ export function useSettersAsRefEventHandler(
     input.addEventListener(event, eventHandler);
   }, [event, eventHandler]);
   return ref;
+}
+
+/**
+ * Creates a function that accepts a name and value as parameters.
+ * When the returned function is invoked, it will call the specified
+ * validate function with the specified values merged in with the name
+ * and value passed to the invoked function.
+ *
+ * @param {ValidateAllHandler<FieldValue>} validate
+ *  a validation function that accepts an object of values
+ * @param {Fields} values a values object
+ * @return {eventLikeHandlers} a function that can be invoked with a name and value.
+ * @see {@link useSettersAsEventHandler}
+ * @see {@link useSettersAsRefEventHandler}
+ * @example
+ * // used with useForms
+ * const {validate, values, setValue} = useForms(...);
+ * const validateAll = useValidateAsSetter(validate, values);
+ * // now you can use validate with onChange events and keep the validation
+ * // up to date.
+ * const onChange = useSettersAsEventHandler(setValue, validateAll);
+ */
+export function useValidateAsSetter(
+  validate: ValidateAllHandler<FieldValue>,
+  values: Fields,
+): eventLikeHandlers {
+  return useCallback((name, value) => {
+    validate(!name ? values : {
+      ...values,
+      [name]: value,
+    });
+  }, [values, validate]);
 }

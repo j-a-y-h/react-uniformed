@@ -4,12 +4,21 @@
 <dt><a href="#useConstraints">useConstraints(rules)</a> ⇒</dt>
 <dd><p>A declarative way of validating inputs based upon HTML 5 constraints</p>
 </dd>
+<dt><a href="#useForm">useForm(props)</a> ⇒ <code>UseFormsHook</code></dt>
+<dd><p>A hook for managing form states.</p>
+</dd>
 <dt><a href="#useInvokeCount">useInvokeCount(fnc)</a> ⇒ <code>Array.&lt;function(), number&gt;</code></dt>
 <dd><p>Counts the number of times the specified function is invoked.</p>
 </dd>
 <dt><a href="#useInvoking">useInvoking(fnc)</a> ⇒ <code>Array.&lt;function(), boolean&gt;</code></dt>
 <dd><p>Determines if the specified function is being called. This function
 is only useful for async functions.</p>
+</dd>
+<dt><a href="#useValidateAsSetter">useValidateAsSetter(validate, values)</a> ⇒ <code>eventLikeHandlers</code></dt>
+<dd><p>Creates a function that accepts a name and value as parameters.
+When the returned function is invoked, it will call the specified
+validate function with the specified values merged in with the name
+and value passed to the invoked function.</p>
 </dd>
 <dt><a href="#normalizeNestedObjects">normalizeNestedObjects()</a> ⇒ <code>NormalizerHandler</code></dt>
 <dd><p>Used to add nested object support to useFields or useForms. This
@@ -79,6 +88,70 @@ being a function that accepts value as the only argument.
  // can be used with events
  const handleBlur = useValidationWithValues(validator, values);
 ```
+<a name="useForm"></a>
+
+## useForm(props) ⇒ <code>UseFormsHook</code>
+A hook for managing form states.
+
+**Kind**: global function  
+**See**
+
+- [useConstraints](#useConstraints)
+- [useValidation](#useValidation)
+- [useSubmission](#useSubmission)
+- [useFields](useFields)
+- [useSettersAsEventHandler](useSettersAsEventHandler)
+- [useSettersAsRefEventHandler](useSettersAsRefEventHandler)
+- [useValidateAsSetter](#useValidateAsSetter)
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| props | <code>UseFormParameters</code> |  |
+| props.onSubmit | <code>function</code> | a callback function for form submissions |
+| props.initialValues | <code>Fields</code> | the initial form values |
+| props.normalizer | <code>NormalizerHandler</code> | a handler that translates form values before setting values |
+| props.validators | <code>Validators</code> \| <code>SingleValidator.&lt;FieldValue&gt;</code> | the validators used to validate values |
+| props.constraints | <code>ConstraintValidators</code> \| <code>SyncedConstraint</code> | the constraints used |
+
+**Example**  
+```js
+const { submit, setValue, values } = useForm({
+  onSubmit: data => alert(JSON.stringify(data))
+});
+const handleChange = useSettersAsEventHandler(setValue);
+
+// jsx
+<form onSubmit={submit}>
+   <input
+      name="name"
+      value={values.name}
+      onChange={handleChange}
+   />
+</form>
+```
+**Example**  
+```js
+// using validate in change events
+
+const { submit, setValue, validate, values } = useForm({
+  onSubmit: data => alert(JSON.stringify(data))
+});
+// Although this will work, you should avoid validating all inputs on change b/c
+// it may cost you in performance.
+const validateAllOnChange = useValidateAsSetter(validate, values);
+// this will set the value of inputs on change and validate all form inputs
+const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
+
+// jsx
+<form onSubmit={submit}>
+  <input
+    name="name"
+    value={values.name}
+    onChange={handleChange}
+  />
+</form>
+```
 <a name="useInvokeCount"></a>
 
 ## useInvokeCount(fnc) ⇒ <code>Array.&lt;function(), number&gt;</code>
@@ -106,6 +179,31 @@ the second index is the state of the invocation for the function.
 | --- | --- |
 | fnc | the specified function |
 
+<a name="useValidateAsSetter"></a>
+
+## useValidateAsSetter(validate, values) ⇒ <code>eventLikeHandlers</code>
+Creates a function that accepts a name and value as parameters.
+When the returned function is invoked, it will call the specified
+validate function with the specified values merged in with the name
+and value passed to the invoked function.
+
+**Kind**: global function  
+**Returns**: <code>eventLikeHandlers</code> - a function that can be invoked with a name and value.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| validate | <code>ValidateAllHandler.&lt;FieldValue&gt;</code> | a validation function that accepts an object of values |
+| values | <code>Fields</code> | a values object |
+
+**Example**  
+```js
+// used with useForms
+const {validate, values, setValue} = useForms(...);
+const validateAll = useValidateAsSetter(validate, values);
+// now you can use validate with onChange events and keep the validation
+// up to date.
+const onChange = useSettersAsEventHandler(setValue, validateAll);
+```
 <a name="normalizeNestedObjects"></a>
 
 ## normalizeNestedObjects() ⇒ <code>NormalizerHandler</code>
