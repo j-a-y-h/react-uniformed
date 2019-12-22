@@ -4,10 +4,10 @@
 <dt><a href="#useConstraints">useConstraints(rules)</a> ⇒</dt>
 <dd><p>A declarative way of validating inputs based upon HTML 5 constraints</p>
 </dd>
-<dt><a href="#useInvokeCount">useInvokeCount(fnc)</a> ⇒</dt>
+<dt><a href="#useInvokeCount">useInvokeCount(fnc)</a> ⇒ <code>Array.&lt;function(), number&gt;</code></dt>
 <dd><p>Counts the number of times the specified function is invoked.</p>
 </dd>
-<dt><a href="#useInvoking">useInvoking(fnc)</a> ⇒</dt>
+<dt><a href="#useInvoking">useInvoking(fnc)</a> ⇒ <code>Array.&lt;function(), boolean&gt;</code></dt>
 <dd><p>Determines if the specified function is being called. This function
 is only useful for async functions.</p>
 </dd>
@@ -81,11 +81,11 @@ being a function that accepts value as the only argument.
 ```
 <a name="useInvokeCount"></a>
 
-## useInvokeCount(fnc) ⇒
+## useInvokeCount(fnc) ⇒ <code>Array.&lt;function(), number&gt;</code>
 Counts the number of times the specified function is invoked.
 
 **Kind**: global function  
-**Returns**: an array where the first index is a function and
+**Returns**: <code>Array.&lt;function(), number&gt;</code> - an array where the first index is a function and
 the second index is the number of times the function was called.  
 
 | Param | Description |
@@ -94,12 +94,12 @@ the second index is the number of times the function was called.
 
 <a name="useInvoking"></a>
 
-## useInvoking(fnc) ⇒
+## useInvoking(fnc) ⇒ <code>Array.&lt;function(), boolean&gt;</code>
 Determines if the specified function is being called. This function
 is only useful for async functions.
 
 **Kind**: global function  
-**Returns**: an array where the first index is a function and
+**Returns**: <code>Array.&lt;function(), boolean&gt;</code> - an array where the first index is a function and
 the second index is the state of the invocation for the function.  
 
 | Param | Description |
@@ -184,7 +184,7 @@ state of the submission progress.
 
 | Param | Description |
 | --- | --- |
-| param |  |
+| param | the props the pass in |
 | param.validator | the specified validator. If your validation logic is async, then you should return a promise in your function otherwise this won't work as expected. |
 | param.onSubmit | the specified onSubmit handler. If your onSubmit handler is async, then you should return a promise in your function otherwise this won't work as expected. |
 

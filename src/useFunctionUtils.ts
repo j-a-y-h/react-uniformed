@@ -2,8 +2,9 @@ import { useState, useCallback } from 'react';
 
 /**
  * Counts the number of times the specified function is invoked.
+ *
  * @param fnc the specified function
- * @return an array where the first index is a function and
+ * @return {Array<Function, number>} an array where the first index is a function and
  * the second index is the number of times the function was called.
  */
 export function useInvokeCount<T, K>(fnc: (...args: T[]) => K): [(...args: T[]) => K, number] {
@@ -18,8 +19,9 @@ export function useInvokeCount<T, K>(fnc: (...args: T[]) => K): [(...args: T[]) 
 /**
  * Determines if the specified function is being called. This function
  * is only useful for async functions.
+ *
  * @param fnc the specified function
- * @return an array where the first index is a function and
+ * @return {Array<Function, boolean>} an array where the first index is a function and
  * the second index is the state of the invocation for the function.
  */
 export function useInvoking<T, K>(

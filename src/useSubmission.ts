@@ -23,15 +23,17 @@ export interface UseSubmissionHook {
 /**
  * Handles the form submission. Calls the specified validator and only
  * calls the onSubmit function if the validator returns error free.
- * @param param
+ *
+ * @param param the props the pass in
  * @param param.validator the specified validator. If your validation logic is async,
  * then you should return a promise in your function otherwise this won't work as expected.
  * @param param.onSubmit the specified onSubmit handler. If your onSubmit handler is async,
  * then you should return a promise in your function otherwise this won't work as expected.
- * @return {{isSubmitting: boolean, submitCount: number, submit: function}} returns a
+ * @return {{isSubmitting: boolean, submitCount: number, submit: Function}} returns a
  * handler for onSubmit events, a count of how many times submit was called, and the
  * state of the submission progress.
  * @example
+ *
  *   // this example is if you are not using the useForm hook. Note: the useForm hook
  *   // handles all of this.
  *
