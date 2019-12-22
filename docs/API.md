@@ -4,17 +4,18 @@
 <dt><a href="#useConstraints">useConstraints(rules)</a> ⇒</dt>
 <dd><p>A declarative way of validating inputs based upon HTML 5 constraints</p>
 </dd>
-<dt><a href="#useValidateAsSetter">useValidateAsSetter(validate, values)</a> ⇒</dt>
-<dd><p>Creates a function that accepts a name and value as parameters.
-When the returned function is invoked, it will call the specified
-validate function with the specified values merged in with the name
-and value passed to the invoked function.</p>
 <dt><a href="#useInvokeCount">useInvokeCount(fnc)</a> ⇒ <code>Array.&lt;function(), number&gt;</code></dt>
 <dd><p>Counts the number of times the specified function is invoked.</p>
 </dd>
 <dt><a href="#useInvoking">useInvoking(fnc)</a> ⇒ <code>Array.&lt;function(), boolean&gt;</code></dt>
 <dd><p>Determines if the specified function is being called. This function
 is only useful for async functions.</p>
+</dd>
+<dt><a href="#useValidateAsSetter">useValidateAsSetter(validate, values)</a> ⇒</dt>
+<dd><p>Creates a function that accepts a name and value as parameters.
+When the returned function is invoked, it will call the specified
+validate function with the specified values merged in with the name
+and value passed to the invoked function.</p>
 </dd>
 <dt><a href="#normalizeNestedObjects">normalizeNestedObjects()</a> ⇒ <code>NormalizerHandler</code></dt>
 <dd><p>Used to add nested object support to useFields or useForms. This
@@ -41,15 +42,15 @@ calls the onSubmit function if the validator returns error free.</p>
 ## useConstraints(rules) ⇒
 A declarative way of validating inputs based upon HTML 5 constraints
 
-**Kind**: global function
+**Kind**: global function  
 **Returns**: maps the rules to an object map with the value
-being a function that accepts value as the only argument.
+being a function that accepts value as the only argument.  
 
 | Param | Description |
 | --- | --- |
 | rules | an object mapping that consist of HTML5ValidatorRules as value or validator function that accepts value as the only argument. |
 
-**Example**
+**Example**  
 ```js
 // BASIC
  const validator = useConstraints({
@@ -84,39 +85,14 @@ being a function that accepts value as the only argument.
  // can be used with events
  const handleBlur = useValidationWithValues(validator, values);
 ```
-<a name="useValidateAsSetter"></a>
-
-## useValidateAsSetter(validate, values) ⇒
-Creates a function that accepts a name and value as parameters.
-When the returned function is invoked, it will call the specified
-validate function with the specified values merged in with the name
-and value passed to the invoked function.
-
-**Kind**: global function
-**Returns**: a function that can be invoked with a name and value.
-
-| Param | Description |
-| --- | --- |
-| validate | a validation function that accepts an object of values |
-| values | a values object |
-
-**Example**
-```js
-// used with useForms
-const {validate, values, setValue} = useForms(...);
-const validateAll = useValidateAsSetter(validate, values);
-// now you can use validate with onChange events and keep the validation
-// up to date.
-const onChange = useSettersAsEventHandler(setValue, validateAll);
-```
 <a name="useInvokeCount"></a>
 
 ## useInvokeCount(fnc) ⇒ <code>Array.&lt;function(), number&gt;</code>
 Counts the number of times the specified function is invoked.
 
-**Kind**: global function
+**Kind**: global function  
 **Returns**: <code>Array.&lt;function(), number&gt;</code> - an array where the first index is a function and
-the second index is the number of times the function was called.
+the second index is the number of times the function was called.  
 
 | Param | Description |
 | --- | --- |
@@ -128,14 +104,39 @@ the second index is the number of times the function was called.
 Determines if the specified function is being called. This function
 is only useful for async functions.
 
-**Kind**: global function
+**Kind**: global function  
 **Returns**: <code>Array.&lt;function(), boolean&gt;</code> - an array where the first index is a function and
-the second index is the state of the invocation for the function.
+the second index is the state of the invocation for the function.  
 
 | Param | Description |
 | --- | --- |
 | fnc | the specified function |
 
+<a name="useValidateAsSetter"></a>
+
+## useValidateAsSetter(validate, values) ⇒
+Creates a function that accepts a name and value as parameters.
+When the returned function is invoked, it will call the specified
+validate function with the specified values merged in with the name
+and value passed to the invoked function.
+
+**Kind**: global function  
+**Returns**: a function that can be invoked with a name and value.  
+
+| Param | Description |
+| --- | --- |
+| validate | a validation function that accepts an object of values |
+| values | a values object |
+
+**Example**  
+```js
+// used with useForms
+const {validate, values, setValue} = useForms(...);
+const validateAll = useValidateAsSetter(validate, values);
+// now you can use validate with onChange events and keep the validation
+// up to date.
+const onChange = useSettersAsEventHandler(setValue, validateAll);
+```
 <a name="normalizeNestedObjects"></a>
 
 ## normalizeNestedObjects() ⇒ <code>NormalizerHandler</code>
@@ -144,9 +145,9 @@ function supports nesting with brackets. E.g. referencing an
 array value indexed at 0 `arrayName[0]`; referencing an object
 value indexed at country `locations[country]`.
 
-**Kind**: global function
-**Returns**: <code>NormalizerHandler</code> - Returns a normalizer handler
-**Example**
+**Kind**: global function  
+**Returns**: <code>NormalizerHandler</code> - Returns a normalizer handler  
+**Example**  
 ```js
 // jsx
    <input name="users[0]" value="John">
@@ -172,14 +173,14 @@ Creates a single normalizer function from the specified list of normalizers.
 note: order matters when passing normalizers. This means that the results or value
 of the first normalizer is passed to the next normalizer.
 
-**Kind**: global function
-**Returns**: <code>NormalizerHandler</code> - returns a normalizer handler
+**Kind**: global function  
+**Returns**: <code>NormalizerHandler</code> - returns a normalizer handler  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | normalizers | <code>Array.&lt;(NormalizerHandler\|UseNormalizersOption)&gt;</code> | if you pass a normalizer handler then it will apply to all fields. You can specify a specific list of fields by passing in |
 
-**Example**
+**Example**  
 ```js
 useNormalizers(
    // apply to all fields
@@ -207,10 +208,10 @@ useNormalizers(
 Handles the form submission. Calls the specified validator and only
 calls the onSubmit function if the validator returns error free.
 
-**Kind**: global function
+**Kind**: global function  
 **Returns**: <code>Object</code> - returns a
 handler for onSubmit events, a count of how many times submit was called, and the
-state of the submission progress.
+state of the submission progress.  
 
 | Param | Description |
 | --- | --- |
@@ -218,7 +219,7 @@ state of the submission progress.
 | param.validator | the specified validator. If your validation logic is async, then you should return a promise in your function otherwise this won't work as expected. |
 | param.onSubmit | the specified onSubmit handler. If your onSubmit handler is async, then you should return a promise in your function otherwise this won't work as expected. |
 
-**Example**
+**Example**  
 ```js
 // this example is if you are not using the useForm hook. Note: the useForm hook
   // handles all of this.
@@ -242,14 +243,14 @@ state of the submission progress.
 ## useValidation(validator) ⇒
 A hook for performing validation.
 
-**Kind**: global function
-**Returns**: returns an useValidation object
+**Kind**: global function  
+**Returns**: returns an useValidation object  
 
 | Param | Description |
 | --- | --- |
 | validator | A validation map or a validation function. |
 
-**Example**
+**Example**  
 ```js
 // validate using validation maps
 const {validateByName, errors} = useValidation({
