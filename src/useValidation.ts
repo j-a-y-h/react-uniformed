@@ -59,16 +59,18 @@ function assertValidator(functionName: string, name: string, validator: Function
 export async function validateValidators(
   names: string[], validators: Validators, values: Fields,
 ): Promise<Errors> {
+  // validate all fields by name
   const errorsPromiseMap = names
-    .map(async (name): Promise<[string, validValidatorReturnTypes]> => {
+    .map(async (name): Promise<[string, validErrorValues]> => {
       const handler = validators[name] || defaultValidator;
       assertValidator(validateValidators.name, name, handler);
       const currentErrors = await handler(values[name]);
       return [name, currentErrors];
     });
   const errorsMap = await Promise.all(errorsPromiseMap);
+  // create an Errors object from the errorsMap
   return errorsMap.reduce((
-    objectMap: MutableValues<validValidatorReturnTypes>, [name, error],
+    objectMap: MutableValues<validErrorValues>, [name, error],
   ): Errors => {
     // eslint-disable-next-line no-param-reassign
     objectMap[name] = error;
