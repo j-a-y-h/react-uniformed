@@ -3,6 +3,7 @@
   "version": "0.0.11",
   "description": "Scalable forms for React using hooks",
   "main": "dist/react-uniformed.js",
+  "types": "dist/index.d.ts",
   "author": "Jay Harris <jay@sourware.com>",
   "license": "MIT",
   "private": false,
