@@ -36,7 +36,8 @@
     "build:prod": "yarn test:stability && yarn bundle:prod",
     "build:js": "yarn clean && yarn tsc ./src/index.ts --target ESNEXT --outdir dist &> /dev/null",
     "build:docs:api": "yarn build:js || jsdoc2md ./dist/use*.js > ./docs/API.md",
-    "build:examples": "yarn build --config ./webpack.examples.config.js && copyfiles -f examples/index.html dist"
+    "build:examples": "yarn build --config ./webpack.examples.config.js && copyfiles -f examples/index.html dist",
+    "storybook": "yarn start-storybook"
   },
   "peerDependencies": {
     "react": "^16.8.0"
@@ -47,14 +48,21 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.3.3",
+    "@storybook/addon-actions": "^5.3.9",
+    "@storybook/addon-console": "^1.2.1",
+    "@storybook/addon-info": "^5.3.9",
+    "@storybook/core": "^5.3.9",
+    "@storybook/react": "^5.3.9",
     "@testing-library/react-hooks": "^3.2.1",
     "@types/jest": "^24.0.17",
     "@types/react": "^16.8.20",
     "@types/react-dom": "^16.8.5",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.18.0",
+    "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.6",
     "babel-polyfill": "^6.26.0",
+    "babel-preset-react-app": "^9.1.1",
     "bundlesize": "^0.18.0",
     "copyfiles": "^2.1.1",
     "coveralls": "^3.0.6",
