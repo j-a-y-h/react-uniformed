@@ -1,6 +1,6 @@
-import { useCallback, SyntheticEvent } from 'react';
-import { hasValue } from './useGenericValues';
-import { Errors } from './useErrors';
+import {
+  useCallback, SyntheticEvent, useState, useEffect,
+} from 'react';
 import { useInvokeCount, useInvoking } from './useFunctionUtils';
 
 export interface SubmissionHandler {
@@ -11,7 +11,12 @@ export interface SubmitHandler {
 }
 export interface UseSubmissionProps {
   readonly onSubmit: SubmissionHandler;
-  readonly validator: () => Promise<Errors> | Errors;
+  readonly validator: () => Promise<void> | void;
+  /**
+   * Determines if submission should be disabled. Generally,
+   * you want to disable if there are errors.
+   */
+  readonly disabled: boolean;
 }
 
 export interface UseSubmissionHook {
@@ -51,19 +56,41 @@ export interface UseSubmissionHook {
  *     onSubmit, validator
  *   });
  */
-export function useSubmission({ validator, onSubmit }: UseSubmissionProps): UseSubmissionHook {
+export function useSubmission({
+  validator, onSubmit, disabled,
+}: UseSubmissionProps): UseSubmissionHook {
+  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
+  const [isWaitingOnValidation, setIsWaitingOnValidation] = useState(false);
   // track submission count
-  const [wrappedOnSubmit, submitCount] = useInvokeCount(onSubmit);
-  const rawSubmissionHandler = useCallback(async (event?: SyntheticEvent): Promise<void> => {
+  const [submitWithInvokeCount, submitCount] = useInvokeCount(onSubmit);
+  const [submitWithInvokingTracker, isSubmitting] = useInvoking(submitWithInvokeCount);
+  // track when to kick off submission
+  useEffect(() => {
+    if (isReadyToSubmit) {
+      if (isWaitingOnValidation) {
+        if (disabled) {
+          setIsReadyToSubmit(false);
+        } else {
+          submitWithInvokingTracker();
+        }
+      } else {
+        setIsWaitingOnValidation(true);
+        validator();
+      }
+    }
+  }, [
+    setIsReadyToSubmit,
+    validator,
+    submitWithInvokingTracker,
+    disabled,
+    isReadyToSubmit,
+    isWaitingOnValidation,
+  ]);
+  const submit = useCallback((event?: SyntheticEvent) => {
     if (event) {
       event.preventDefault();
     }
-    const errors = await validator();
-    if (!hasValue(errors)) {
-      await wrappedOnSubmit();
-    }
-  }, [validator, wrappedOnSubmit]);
-  // track if is submitting
-  const [submit, isSubmitting] = useInvoking(rawSubmissionHandler);
+    setIsReadyToSubmit(true);
+  }, [setIsReadyToSubmit]);
   return { isSubmitting, submitCount, submit };
 }
