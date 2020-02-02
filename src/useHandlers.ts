@@ -45,7 +45,7 @@ export function useSettersAsEventHandler(
   const handler = useHandlers<string | EventTarget | null, keyValueEvent<string>>(...handlers);
   return useCallback((evt: reactOrNativeEvent): void => {
     assert.error(
-      evt && !!evt.target,
+      Boolean(evt?.target),
       LoggingTypes.invalidArgument,
       `${useSettersAsEventHandler.name} expects to be used in an event listener.`,
     );

@@ -50,7 +50,7 @@ function createNestedObject({
     value,
     path,
     currentValue: mergedValue,
-    shadowCopy: shadowCopy && shadowCopy[newIndex],
+    shadowCopy: shadowCopy?.[newIndex],
   });
   return mergedValue;
 }
