@@ -31,7 +31,7 @@ export function useInvoking<T, K>(
   const wrappedFunction = useCallback((...args: T[]) => {
     setIsInvoking(true);
     let ret = fnc(...args);
-    if (ret && (ret as Promise<K>).then) {
+    if ((ret as Promise<K>)?.then) {
       ret = Promise.resolve(ret)
         .catch((error) => {
           setIsInvoking(false);
