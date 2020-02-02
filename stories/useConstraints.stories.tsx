@@ -17,11 +17,9 @@ export function Form() {
   });
   const handleChange = useSettersAsEventHandler(setValue);
   const handleBlur = useSettersAsEventHandler(validateByName);
+  console.log(JSON.stringify(errors, null, 2));
   return (
     <form onSubmit={submit}>
-      {Object.keys(errors).map(error => errors[error] && (
-        <p style={{ color: "red" }} key={error}>[{error}]: {errors[error]}</p>
-      ))}
       <div>
         <label>Name </label>
         <input
