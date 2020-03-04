@@ -79,12 +79,12 @@ export function useSubmission({
       }
     }
   }, [
-    setIsReadyToSubmit,
-    validator,
-    submitWithInvokingTracker,
     disabled,
     isReadyToSubmit,
     isWaitingOnValidation,
+    setIsReadyToSubmit,
+    submitWithInvokingTracker,
+    validator,
   ]);
   const submit = useCallback((event?: SyntheticEvent) => {
     if (event) {

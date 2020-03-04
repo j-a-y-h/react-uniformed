@@ -124,18 +124,18 @@ export function useForm({
     validate, validateByName, errors, resetErrors, setError, hasErrors,
   } = useValidation(validatorsInput);
   // create a submission validator handler
-  const submissionValidator = useCallback(async (): Promise<Errors> => {
-    const validationErrors = await validate(values);
-    const newTouches = Object.keys(validationErrors).reduce((
+  const submissionValidator = useCallback((): void => {
+    const newTouches = Object.keys(values).reduce((
       _touches: MutableValues<boolean>, name,
     ): Touches => {
       // eslint-disable-next-line no-param-reassign
       _touches[name] = true;
       return _touches;
     }, {});
+    validate(values);
     setTouches(newTouches);
-    return validationErrors;
   }, [validate, values, setTouches]);
+
   // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches);
   // create a submit handler
@@ -149,21 +149,22 @@ export function useForm({
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit: handleSubmit,
     validator: submissionValidator,
+    disabled: hasErrors,
   });
   return {
-    values,
-    touches,
     errors,
     hasErrors,
-    touchField,
-    setTouch,
-    setError,
-    setValue,
-    reset,
-    validateByName,
-    validate,
     isSubmitting,
+    reset,
+    setError,
+    setTouch,
+    setValue,
     submit,
     submitCount,
+    touches,
+    touchField,
+    validate,
+    validateByName,
+    values,
   };
 }
