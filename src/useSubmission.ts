@@ -1,5 +1,5 @@
 import {
-  useCallback, SyntheticEvent, useState, useEffect,
+  useCallback, SyntheticEvent, useState, useEffect, useMemo,
 } from 'react';
 import { useInvokeCount, useInvoking } from './useFunctionUtils';
 
@@ -62,37 +62,33 @@ export function useSubmission({
   disabled = false,
 }: UseSubmissionProps): UseSubmissionHook {
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
-  const [isWaitingOnValidation, setIsWaitingOnValidation] = useState(false);
   // track submission count
   const [submitWithInvokeCount, submitCount] = useInvokeCount(onSubmit);
   const [submitWithInvokingTracker, isSubmitting] = useInvoking(submitWithInvokeCount);
+  const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
+  const [validate, isValidating] = useInvoking(validationFnc);
+
   // track when to kick off submission
   useEffect(() => {
-    if (isReadyToSubmit) {
-      if (!validator || isWaitingOnValidation) {
-        setIsReadyToSubmit(false);
-        setIsWaitingOnValidation(false);
-        if (!disabled) {
-          submitWithInvokingTracker();
-        }
-      } else {
-        setIsWaitingOnValidation(true);
-        validator();
+    if (isReadyToSubmit && !isValidating) {
+      setIsReadyToSubmit(false);
+      if (!disabled) {
+        submitWithInvokingTracker();
       }
     }
   }, [
     disabled,
+    isValidating,
     isReadyToSubmit,
-    isWaitingOnValidation,
     setIsReadyToSubmit,
     submitWithInvokingTracker,
-    validator,
   ]);
   const submit = useCallback((event?: SyntheticEvent) => {
     if (event) {
       event.preventDefault();
     }
+    validate();
     setIsReadyToSubmit(true);
-  }, [setIsReadyToSubmit]);
+  }, [setIsReadyToSubmit, validate]);
   return { isSubmitting, submitCount, submit };
 }
