@@ -70,9 +70,9 @@ export function useSubmission({
   useEffect(() => {
     if (isReadyToSubmit) {
       if (!validator || isWaitingOnValidation) {
-        if (disabled) {
-          setIsReadyToSubmit(false);
-        } else {
+        setIsReadyToSubmit(false);
+        setIsWaitingOnValidation(false);
+        if (!disabled) {
           submitWithInvokingTracker();
         }
       } else {
