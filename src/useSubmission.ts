@@ -11,12 +11,12 @@ export interface SubmitHandler {
 }
 export interface UseSubmissionProps {
   readonly onSubmit: SubmissionHandler;
-  readonly validator: () => Promise<void> | void;
+  readonly validator?: () => Promise<void> | void;
   /**
    * Determines if submission should be disabled. Generally,
    * you want to disable if there are errors.
    */
-  readonly disabled: boolean;
+  readonly disabled?: boolean;
 }
 
 export interface UseSubmissionHook {
@@ -57,7 +57,9 @@ export interface UseSubmissionHook {
  *   });
  */
 export function useSubmission({
-  validator, onSubmit, disabled,
+  onSubmit,
+  validator,
+  disabled = false,
 }: UseSubmissionProps): UseSubmissionHook {
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   const [isWaitingOnValidation, setIsWaitingOnValidation] = useState(false);
@@ -67,7 +69,7 @@ export function useSubmission({
   // track when to kick off submission
   useEffect(() => {
     if (isReadyToSubmit) {
-      if (isWaitingOnValidation) {
+      if (!validator || isWaitingOnValidation) {
         if (disabled) {
           setIsReadyToSubmit(false);
         } else {
