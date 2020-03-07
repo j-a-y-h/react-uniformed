@@ -21,7 +21,8 @@
     "react-form-hooks"
   ],
   "scripts": {
-    "test": "jest --silent",
+    "test": "jest",
+    "test:watch": "yarn test --watch",
     "test:coverage": "rimraf ./coverage && yarn test --coverage --silent || true",
     "test:coveralls": "yarn test --coverage --coverageReporters=text-lcov | coveralls",
     "test:stability": "yarn test && yarn lint",
