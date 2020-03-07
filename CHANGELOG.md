@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Typescript definition files
 
+### Changed
+* [`useValidation`] the returned promise for `validate` and `validateByName` no longer resolves to a map of errors.
+* [`useSubmission`] Now accepts an optional `disabled` flag that is used to prevent submission if the value is `true`. This hook also no longer accepts a `validator` that resolves to a map of errors. The preferred way of preventing
+submission is to set the `disabled` flag to true.  The `validator` prop is now optional.
+
 ## [0.0.11] - 2019-12-22
 ### Added
 * [`useValidateAsSetter`] Added a hook that supports using `validate` from `useFrom` with

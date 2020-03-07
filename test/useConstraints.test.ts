@@ -136,7 +136,6 @@ describe("useConstraints", () => {
         const { result } = renderHook(() => useConstraints({
             range: { min: 5, max: 15},
         }));
-        console.warn(result);
         expect(result.current.range(3)).not.toEqual(SUCCESS);
         expect(result.current.range(7)).toEqual(SUCCESS);
         expect(result.current.range(17)).not.toEqual(SUCCESS);

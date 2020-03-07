@@ -1,5 +1,15 @@
 import { useState, useCallback } from 'react';
 
+interface UseInvokingFunctions<T, K> {
+  (...args: T[]): K | Promise<K>;
+  (): K | Promise<K>;
+}
+
+interface UseInvokeCount<T, K> {
+  (...args: T[]): K;
+  (): K;
+}
+
 /**
  * Counts the number of times the specified function is invoked.
  *
@@ -7,7 +17,7 @@ import { useState, useCallback } from 'react';
  * @return {Array<Function, number>} an array where the first index is a function and
  * the second index is the number of times the function was called.
  */
-export function useInvokeCount<T, K>(fnc: (...args: T[]) => K): [(...args: T[]) => K, number] {
+export function useInvokeCount<T, K>(fnc: UseInvokeCount<T, K>): [UseInvokeCount<T, K>, number] {
   const [count, setCount] = useState(0);
   const wrappedFunction = useCallback((...args: T[]) => {
     setCount((currentCount) => currentCount + 1);
@@ -25,8 +35,8 @@ export function useInvokeCount<T, K>(fnc: (...args: T[]) => K): [(...args: T[]) 
  * the second index is the state of the invocation for the function.
  */
 export function useInvoking<T, K>(
-  fnc: (...args: T[]) => K | Promise<K>,
-): [(...args: T[]) => K | Promise<K>, boolean] {
+  fnc: UseInvokingFunctions<T, K>,
+): [UseInvokingFunctions<T, K>, boolean] {
   const [isInvoking, setIsInvoking] = useState(false);
   const wrappedFunction = useCallback((...args: T[]) => {
     setIsInvoking(true);

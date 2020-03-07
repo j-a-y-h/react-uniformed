@@ -18,10 +18,10 @@ export interface Validator {
 }
 export type Validators = Values<Validator>;
 export interface ValidateHandler<T, K = string> {
-  (name: K, value: T): Promise<validErrorValues>;
+  (name: K, value: T): void;
 }
 export interface ValidateAllHandler<T, K = Values<T>> {
-  (valuesMap: K): Promise<Errors>;
+  (valuesMap: K): Promise<void>;
 }
 interface UseValidatorHook<T> {
   readonly errors: Errors;
@@ -144,7 +144,7 @@ export function useValidation(
     // create a validate by input name function
   const validateByName = useCallback(async (
     name: string, value: FieldValue,
-  ): Promise<validErrorValues> => {
+  ): Promise<void> => {
     let error: validErrorValues;
     setValidationState(name, true);
     if (typeof validator === 'function') {
@@ -157,12 +157,11 @@ export function useValidation(
     }
     setError(name, error);
     setValidationState(name, false);
-    return error;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setError, setValidationState, validator]);
 
   // create validate all function
-  const validate = useCallback(async (values: Fields): Promise<Errors> => {
+  const validate = useCallback(async (values: Fields): Promise<void> => {
     const names = Array.from(new Set([...Object.keys(values), ...fieldsToUseInValidateAll]));
     const setAllValidationState = (state: boolean): void => {
       const allStates = names.reduce((
@@ -183,7 +182,6 @@ export function useValidation(
     }
     setErrors(localErrors);
     setAllValidationState(false);
-    return localErrors;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setValidationState, setErrors, fieldsToUseInValidateAll, validator]);
   return {
