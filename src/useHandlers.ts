@@ -68,9 +68,9 @@ export function useSettersAsEventHandler(
   }, [handler]);
 }
 
-export function useSettersAsRefEventHandler(
+export function useSettersAsRefEventHandler<T extends EventTarget = EventTarget>(
   ...args: useEventHandlersWithRefProps<UseEventHandlersWithRefProps[] | eventLikeHandlers[]>
-): Ref<EventTarget> {
+): Ref<T> {
   let event: keyof HTMLElementEventMap = 'change';
   // provided a event handler list
   let handlers: eventLikeHandlers[] = args as eventLikeHandlers[];
@@ -87,7 +87,8 @@ export function useSettersAsRefEventHandler(
     event = firstEvent || event;
   }
   const eventHandler = useSettersAsEventHandler(...handlers);
-  const ref = useCallback((input: EventTarget): void => {
+  // note: React will call input with null when the component is unmounting
+  const ref = useCallback((input: T): void => {
     input.addEventListener(event, eventHandler);
   }, [event, eventHandler]);
   return ref;
