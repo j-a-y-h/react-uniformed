@@ -1,8 +1,23 @@
-import { renderHook } from '@testing-library/react-hooks'
+import React from "react";
+import { renderHook } from '@testing-library/react-hooks';
+import { render } from '@testing-library/react';
 import { useSettersAsRefEventHandler } from '../src';
 
 describe("useSettersAsRefEventHandler", () => {
-    it.todo("Supports setting values on mount");
+    it("Supports setting values on mount", () => {
+      const mountedValues = {
+        test: "john doe",
+      };
+      const { result } = renderHook(() => useSettersAsRefEventHandler<HTMLInputElement>({
+        handlers: [jest.fn()],
+        mountedValues,
+      }));
+      // @ts-ignore
+      const { unmount, container } = render(<input name="test" ref={result.current} />);
+      // @ts-ignore
+      const input: HTMLInputElement = container.querySelector("[name=test]");
+      expect(input.value).toEqual("john doe");
+    });
     it("sets change event handlers on ref elements", () => {
       const { result } = renderHook(() => useSettersAsRefEventHandler(jest.fn()));
       const target = {
