@@ -39,9 +39,7 @@ export type UseFormsHook = Readonly<{
 }>
 
 type onSubmitModifiers = Readonly<{
-  reset: () => void;
   setError: ErrorHandler<string>;
-  setSubmissionError: (error?: string | Error) => void;
 }>;
 
 type UseFormParameters = Readonly<{
@@ -49,7 +47,7 @@ type UseFormParameters = Readonly<{
   constraints?: ConstraintValidators | SyncedConstraint;
   initialValues?: Fields;
   validators?: Validators | SingleValidator<FieldValue>;
-  onSubmit: (values: Fields, api: onSubmitModifiers) => void | Promise<void>;
+  onSubmit: (values: Fields, api: onSubmitModifiers) => void | never | Promise<void | never>;
 }>;
 
 const SUBMISSION_ERROR_KEY = 'default';
@@ -110,6 +108,31 @@ const SUBMISSION_ERROR_KEY = 'default';
  *     onChange={handleChange}
  *   />
  * </form>
+ *
+ * @example
+ * // Setting errors from the server
+ *
+ * // submissionError is set when the onSubmit handler throws an error
+ * const { submit, setValue, validate, submissionError, values } = useForm({
+ *   onSubmit(values, {setError}) {
+ *      const data = fetch('http://api.example.com', { body: values })
+ *        .then(res => res.json())
+ *        // throwing an error or rejecting a promise will set submissionError
+ *        .catch(() => Promise.reject('Unexpected error'));
+ *
+ *      if (data.errors) {
+ *        data.errors.forEach(({error, fieldName}) => {
+ *          // update the form with errors from the server
+ *          setError(fieldName, error);
+ *        });
+ *        // If there are any errors after submission then this function must throw
+ *        // or return Promise.reject() in order to avoid the form resetting.
+ *        // submissionError will be set to the value that was thrown.
+ *        // In this example submissionError === 'submission failed'
+ *        throw 'submission failed';
+ *      }
+ *   }
+ * });
  */
 export function useForm({
   onSubmit,
@@ -165,11 +188,7 @@ export function useForm({
     // note: give the handler every value so that we don't have to worry about
     // it later
     try {
-      await onSubmit(values, {
-        setSubmissionError, reset, setError,
-      });
-      // TODO: break the reset logic out of here. We can gracefully handle the errors but on error
-      //  don't reset the form
+      await onSubmit(values, { setError });
       reset();
     } catch (e) {
       setSubmissionError(e);

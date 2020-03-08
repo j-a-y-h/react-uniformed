@@ -159,6 +159,32 @@ const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
   />
 </form>
 ```
+**Example**  
+```js
+// Setting errors from the server
+
+// submissionError is set when the onSubmit handler throws an error
+const { submit, setValue, validate, submissionError, values } = useForm({
+  onSubmit(values, {setError}) {
+     const data = fetch('http://api.example.com', { body: values })
+       .then(res => res.json())
+       // throwing an error or rejecting a promise will set submissionError
+       .catch(() => Promise.reject('Unexpected error'));
+
+     if (data.errors) {
+       data.errors.forEach(({error, fieldName}) => {
+         // update the form with errors from the server
+         setError(fieldName, error);
+       });
+       // If there are any errors after submission then this function must throw
+       // or return Promise.reject() in order to avoid the form resetting.
+       // submissionError will be set to the value that was thrown.
+       // In this example submissionError === 'submission failed'
+       throw 'submission failed';
+     }
+  }
+});
+```
 <a name="useInvokeCount"></a>
 
 ## useInvokeCount(fnc) ⇒ <code>Array.&lt;function(), number&gt;</code>
