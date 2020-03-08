@@ -8,15 +8,24 @@ describe("useSettersAsRefEventHandler", () => {
       const mountedValues = {
         test: "john doe",
       };
+      // @ts-ignore
       const { result } = renderHook(() => useSettersAsRefEventHandler<HTMLInputElement>({
         handlers: [jest.fn()],
         mountedValues,
       }));
+
       // @ts-ignore
-      const { unmount, container } = render(<input name="test" ref={result.current} />);
+      const renderer = render(<input name="test" ref={result.current} />);
       // @ts-ignore
-      const input: HTMLInputElement = container.querySelector("[name=test]");
-      expect(input.value).toEqual("john doe");
+      const getInput = (r = renderer): HTMLInputElement => r.container.querySelector("[name=test]");
+      expect(getInput().value).toEqual("john doe");
+      mountedValues.test = "";
+      // hook shouldn't change value as the component is uncontrolled
+      expect(getInput().value).toEqual("john doe");
+
+      // test that the hook will update after a rerender
+      const renderer2 = render(<input name="test" ref={result.current} />);
+      expect(getInput(renderer2).value).toEqual("");
     });
     it("sets change event handlers on ref elements", () => {
       const { result } = renderHook(() => useSettersAsRefEventHandler(jest.fn()));
