@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Errors, ErrorHandler } from './useErrors';
+import { Errors, ErrorHandler, useErrors, UseErrorsHook } from './useErrors';
 import { useHandlers } from './useHandlers';
 import {
   useFields, FieldValue, Fields, NormalizerHandler,
@@ -7,7 +7,7 @@ import {
 import {
   useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from './useTouch';
-import { useSubmission, SubmissionHandler, SubmitHandler } from './useSubmission';
+import { useSubmission, SubmissionHandler, SubmitHandler, UseSubmissionProps, UseSubmissionHook } from './useSubmission';
 import {
   useValidation,
   Validators,
@@ -23,6 +23,7 @@ import { ConstraintValidators, SyncedConstraint, useConstraints } from './useCon
 export type UseFormsHook = Readonly<{
   errors: Errors | PartialValues<Validators, Error>;
   hasErrors: boolean;
+  hasSubmissionErrors: boolean;
   isSubmitting: boolean;
   values: Fields;
   setError: ErrorHandler;
@@ -36,12 +37,18 @@ export type UseFormsHook = Readonly<{
   validate: ValidateAllHandler<FieldValue>;
   reset: () => void;
 }>
+
+type onSubmitModifiers = Readonly<{
+  reset: () => void;
+  setSubmissionError: (error?: string | Error) => void;
+}>;
+
 type UseFormParameters = Readonly<{
   normalizer?: NormalizerHandler;
   constraints?: ConstraintValidators | SyncedConstraint;
   initialValues?: Fields;
   validators?: Validators | SingleValidator<FieldValue>;
-  onSubmit: (values: Fields) => void | Promise<void>;
+  onSubmit: (values: Fields, api: onSubmitModifiers) => void | Promise<void>;
 }>;
 
 /**
@@ -135,16 +142,29 @@ export function useForm({
     validate(values);
     setTouches(newTouches);
   }, [validate, values, setTouches]);
+  const {
+    hasErrors: hasSubmissionErrors,
+    setError: setSubmissionError,
+    resetErrors: resetSubmissionErrors,
+  } = useErrors();
+  const setSubmissionErrorWrapper = useCallback((error: string | Error = 'Unexpected error'): void => {
+    setSubmissionError('default', String(error));
+  }, [setSubmissionError]);
 
   // create reset handlers
-  const reset = useHandlers(resetValues, resetErrors, resetTouches);
+  const reset = useHandlers(resetValues, resetErrors, resetTouches, resetSubmissionErrors);
   // create a submit handler
   const handleSubmit: SubmissionHandler = useCallback(async (): Promise<void> => {
     // note: give the handler every value so that we don't have to worry about
     // it later
-    await onSubmit(values);
-    reset();
-  }, [onSubmit, values, reset]);
+    await Promise.resolve(onSubmit(values, {
+      setSubmissionError: setSubmissionErrorWrapper, reset,
+    }))
+      // TODO: break the reset logic out of here. We can gracefully handle the errors but on error
+      //  don't reset the form
+      .then(() => reset())
+      .catch(setSubmissionErrorWrapper);
+  }, [onSubmit, values, reset, setSubmissionErrorWrapper]);
   // use submission hook
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit: handleSubmit,
@@ -154,6 +174,7 @@ export function useForm({
   return {
     errors,
     hasErrors,
+    hasSubmissionErrors,
     isSubmitting,
     reset,
     setError,
