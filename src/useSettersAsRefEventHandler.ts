@@ -32,7 +32,7 @@ export function useSettersAsRefEventHandler<
     assert.error(
       options && typeof options === 'object',
       LoggingTypes.typeError,
-      `(expected: {event: string, handlers: function[]}, received: ${typeof options}) ${useSettersAsRefEventHandler.name} expects a list of functions or an object with event and handlers as properties.`,
+      `(expected: {event?: string, handlers: function[], mountedValues?: {}}, received: typeof ${typeof options}, ${options})`,
     );
     ({ handlers, mountedValues } = options);
     event = options.event || event;
