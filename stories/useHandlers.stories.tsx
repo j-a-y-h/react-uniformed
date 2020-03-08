@@ -6,6 +6,19 @@ export default {
 }
 
 export function Basic() {
+  const { setValue } = useFields();
+  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(setValue);
+  return (
+    <form onSubmit={(i) => i.preventDefault()}>
+      <input name="name" ref={changeRef} />
+      <br />
+      <input type="submit" />
+    </form>
+  );
+}
+
+
+export function MountedValues() {
   const { values, setValue, resetValues } = useFields();
   const changeRef = useSettersAsRefEventHandler<HTMLInputElement>({
     handlers: [setValue],
