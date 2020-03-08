@@ -204,7 +204,9 @@ describe("useConstraints", () => {
 
         // @ts-ignore
         const { result } = renderHook(() => useConstraints({
+            // @ts-ignore
             max: { max: now, type: "date" },
+            // @ts-ignore
             min: { min: now, type: "date" },
         }));
         // @ts-ignore

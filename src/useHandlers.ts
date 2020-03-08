@@ -1,5 +1,5 @@
 import {
-  SyntheticEvent, useCallback, Ref,
+  SyntheticEvent, useCallback,
 } from 'react';
 import { assert, LoggingTypes } from './utils';
 import { FieldValue, Fields } from './useFields';
@@ -10,15 +10,8 @@ interface Handler<T, K extends T[], Z> {
 }
 export type reactOrNativeEvent = SyntheticEvent | Event;
 type keyValueEvent<T> = [string, T, EventTarget | null];
-type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEvent<string>, void>
-interface UseEventHandlersWithRefProps {
-  readonly event?: keyof HTMLElementEventMap;
-  // TODO: change to setters to match the function signature
-  readonly handlers: eventLikeHandlers[];
-}
-type useEventHandlersWithRefProps<T> = T extends UseEventHandlersWithRefProps[]
-  ? [UseEventHandlersWithRefProps]
-  : eventLikeHandlers[];
+export type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEvent<string>, void>
+
 interface ReactOrNativeEventListener {
   (event: Event | SyntheticEvent): void;
 }
@@ -66,31 +59,6 @@ export function useSettersAsEventHandler(
       target,
     );
   }, [handler]);
-}
-
-export function useSettersAsRefEventHandler(
-  ...args: useEventHandlersWithRefProps<UseEventHandlersWithRefProps[] | eventLikeHandlers[]>
-): Ref<EventTarget> {
-  let event: keyof HTMLElementEventMap = 'change';
-  // provided a event handler list
-  let handlers: eventLikeHandlers[] = args as eventLikeHandlers[];
-  if (typeof args[0] !== 'function') {
-    // provided an object
-    const [options] = args;
-    assert.error(
-      options && typeof options === 'object',
-      LoggingTypes.typeError,
-      `(expected: {event: string, handlers: function[]}, received: ${typeof options}) ${useSettersAsRefEventHandler.name} expects a list of functions or an object with event and handlers as properties.`,
-    );
-    const { event: firstEvent } = options;
-    ({ handlers } = options);
-    event = firstEvent || event;
-  }
-  const eventHandler = useSettersAsEventHandler(...handlers);
-  const ref = useCallback((input: EventTarget): void => {
-    input.addEventListener(event, eventHandler);
-  }, [event, eventHandler]);
-  return ref;
 }
 
 /**

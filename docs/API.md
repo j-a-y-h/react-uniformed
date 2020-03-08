@@ -31,6 +31,12 @@ value indexed at country <code>locations[country]</code>.</p>
 note: order matters when passing normalizers. This means that the results or value
 of the first normalizer is passed to the next normalizer.</p>
 </dd>
+<dt><a href="#useSettersAsRefEventHandler">useSettersAsRefEventHandler(args)</a> ⇒ <code>Ref</code></dt>
+<dd><p>A hook that adds support for uncontrolled inputs using
+React refs. The React ref is used to synchronize the state of the input in the DOM
+and the state of the form in the Virtual DOM.
+This hook is generally only needed for larger forms or larger React Virtual DOM.</p>
+</dd>
 <dt><a href="#useSubmission">useSubmission(param)</a> ⇒ <code>Object</code></dt>
 <dd><p>Handles the form submission. Calls the specified validator and only
 calls the onSubmit function if the validator returns error free.</p>
@@ -94,6 +100,7 @@ being a function that accepts value as the only argument.
 A hook for managing form states.
 
 **Kind**: global function  
+**Returns**: <code>UseFormsHook</code> - the APIs used to manage the state of a function.  
 **See**
 
 - [useConstraints](#useConstraints)
@@ -101,18 +108,18 @@ A hook for managing form states.
 - [useSubmission](#useSubmission)
 - [useFields](useFields)
 - [useSettersAsEventHandler](useSettersAsEventHandler)
-- [useSettersAsRefEventHandler](useSettersAsRefEventHandler)
+- [useSettersAsRefEventHandler](#useSettersAsRefEventHandler)
 - [useValidateAsSetter](#useValidateAsSetter)
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| props | <code>UseFormParameters</code> |  |
+| props | <code>UseFormParameters</code> | the props api |
 | props.onSubmit | <code>function</code> | a callback function for form submissions |
 | props.initialValues | <code>Fields</code> | the initial form values |
 | props.normalizer | <code>NormalizerHandler</code> | a handler that translates form values before setting values |
 | props.validators | <code>Validators</code> \| <code>SingleValidator.&lt;FieldValue&gt;</code> | the validators used to validate values |
-| props.constraints | <code>ConstraintValidators</code> \| <code>SyncedConstraint</code> | the constraints used |
+| props.constraints | <code>ConstraintValidators</code> \| <code>SyncedConstraint</code> | the constraints api |
 
 **Example**  
 ```js
@@ -189,6 +196,11 @@ and value passed to the invoked function.
 
 **Kind**: global function  
 **Returns**: <code>eventLikeHandlers</code> - a function that can be invoked with a name and value.  
+**See**
+
+- [useSettersAsEventHandler](useSettersAsEventHandler)
+- [useSettersAsRefEventHandler](#useSettersAsRefEventHandler)
+
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -268,6 +280,31 @@ useNormalizers(
      normalizer: ({value}) => !value ? value : value.toLowerCase(),
    }
 )
+```
+<a name="useSettersAsRefEventHandler"></a>
+
+## useSettersAsRefEventHandler(args) ⇒ <code>Ref</code>
+A hook that adds support for uncontrolled inputs using
+React refs. The React ref is used to synchronize the state of the input in the DOM
+and the state of the form in the Virtual DOM.
+This hook is generally only needed for larger forms or larger React Virtual DOM.
+
+**Kind**: global function  
+**Returns**: <code>Ref</code> - returns a React ref function.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| args | <code>Array.&lt;eventLikeHandlers&gt;</code> \| <code>Array.&lt;UseEventHandlersWithRefProps&gt;</code> | a list of functions used to set a value or an object with `event`,  `handlers`, and `mountedValues` as properties. - `handlers`: a list of functinos used to set a value. - `event?`: the event to register this handler to. (defaults to `'change'`). - `mountedValues?`: used to set values on mount of the ref. |
+
+**Example**  
+```js
+import {useSettersAsRefEventHandler} from "react-uniformed";
+
+// useSettersAsRefEventHandler defaults to an on change event
+const changeRef = useSettersAsRefEventHandler(setValue);
+
+// name attribute is still required as the changeRef calls setValue(name, value) on change
+<input name="name" ref={changeRef} />
 ```
 <a name="useSubmission"></a>
 
