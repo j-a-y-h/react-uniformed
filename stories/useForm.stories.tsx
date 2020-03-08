@@ -37,7 +37,7 @@ export function Basic() {
 }
 
 export function SubmissionFails() {
-    const { setValue, validateByName, values, submit } = useForm({
+    const { setValue, validateByName, values, submit, hasSubmissionErrors } = useForm({
         onSubmit(data) {
             throw "Unexpected error occured";
             alert(JSON.stringify(data));
@@ -47,6 +47,9 @@ export function SubmissionFails() {
     console.log(JSON.stringify(values, null, 2));
     return (
       <form onSubmit={submit}>
+        <div>
+          {hasSubmissionErrors && <span>Unexpected Error</span>}
+        </div>
         <div>
           <label>Name </label>
           <input

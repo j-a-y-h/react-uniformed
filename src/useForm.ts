@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Errors, ErrorHandler, useErrors, UseErrorsHook } from './useErrors';
+import { Errors, ErrorHandler, useErrors } from './useErrors';
 import { useHandlers } from './useHandlers';
 import {
   useFields, FieldValue, Fields, NormalizerHandler,
@@ -7,7 +7,7 @@ import {
 import {
   useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from './useTouch';
-import { useSubmission, SubmissionHandler, SubmitHandler, UseSubmissionProps, UseSubmissionHook } from './useSubmission';
+import { useSubmission, SubmissionHandler, SubmitHandler } from './useSubmission';
 import {
   useValidation,
   Validators,
@@ -23,7 +23,6 @@ import { ConstraintValidators, SyncedConstraint, useConstraints } from './useCon
 export type UseFormsHook = Readonly<{
   errors: Errors | PartialValues<Validators, Error>;
   hasErrors: boolean;
-  hasSubmissionErrors: boolean;
   isSubmitting: boolean;
   values: Fields;
   setError: ErrorHandler;
@@ -32,6 +31,7 @@ export type UseFormsHook = Readonly<{
   setValue: SetValueCallback<FieldValue>;
   submitCount: number;
   submit: SubmitHandler;
+  submissionError?: string;
   touches: Touches;
   validateByName: ValidateHandler<FieldValue>;
   validate: ValidateAllHandler<FieldValue>;
@@ -40,6 +40,7 @@ export type UseFormsHook = Readonly<{
 
 type onSubmitModifiers = Readonly<{
   reset: () => void;
+  setError: ErrorHandler<string>;
   setSubmissionError: (error?: string | Error) => void;
 }>;
 
@@ -50,6 +51,8 @@ type UseFormParameters = Readonly<{
   validators?: Validators | SingleValidator<FieldValue>;
   onSubmit: (values: Fields, api: onSubmitModifiers) => void | Promise<void>;
 }>;
+
+const SUBMISSION_ERROR_KEY = 'default';
 
 /**
  * A hook for managing form states.
@@ -142,14 +145,18 @@ export function useForm({
     validate(values);
     setTouches(newTouches);
   }, [validate, values, setTouches]);
+  // track errors during submission
   const {
-    hasErrors: hasSubmissionErrors,
-    setError: setSubmissionError,
+    setError: setSubmissionErrorHandler,
     resetErrors: resetSubmissionErrors,
+    errors: submissionErrors,
   } = useErrors();
-  const setSubmissionErrorWrapper = useCallback((error: string | Error = 'Unexpected error'): void => {
-    setSubmissionError('default', String(error));
-  }, [setSubmissionError]);
+  // grabs the submission error
+  const submissionError = useMemo(() => submissionErrors[SUBMISSION_ERROR_KEY], [submissionErrors]);
+  // wrapper function for setting submission errors
+  const setSubmissionError = useCallback((error: string | Error = 'Unexpected error'): void => {
+    setSubmissionErrorHandler(SUBMISSION_ERROR_KEY, String(error));
+  }, [setSubmissionErrorHandler]);
 
   // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches, resetSubmissionErrors);
@@ -157,14 +164,17 @@ export function useForm({
   const handleSubmit: SubmissionHandler = useCallback(async (): Promise<void> => {
     // note: give the handler every value so that we don't have to worry about
     // it later
-    await Promise.resolve(onSubmit(values, {
-      setSubmissionError: setSubmissionErrorWrapper, reset,
-    }))
+    try {
+      await onSubmit(values, {
+        setSubmissionError, reset, setError,
+      });
       // TODO: break the reset logic out of here. We can gracefully handle the errors but on error
       //  don't reset the form
-      .then(() => reset())
-      .catch(setSubmissionErrorWrapper);
-  }, [onSubmit, values, reset, setSubmissionErrorWrapper]);
+      reset();
+    } catch (e) {
+      setSubmissionError(e);
+    }
+  }, [onSubmit, values, reset, setSubmissionError]);
   // use submission hook
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit: handleSubmit,
@@ -174,7 +184,6 @@ export function useForm({
   return {
     errors,
     hasErrors,
-    hasSubmissionErrors,
     isSubmitting,
     reset,
     setError,
@@ -182,6 +191,7 @@ export function useForm({
     setValue,
     submit,
     submitCount,
+    submissionError,
     touches,
     touchField,
     validate,
