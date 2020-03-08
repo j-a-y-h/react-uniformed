@@ -47,7 +47,7 @@ export function useSettersAsRefEventHandler<
   ...args: useEventHandlersWithRefProps<[UseEventHandlersWithRefProps<V>] | eventLikeHandlers[], V>
 ): Ref<T> {
   let event: keyof HTMLElementEventMap = 'change';
-  // provided a event handler list
+  // provided an event handler list
   let handlers: eventLikeHandlers[] = args as eventLikeHandlers[];
   let mountedValues: V | undefined;
   if (typeof args[0] !== 'function' && args.length > 0) {
