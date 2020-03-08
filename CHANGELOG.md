@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Typescript definition files
 
 ### Changed
-* [`useSettersAsRefEventHandler`] The object api now supports a `mountedValues` property that is the shape of a value object map (eg `{email: 'user@example.com'}`).  When the ref callback is mounted on an element and the `mountedValues` property is set to a value then the specified element's value property will be set to the corresponding `mountedValues` property that shares the same name as the specified element (eg `element.value = mountedValues[element.name]`).
+* [`useSettersAsRefEventHandler`] The object api now supports a `mountedValues` property that is the shape of a value object map (eg `{email: 'user@example.com'}`).  When the ref callback is mounted on an element and the `mountedValues` property is set, then the specified element's `value` property will be set to the corresponding `mountedValues` property that shares the same name as the specified element's name propert (eg `element.value = mountedValues[element.name]`).
 * [`useValidation`] the returned promise for `validate` and `validateByName` no longer resolves to a map of errors.
 * [`useSubmission`] Now accepts an optional `disabled` flag that is used to prevent submission if the value is `true`. This hook also no longer accepts a `validator` that resolves to a map of errors. The preferred way of preventing
 submission is to set the `disabled` flag to true.  The `validator` prop is now optional.
