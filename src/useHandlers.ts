@@ -87,9 +87,11 @@ export function useSettersAsRefEventHandler<T extends EventTarget = EventTarget>
     event = firstEvent || event;
   }
   const eventHandler = useSettersAsEventHandler(...handlers);
-  // note: React will call input with null when the component is unmounting
-  const ref = useCallback((input: T): void => {
-    input.addEventListener(event, eventHandler);
+  const ref = useCallback((input: T | null): void => {
+    // note: React will call input with null when the component is unmounting
+    if (input) {
+      input.addEventListener(event, eventHandler);
+    }
   }, [event, eventHandler]);
   return ref;
 }
