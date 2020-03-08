@@ -1,5 +1,5 @@
 import {
-    useCallback, Ref,
+  useCallback, Ref,
 } from 'react';
 import { useSettersAsEventHandler, eventLikeHandlers } from './useHandlers';
 import { assert, LoggingTypes } from './utils';

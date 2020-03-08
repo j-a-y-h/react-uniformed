@@ -30,7 +30,7 @@ export function MountedValues() {
       {showInput && <input name="name" ref={changeRef} />}
       <br />
       <button onClick={() => setShowInput(i => !i)}>Hide Input</button>
-      <button onClick={resetValues}>Clear values</button>
+      <button type="reset" onClick={resetValues}>Clear values</button>
       <input type="submit" />
     </form>
   );
