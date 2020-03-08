@@ -1,5 +1,5 @@
 import {
-  SyntheticEvent, useCallback, Ref,
+  SyntheticEvent, useCallback,
 } from 'react';
 import { assert, LoggingTypes } from './utils';
 import { FieldValue, Fields } from './useFields';

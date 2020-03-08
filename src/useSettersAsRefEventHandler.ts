@@ -6,17 +6,41 @@ import { assert, LoggingTypes } from './utils';
 import { Fields } from './useFields';
 
 interface UseEventHandlersWithRefProps<V> {
-    readonly event?: keyof HTMLElementEventMap;
-    readonly handlers: eventLikeHandlers[];
-    /**
-     * Used to set values on mount of the ref.
-     */
-    readonly mountedValues?: V;
-  }
-type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProps<V>]
-    ? [UseEventHandlersWithRefProps<V>]
-      : eventLikeHandlers[];
+  readonly event?: keyof HTMLElementEventMap;
+  readonly handlers: eventLikeHandlers[];
+  /**
+   * Used to set values on mount of the ref.
+   */
+  readonly mountedValues?: V;
+}
 
+type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProps<V>]
+  ? [UseEventHandlersWithRefProps<V>]
+  : eventLikeHandlers[];
+
+/**
+ * A hook that adds support for uncontrolled inputs using
+ * React refs. The React ref is used to synchronize the state of the input in the DOM
+ * and the state of the form in the Virtual DOM.
+ * This hook is generally only needed for larger forms or larger React Virtual DOM.
+ *
+ * @param {eventLikeHandlers[] | UseEventHandlersWithRefProps[]} args
+ *  a list of functions used to set a value or an object with `event`,
+ *  `handlers`, and `mountedValues` as properties.
+ * - `handlers`: a list of functinos used to set a value.
+ * - `event?`: the event to register this handler to. (defaults to `'change'`).
+ * - `mountedValues?`: used to set values on mount of the ref.
+ * @return {Ref} returns a React ref function.
+ *
+ * @example
+ * import {useSettersAsRefEventHandler} from "react-uniformed";
+ *
+ * // useSettersAsRefEventHandler defaults to an on change event
+ * const changeRef = useSettersAsRefEventHandler(setValue);
+ *
+ * // name attribute is still required as the changeRef calls setValue(name, value) on change
+ * <input name="name" ref={changeRef} />
+ */
 export function useSettersAsRefEventHandler<
   T extends HTMLElement = HTMLElement, V extends Fields = Fields
 >(
