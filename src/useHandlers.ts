@@ -11,13 +11,16 @@ interface Handler<T, K extends T[], Z> {
 export type reactOrNativeEvent = SyntheticEvent | Event;
 type keyValueEvent<T> = [string, T, EventTarget | null];
 type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEvent<string>, void>
-interface UseEventHandlersWithRefProps {
+interface UseEventHandlersWithRefProps<V> {
   readonly event?: keyof HTMLElementEventMap;
-  // TODO: change to setters to match the function signature
   readonly handlers: eventLikeHandlers[];
+  /**
+   * Used to set values on mount of the ref.
+   */
+  readonly mountedValues?: V;
 }
-type useEventHandlersWithRefProps<T> = T extends UseEventHandlersWithRefProps[]
-  ? [UseEventHandlersWithRefProps]
+type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProps<V>]
+  ? [UseEventHandlersWithRefProps<V>]
   : eventLikeHandlers[];
 interface ReactOrNativeEventListener {
   (event: Event | SyntheticEvent): void;
@@ -68,13 +71,16 @@ export function useSettersAsEventHandler(
   }, [handler]);
 }
 
-export function useSettersAsRefEventHandler<T extends EventTarget = EventTarget>(
-  ...args: useEventHandlersWithRefProps<UseEventHandlersWithRefProps[] | eventLikeHandlers[]>
+export function useSettersAsRefEventHandler<
+  T extends HTMLElement = HTMLElement, V extends Fields = Fields
+>(
+  ...args: useEventHandlersWithRefProps<[UseEventHandlersWithRefProps<V>] | eventLikeHandlers[], V>
 ): Ref<T> {
   let event: keyof HTMLElementEventMap = 'change';
   // provided a event handler list
   let handlers: eventLikeHandlers[] = args as eventLikeHandlers[];
-  if (typeof args[0] !== 'function') {
+  let mountedValues: V | undefined;
+  if (typeof args[0] !== 'function' && args.length > 0) {
     // provided an object
     const [options] = args;
     assert.error(
@@ -82,17 +88,22 @@ export function useSettersAsRefEventHandler<T extends EventTarget = EventTarget>
       LoggingTypes.typeError,
       `(expected: {event: string, handlers: function[]}, received: ${typeof options}) ${useSettersAsRefEventHandler.name} expects a list of functions or an object with event and handlers as properties.`,
     );
-    const { event: firstEvent } = options;
-    ({ handlers } = options);
-    event = firstEvent || event;
+    ({ handlers, mountedValues } = options);
+    event = options.event || event;
   }
   const eventHandler = useSettersAsEventHandler(...handlers);
   const ref = useCallback((input: T | null): void => {
     // note: React will call input with null when the component is unmounting
     if (input) {
+      const { name } = input as unknown as HTMLInputElement;
       input.addEventListener(event, eventHandler);
+      if (mountedValues && name && mountedValues[name]) {
+        // need to set the mounted values
+        // eslint-disable-next-line no-param-reassign
+        (input as unknown as HTMLInputElement).value = String(mountedValues[name]);
+      }
     }
-  }, [event, eventHandler]);
+  }, [event, eventHandler, mountedValues]);
   return ref;
 }
 

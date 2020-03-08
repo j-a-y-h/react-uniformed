@@ -6,12 +6,18 @@ export default {
 }
 
 export function Basic() {
-  const {values, setValue} = useFields();
-  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(setValue);
-
+  const { values, setValue, resetValues } = useFields();
+  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>({
+    handlers: [setValue],
+    mountedValues: values,
+  });
+  const [showInput, setShowInput] = React.useState(true);
   return (
     <form onSubmit={(i) => i.preventDefault()}>
-      <input name="name" value={values.name} ref={changeRef} />
+      {showInput && <input name="name" ref={changeRef} />}
+      <br />
+      <button onClick={() => setShowInput(i => !i)}>Hide Input</button>
+      <button onClick={resetValues}>Clear values</button>
       <input type="submit" />
     </form>
   );

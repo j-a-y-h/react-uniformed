@@ -34,6 +34,7 @@ describe("useSettersAsEventHandler", () => {
   });
 });
 describe("useSettersAsRefEventHandler", () => {
+  it.todo("Supports setting values on mount");
   it("sets change event handlers on ref elements", () => {
     const { result } = renderHook(() => useSettersAsRefEventHandler(jest.fn()));
     const target = {
