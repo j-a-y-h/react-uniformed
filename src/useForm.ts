@@ -193,7 +193,7 @@ export function useForm({
     } catch (e) {
       setSubmissionError(e);
     }
-  }, [onSubmit, values, reset, setSubmissionError]);
+  }, [onSubmit, values, reset, setSubmissionError, setError]);
   // use submission hook
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit: handleSubmit,
