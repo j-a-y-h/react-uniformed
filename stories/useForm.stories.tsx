@@ -4,6 +4,13 @@ import { useForm, useSettersAsEventHandler } from "../src";
 export default {
     title: "useForm"
 }
+const sleep = (duration: number) => {
+  return new Promise<void>((res) => {
+    setTimeout(() => {
+      res();
+    }, duration * 1000);
+  });
+}
 
 export function Basic() {
   const { setValue, validateByName, values, submit } = useForm({
@@ -37,18 +44,24 @@ export function Basic() {
 }
 
 export function SubmissionFails() {
-    const { setValue, validateByName, values, submit, hasSubmissionErrors } = useForm({
-        onSubmit(data) {
+    const { setValue, isSubmitting, values, submit, submissionError } = useForm({
+      onSubmit(data) {
+        return sleep(3).then(() => {
+          const hasError = Boolean(Math.floor(Math.random() * 2));
+          if (hasError) {
             throw "Unexpected error occured";
+          } else {
             alert(JSON.stringify(data));
-        },
+          }
+        })
+      },
     });
-    const handleChange = useSettersAsEventHandler(setValue, validateByName);
+    const handleChange = useSettersAsEventHandler(setValue);
     console.log(JSON.stringify(values, null, 2));
     return (
       <form onSubmit={submit}>
         <div>
-          {hasSubmissionErrors && <span>Unexpected Error</span>}
+          {submissionError && <span>{submissionError}</span>}
         </div>
         <div>
           <label>Name </label>
@@ -68,7 +81,7 @@ export function SubmissionFails() {
             onChange={handleChange}
           />
         </div>
-        <input type="submit" />
+        <input disabled={isSubmitting} type="submit" />
       </form>
     );
   }
