@@ -26,8 +26,23 @@ export interface UseSubmissionHook {
 }
 
 /**
- * Handles the form submission. Calls the specified validator and only
- * calls the onSubmit function if the validator returns error free.
+ * Handles the form submission. Runs validation before calling the `onSubmit` function
+ * if a validator was passed in.  If no validator was passed in, then the `onSubmit` function
+ * will be invoked.  The validator function must set the state on disabled to true, if there
+ * were errors. Disabled will prevent this hook from calling the `onSubmit` function.
+ *
+ * Below is a flow diagram for this hook
+ *```
+ *                submit(Event)
+ *                     |
+ *   (no) - (validator is a function?) - (yes)
+ *    |                                    |
+ *  onSubmit(Event)                   validator()
+ *                                         |
+ *                       (no) - (disabled set to `false`?) - (yes)
+ *                                                             |
+ *                                                        onSubmit(Event)
+ *```
  *
  * @param param the props the pass in
  * @param param.validator the specified validator. If your validation logic is async,
@@ -67,33 +82,30 @@ export function useSubmission({
   const [submitWithInvokingTracker, isSubmitting] = useInvoking(submitWithInvokeCount);
   const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
   const [validate, isValidating] = useInvoking(validationFnc);
-  // A queue of events. Using a queue as there isn't a lock preventing
-  // submit from being invoked multiple times
-  const submitEvents = useRef<(Event | undefined)[]>([]);
+  const submitEvent = useRef<Event | undefined>();
 
   // track when to kick off submission
   useEffect(() => {
     if (isReadyToSubmit && !isValidating) {
       setIsReadyToSubmit(false);
       if (!disabled) {
-        submitWithInvokingTracker(submitEvents.current.shift());
+        submitWithInvokingTracker(submitEvent.current);
       }
     }
   }, [
     disabled,
-    isValidating,
-    isReadyToSubmit,
-    setIsReadyToSubmit,
     submitWithInvokingTracker,
+    isReadyToSubmit,
+    isValidating,
   ]);
   const submit = useCallback((event?: SyntheticEvent) => {
     if (event) {
       event.preventDefault();
     }
-    // always push something because
-    submitEvents.current.push(event?.nativeEvent);
-    validate();
     setIsReadyToSubmit(true);
-  }, [setIsReadyToSubmit, validate]);
+    if (validator) {
+      validate();
+    }
+  }, [validator, validate, setIsReadyToSubmit]);
   return { isSubmitting, submitCount, submit };
 }

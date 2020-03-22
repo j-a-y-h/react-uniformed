@@ -38,9 +38,20 @@ and the state of the form in the Virtual DOM.
 This hook is generally only needed for larger forms or larger React Virtual DOM.</p>
 </dd>
 <dt><a href="#useSubmission">useSubmission(param)</a> ⇒ <code>Object</code></dt>
-<dd><p>Handles the form submission. Calls the specified validator and only
-calls the onSubmit function if the validator returns error free.</p>
-</dd>
+<dd><p>Handles the form submission. Runs validation before calling the <code>onSubmit</code> function
+if a validator was passed in.  If no validator was passed in, then the <code>onSubmit</code> function
+will be invoked.  The validator function must set the state on disabled to true, if there
+were errors. Disabled will prevent this hook from calling the <code>onSubmit</code> function.</p>
+<p>Below is a flow diagram for this hook</p>
+<pre><code>               submit(Event)
+                    |
+  (no) - (validator is a function?) - (yes)
+   |                                    |
+ onSubmit(Event)                   validator()
+                                        |
+                      (no) - (disabled set to `false`?) - (yes)
+                                                            |
+                                                       onSubmit(Event)</code></pre></dd>
 <dt><a href="#useValidation">useValidation(validator)</a> ⇒</dt>
 <dd><p>A hook for performing validation.</p>
 </dd>
@@ -309,8 +320,23 @@ const changeRef = useSettersAsRefEventHandler(setValue);
 <a name="useSubmission"></a>
 
 ## useSubmission(param) ⇒ <code>Object</code>
-Handles the form submission. Calls the specified validator and only
-calls the onSubmit function if the validator returns error free.
+Handles the form submission. Runs validation before calling the `onSubmit` function
+if a validator was passed in.  If no validator was passed in, then the `onSubmit` function
+will be invoked.  The validator function must set the state on disabled to true, if there
+were errors. Disabled will prevent this hook from calling the `onSubmit` function.
+
+Below is a flow diagram for this hook
+```
+               submit(Event)
+                    |
+  (no) - (validator is a function?) - (yes)
+   |                                    |
+ onSubmit(Event)                   validator()
+                                        |
+                      (no) - (disabled set to `false`?) - (yes)
+                                                            |
+                                                       onSubmit(Event)
+```
 
 **Kind**: global function  
 **Returns**: <code>Object</code> - returns a
