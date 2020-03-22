@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+* [`useSubmission`] `onSubmit` will be called with the current Event if `submit` is called with an event.
+* [`useForm`] `onSubmit` the second argument will be the event if `submit` is called with an event.
+
+### Removed
+* [`useValidation`] Removed `isValidating` from the hook.
+A hook to track if a function is currently being called will be added in a later update.
+
 ## [0.0.13] - 2020-03-08
 ### Added
 * Typescript definition files
