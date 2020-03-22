@@ -135,6 +135,14 @@ export function useForm({
     validate(values);
     setTouches(newTouches);
   }, [validate, values, setTouches]);
+  // note: useSubmission will skip validation if no function was passed
+  //  in order to take advantage of this, we must pass undefined if useForm
+  //  was invoked with a validation function
+  const validator = useMemo((): undefined | (() => void) => ((
+    typeof validators === 'function' || typeof constraints === 'function'
+    || (Object.keys(validators).length + Object.keys(constraints).length) > 0
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  ) ? submissionValidator : undefined), []);
 
   // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches);
@@ -148,7 +156,7 @@ export function useForm({
   // use submission hook
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit: handleSubmit,
-    validator: submissionValidator,
+    validator,
     disabled: hasErrors,
   });
   return {
