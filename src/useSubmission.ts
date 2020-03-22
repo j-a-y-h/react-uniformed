@@ -52,6 +52,7 @@ export interface UseSubmissionHook {
  * @return {{isSubmitting: boolean, submitCount: number, submit: Function}} returns a
  * handler for onSubmit events, a count of how many times submit was called, and the
  * state of the submission progress.
+ * @see {@link useFunctionStats}
  * @example
  *
  *   // this example is if you are not using the useForm hook. Note: the useForm hook

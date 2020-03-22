@@ -7,12 +7,9 @@
 <dt><a href="#useForm">useForm(props)</a> ⇒ <code>UseFormsHook</code></dt>
 <dd><p>A hook for managing form states.</p>
 </dd>
-<dt><a href="#useInvokeCount">useInvokeCount(fnc)</a> ⇒ <code>Array.&lt;function(), number&gt;</code></dt>
-<dd><p>Counts the number of times the specified function is invoked.</p>
-</dd>
-<dt><a href="#useInvoking">useInvoking(fnc)</a> ⇒ <code>Array.&lt;function(), boolean&gt;</code></dt>
-<dd><p>Determines if the specified function is being called. This function
-is only useful for async functions.</p>
+<dt><a href="#useFunctionStats">useFunctionStats(fnc)</a> ⇒ <code>UseFunctionStats.&lt;T, K&gt;</code></dt>
+<dd><p>Keeps track of certain statistics on a function. Eg: if the function
+is invoking and how many times the function was called.</p>
 </dd>
 <dt><a href="#useValidateAsSetter">useValidateAsSetter(validate, values)</a> ⇒ <code>eventLikeHandlers</code></dt>
 <dd><p>Creates a function that accepts a name and value as parameters.
@@ -170,28 +167,17 @@ const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
   />
 </form>
 ```
-<a name="useInvokeCount"></a>
+<a name="useFunctionStats"></a>
 
-## useInvokeCount(fnc) ⇒ <code>Array.&lt;function(), number&gt;</code>
-Counts the number of times the specified function is invoked.
-
-**Kind**: global function  
-**Returns**: <code>Array.&lt;function(), number&gt;</code> - an array where the first index is a function and
-the second index is the number of times the function was called.  
-
-| Param | Description |
-| --- | --- |
-| fnc | the specified function |
-
-<a name="useInvoking"></a>
-
-## useInvoking(fnc) ⇒ <code>Array.&lt;function(), boolean&gt;</code>
-Determines if the specified function is being called. This function
-is only useful for async functions.
+## useFunctionStats(fnc) ⇒ <code>UseFunctionStats.&lt;T, K&gt;</code>
+Keeps track of certain statistics on a function. Eg: if the function
+is invoking and how many times the function was called.
 
 **Kind**: global function  
-**Returns**: <code>Array.&lt;function(), boolean&gt;</code> - an array where the first index is a function and
-the second index is the state of the invocation for the function.  
+**Returns**: <code>UseFunctionStats.&lt;T, K&gt;</code> - Returns a object.
+- `isRunning`: determines if a function was running
+- `fnc`: the specified function
+- `invokeCount`: the number to times the function was called  
 
 | Param | Description |
 | --- | --- |
@@ -342,6 +328,7 @@ Below is a flow diagram for this hook
 **Returns**: <code>Object</code> - returns a
 handler for onSubmit events, a count of how many times submit was called, and the
 state of the submission progress.  
+**See**: [useFunctionStats](#useFunctionStats)  
 
 | Param | Description |
 | --- | --- |

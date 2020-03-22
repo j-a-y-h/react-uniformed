@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 
-interface UseInvokingFunctions<T, K> {
+interface UseFunctionStatsFnc<T, K> {
   (...args: T[]): K | Promise<K>;
   (): K | Promise<K>;
 }
@@ -8,7 +8,7 @@ interface UseInvokingFunctions<T, K> {
 interface UseFunctionStats<T, K> {
   readonly isRunning: boolean;
   readonly invokeCount: number;
-  readonly fnc: UseInvokingFunctions<T, K>;
+  readonly fnc: UseFunctionStatsFnc<T, K>;
 }
 
 /**
@@ -22,12 +22,12 @@ interface UseFunctionStats<T, K> {
  * - `invokeCount`: the number to times the function was called
  */
 export function useFunctionStats<T, K>(
-  fnc: UseInvokingFunctions<T, K>,
+  fnc: UseFunctionStatsFnc<T, K>,
 ): UseFunctionStats<T, K> {
   const [isRunning, setIsInvoking] = useState(false);
   const invokeCount = useRef(0);
   const wrappedFunction = useCallback((...args: T[]) => {
-    // note: using a ref becuase setIsInvoking will kick off a new render.
+    // note: using a ref because setIsInvoking will kick off a new render.
     //  If this wasn't true then this would need to be a setState.
     invokeCount.current += 1;
     setIsInvoking(true);
