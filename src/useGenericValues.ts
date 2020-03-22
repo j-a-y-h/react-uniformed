@@ -61,7 +61,7 @@ function resetCompare<T>(oldState: Values<T>, newState: Values<T>): boolean {
     && (
       // verify that the objects are not empty
       (typeof oldState === typeof newState && oldState && newState)
-      && (Object.keys(oldState).length > 0 || Object.keys(newState).length > 0)
+      && (isMapWithValues(oldState) || isMapWithValues(newState))
     )
   );
 }

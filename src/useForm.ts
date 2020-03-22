@@ -135,8 +135,8 @@ export function useForm({
     validate(values);
     setTouches(newTouches);
   }, [validate, values, setTouches]);
-  // note: useSubmission will skip validation if no function was passed
-  //  in order to take advantage of this, we must pass undefined if useForm
+  // note: useSubmission will skip validation if no function was passed.
+  //  In order to take advantage of this, we must pass undefined if useForm
   //  was invoked with a validation function
   const validator = useMemo((): undefined | (() => void) => ((
     typeof validators === 'function'
