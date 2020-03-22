@@ -1,7 +1,7 @@
 import {
   useCallback, SyntheticEvent, useState, useEffect, useMemo, useRef,
 } from 'react';
-import { useFunctionStats } from './useFunctionUtils';
+import { useFunctionStats } from './useFunctionStats';
 
 export interface SubmissionHandler {
   (event?: Event): void | Promise<void>;
