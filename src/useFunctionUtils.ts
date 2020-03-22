@@ -1,51 +1,42 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 interface UseInvokingFunctions<T, K> {
   (...args: T[]): K | Promise<K>;
   (): K | Promise<K>;
 }
 
-interface UseInvokeCount<T, K> {
-  (...args: T[]): K;
-  (): K;
+interface UseFunctionStats<T, K> {
+  readonly isRunning: boolean;
+  readonly invokeCount: number;
+  readonly fnc: UseInvokingFunctions<T, K>;
 }
 
 /**
- * Counts the number of times the specified function is invoked.
+ * Keeps track of certain statistics on a function. Eg: if the function
+ * is invoking and how many times the function was called.
  *
  * @param fnc the specified function
- * @return {Array<Function, number>} an array where the first index is a function and
- * the second index is the number of times the function was called.
+ * @return {UseFunctionStats<T, K>} Returns a object.
+ * - `isRunning`: determines if a function was running
+ * - `fnc`: the specified function
+ * - `invokeCount`: the number to times the function was called
  */
-export function useInvokeCount<T, K>(fnc: UseInvokeCount<T, K>): [UseInvokeCount<T, K>, number] {
-  const [count, setCount] = useState(0);
-  const wrappedFunction = useCallback((...args: T[]) => {
-    setCount((currentCount) => currentCount + 1);
-    return fnc(...args);
-  }, [fnc]);
-  return [wrappedFunction, count];
-}
-
-/**
- * Determines if the specified function is being called. This function
- * is only useful for async functions.
- *
- * @param fnc the specified function
- * @return {Array<Function, boolean>} an array where the first index is a function and
- * the second index is the state of the invocation for the function.
- */
-export function useInvoking<T, K>(
+export function useFunctionStats<T, K>(
   fnc: UseInvokingFunctions<T, K>,
-): [UseInvokingFunctions<T, K>, boolean] {
-  const [isInvoking, setIsInvoking] = useState(false);
+): UseFunctionStats<T, K> {
+  const [isRunning, setIsInvoking] = useState(false);
+  const invokeCount = useRef(0);
   const wrappedFunction = useCallback((...args: T[]) => {
+    // note: using a ref becuase setIsInvoking will kick off a new render.
+    //  If this wasn't true then this would need to be a setState.
+    invokeCount.current += 1;
     setIsInvoking(true);
     let ret = fnc(...args);
     if ((ret as Promise<K>)?.then) {
       ret = Promise.resolve(ret)
         .catch((error) => {
           setIsInvoking(false);
-          throw error;
+          return Promise.reject(error);
         })
         .then((result) => {
           setIsInvoking(false);
@@ -56,5 +47,9 @@ export function useInvoking<T, K>(
     }
     return ret;
   }, [fnc]);
-  return [wrappedFunction, isInvoking];
+  return {
+    fnc: wrappedFunction,
+    isRunning,
+    invokeCount: invokeCount.current,
+  };
 }

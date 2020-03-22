@@ -1,7 +1,7 @@
 import {
   useCallback, SyntheticEvent, useState, useEffect, useMemo, useRef,
 } from 'react';
-import { useInvokeCount, useInvoking } from './useFunctionUtils';
+import { useFunctionStats } from './useFunctionUtils';
 
 export interface SubmissionHandler {
   (event?: Event): void | Promise<void>;
@@ -78,10 +78,16 @@ export function useSubmission({
 }: UseSubmissionProps): UseSubmissionHook {
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   // track submission count
-  const [submitWithInvokeCount, submitCount] = useInvokeCount<Event | undefined, void>(onSubmit);
-  const [submitWithInvokingTracker, isSubmitting] = useInvoking(submitWithInvokeCount);
+  const {
+    fnc: wrappedOnSubmit,
+    invokeCount: submitCount,
+    isRunning: isSubmitting,
+  } = useFunctionStats<Event | undefined, void>(onSubmit);
   const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
-  const [validate, isValidating] = useInvoking(validationFnc);
+  const {
+    fnc: validate,
+    isRunning: isValidating,
+  } = useFunctionStats(validationFnc);
   const submitEvent = useRef<Event | undefined>();
 
   // track when to kick off submission
@@ -89,12 +95,12 @@ export function useSubmission({
     if (isReadyToSubmit && !isValidating) {
       setIsReadyToSubmit(false);
       if (!disabled) {
-        submitWithInvokingTracker(submitEvent.current);
+        wrappedOnSubmit(submitEvent.current);
       }
     }
   }, [
     disabled,
-    submitWithInvokingTracker,
+    wrappedOnSubmit,
     isReadyToSubmit,
     isValidating,
   ]);
