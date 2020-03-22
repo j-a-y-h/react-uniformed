@@ -48,8 +48,11 @@ export interface UseResetableValuesHook<T> {
   readonly setValues: SetValues<T>;
   readonly resetValues: () => void;
 }
-export function hasValue<T>(values: Values<T>): boolean {
-  return !values || typeof values !== 'object' || Object.keys(values).some((key): boolean => Boolean(values[key]));
+export function isMapWithValues<T>(values: Values<T>): boolean {
+  return Boolean(
+    values && typeof values === 'object'
+    && Object.keys(values).some((key): boolean => Boolean(values[key])),
+  );
 }
 
 function resetCompare<T>(oldState: Values<T>, newState: Values<T>): boolean {
@@ -108,7 +111,7 @@ export function useGenericValues<T>(initialValues: Values<T> = {}): UseResetable
     // eslint-disable-next-line react-hooks/exhaustive-deps
   const resetValues = useCallback((): void => setValues(initialValues), []);
   // note: this counts 0 and empty string as no value.
-  const hasValueCallback = useMemo((): boolean => hasValue(values), [values]);
+  const hasValueCallback = useMemo((): boolean => isMapWithValues(values), [values]);
   return {
     values, setValue, resetValues, setValues, hasValue: hasValueCallback,
   };

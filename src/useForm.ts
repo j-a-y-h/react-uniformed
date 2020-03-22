@@ -16,7 +16,7 @@ import {
   SingleValidator,
 } from './useValidation';
 import {
-  SetValueCallback, MutableValues, PartialValues, hasValue,
+  SetValueCallback, MutableValues, PartialValues, isMapWithValues,
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
 
@@ -114,7 +114,7 @@ export function useForm({
     touches, resetTouches, setTouch, touchField, setTouches,
   } = useTouch();
     // picks between constraints or validators
-  const validatorsInput = useMemo(() => (typeof validators === 'function' || hasValue(validators)
+  const validatorsInput = useMemo(() => (typeof validators === 'function' || isMapWithValues(validators)
     ? validators
     : constraintsHook
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,8 +139,10 @@ export function useForm({
   //  in order to take advantage of this, we must pass undefined if useForm
   //  was invoked with a validation function
   const validator = useMemo((): undefined | (() => void) => ((
-    typeof validators === 'function' || typeof constraints === 'function'
-    || (Object.keys(validators).length + Object.keys(constraints).length) > 0
+    typeof validators === 'function'
+    || typeof constraints === 'function'
+    || isMapWithValues(validators)
+    || isMapWithValues(constraints)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ) ? submissionValidator : undefined), []);
 
