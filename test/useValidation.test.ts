@@ -42,29 +42,27 @@ describe("useValidation", () => {
         expect(result.current.errors.name).toEqual(SUCCESS);
         expect(result.current.errors.john).toEqual(ERROR);
     });
-    it("values validate to true if no corresponding validator", async () => {
+    it.each([
+        [{}, undefined],
+        [() => ({}), undefined]
+    ])("values validate to true if passed `%s`", async (validator, expectLastTest?: string) => {
+        const { result, waitForNextUpdate } = renderHook(() => useValidation(validator));
+        act(() => {
+            // @ts-ignore
+            result.current.validateByName("john", "asfdkasjdkl");
+        });
+        await waitForNextUpdate();
         // @ts-ignore
-        const testFunction = async (validator, expectLastTest?: "") => {
-            const { result, waitForNextUpdate } = renderHook(() => useValidation(validator));
-            act(() => {
-                // @ts-ignore
-                result.current.validateByName("john", "asfdkasjdkl");
-            });
-            await waitForNextUpdate();
-            // @ts-ignore
-            expect(result.current.errors.john).toEqual(SUCCESS);
-            // @ts-ignore
-            expect(result.current.errors.pizza).toEqual(undefined);
-            act(() => {
-                result.current.validate({ pizza: "asfdkasjdkl" });
-            });
-            await waitForNextUpdate();
-            // @ts-ignore
-            expect(result.current.errors.john).toEqual(undefined);
-            // @ts-ignore
-            expect(result.current.errors.pizza).toEqual(expectLastTest);
-        };
-        await testFunction({}, SUCCESS);
-        await testFunction(() => ({}), undefined);
+        expect(result.current.errors.john).toEqual(SUCCESS);
+        // @ts-ignore
+        expect(result.current.errors.pizza).toEqual(undefined);
+        act(() => {
+            result.current.validate({ pizza: "asfdkasjdkl" });
+        });
+        await waitForNextUpdate();
+        // @ts-ignore
+        expect(result.current.errors.john).toBeFalsy();
+        // @ts-ignore
+        expect(result.current.errors.pizza).toEqual(expectLastTest);
     });
 });

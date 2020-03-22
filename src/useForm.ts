@@ -16,7 +16,7 @@ import {
   SingleValidator,
 } from './useValidation';
 import {
-  SetValueCallback, MutableValues, PartialValues, hasValue,
+  SetValueCallback, MutableValues, PartialValues, isMapWithValues,
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
 
@@ -24,24 +24,24 @@ export type UseFormsHook = Readonly<{
   errors: Errors | PartialValues<Validators, Error>;
   hasErrors: boolean;
   isSubmitting: boolean;
-  values: Fields;
+  reset: () => void;
   setError: ErrorHandler;
   setTouch: TouchHandler;
-  touchField: TouchFieldHandler;
   setValue: SetValueCallback<FieldValue>;
-  submitCount: number;
   submit: SubmitHandler;
+  submitCount: number;
   touches: Touches;
-  validateByName: ValidateHandler<FieldValue>;
+  touchField: TouchFieldHandler;
   validate: ValidateAllHandler<FieldValue>;
-  reset: () => void;
+  validateByName: ValidateHandler<FieldValue>;
+  values: Fields;
 }>
 type UseFormParameters = Readonly<{
-  normalizer?: NormalizerHandler;
   constraints?: ConstraintValidators | SyncedConstraint;
   initialValues?: Fields;
+  normalizer?: NormalizerHandler;
+  onSubmit: (values: Fields, event?: Event) => void | Promise<void>;
   validators?: Validators | SingleValidator<FieldValue>;
-  onSubmit: (values: Fields) => void | Promise<void>;
 }>;
 
 /**
@@ -114,7 +114,7 @@ export function useForm({
     touches, resetTouches, setTouch, touchField, setTouches,
   } = useTouch();
     // picks between constraints or validators
-  const validatorsInput = useMemo(() => (typeof validators === 'function' || hasValue(validators)
+  const validatorsInput = useMemo(() => (typeof validators === 'function' || isMapWithValues(validators)
     ? validators
     : constraintsHook
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,20 +135,30 @@ export function useForm({
     validate(values);
     setTouches(newTouches);
   }, [validate, values, setTouches]);
+  // note: useSubmission will skip validation if no function was passed.
+  //  In order to take advantage of this, we must pass undefined if useForm
+  //  was invoked with a validation function
+  const validator = useMemo((): undefined | (() => void) => ((
+    typeof validators === 'function'
+    || typeof constraints === 'function'
+    || isMapWithValues(validators)
+    || isMapWithValues(constraints)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  ) ? submissionValidator : undefined), []);
 
   // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches);
   // create a submit handler
-  const handleSubmit: SubmissionHandler = useCallback(async (): Promise<void> => {
+  const handleSubmit: SubmissionHandler = useCallback(async (event?: Event): Promise<void> => {
     // note: give the handler every value so that we don't have to worry about
     // it later
-    await onSubmit(values);
+    await onSubmit(values, event);
     reset();
   }, [onSubmit, values, reset]);
   // use submission hook
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit: handleSubmit,
-    validator: submissionValidator,
+    validator,
     disabled: hasErrors,
   });
   return {

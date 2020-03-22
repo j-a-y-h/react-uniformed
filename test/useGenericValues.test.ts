@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-hooks'
-import { useGenericValues } from '../src/useGenericValues';
+import { useGenericValues, isMapWithValues } from '../src/useGenericValues';
 
 describe("useGenericValues", () => {
   it('can set values', () => {
@@ -24,10 +24,23 @@ describe("useGenericValues", () => {
   it('can determine if there are values', () => {
     const { result } = renderHook(() => useGenericValues<string>());
 
+    expect(result.current.hasValue).toEqual(false);
     act(() => result.current.setValue("email", "required"));
     expect(result.current.hasValue).toEqual(true);
     act(() => result.current.resetValues());
     expect(result.current.hasValue).toEqual(false);
+  });
+  it.each([
+    [null, false],
+    [undefined, false],
+    [{}, false],
+    [{t: 0}, false],
+    [{t: ''}, false],
+    [{t: "test"}, true],
+    [() => {}, false],
+  ])(`hasValue returns false for %s input`, (input, expects) => {
+    // @ts-ignore
+    expect(isMapWithValues(input)).toEqual(expects);
   });
   it("supports initial values", () => {
     const initialValue = {

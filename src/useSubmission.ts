@@ -1,10 +1,10 @@
 import {
-  useCallback, SyntheticEvent, useState, useEffect, useMemo,
+  useCallback, SyntheticEvent, useState, useEffect, useMemo, useRef,
 } from 'react';
-import { useInvokeCount, useInvoking } from './useFunctionUtils';
+import { useFunctionStats } from './useFunctionStats';
 
 export interface SubmissionHandler {
-  (): void | Promise<void>;
+  (event?: Event): void | Promise<void>;
 }
 export interface SubmitHandler {
   (event?: SyntheticEvent): void;
@@ -26,8 +26,23 @@ export interface UseSubmissionHook {
 }
 
 /**
- * Handles the form submission. Calls the specified validator and only
- * calls the onSubmit function if the validator returns error free.
+ * Handles the form submission. Runs validation before calling the `onSubmit` function
+ * if a validator was passed in.  If no validator was passed in, then the `onSubmit` function
+ * will be invoked.  The validator function must set the state on disabled to true, if there
+ * were errors. Disabled will prevent this hook from calling the `onSubmit` function.
+ *
+ * Below is a flow diagram for this hook
+ *```
+ *                submit(Event)
+ *                     |
+ *   (no) - (validator is a function?) - (yes)
+ *    |                                    |
+ *  onSubmit(Event)                   validator()
+ *                                         |
+ *                       (no) - (disabled set to `false`?) - (yes)
+ *                                                             |
+ *                                                        onSubmit(Event)
+ *```
  *
  * @param param the props the pass in
  * @param param.validator the specified validator. If your validation logic is async,
@@ -37,6 +52,7 @@ export interface UseSubmissionHook {
  * @return {{isSubmitting: boolean, submitCount: number, submit: Function}} returns a
  * handler for onSubmit events, a count of how many times submit was called, and the
  * state of the submission progress.
+ * @see {@link useFunctionStats}
  * @example
  *
  *   // this example is if you are not using the useForm hook. Note: the useForm hook
@@ -63,32 +79,40 @@ export function useSubmission({
 }: UseSubmissionProps): UseSubmissionHook {
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   // track submission count
-  const [submitWithInvokeCount, submitCount] = useInvokeCount(onSubmit);
-  const [submitWithInvokingTracker, isSubmitting] = useInvoking(submitWithInvokeCount);
+  const {
+    fnc: wrappedOnSubmit,
+    invokeCount: submitCount,
+    isRunning: isSubmitting,
+  } = useFunctionStats<Event | undefined, void>(onSubmit);
   const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
-  const [validate, isValidating] = useInvoking(validationFnc);
+  const {
+    fnc: validate,
+    isRunning: isValidating,
+  } = useFunctionStats(validationFnc);
+  const submitEvent = useRef<Event | undefined>();
 
   // track when to kick off submission
   useEffect(() => {
     if (isReadyToSubmit && !isValidating) {
       setIsReadyToSubmit(false);
       if (!disabled) {
-        submitWithInvokingTracker();
+        wrappedOnSubmit(submitEvent.current);
       }
     }
   }, [
     disabled,
-    isValidating,
+    wrappedOnSubmit,
     isReadyToSubmit,
-    setIsReadyToSubmit,
-    submitWithInvokingTracker,
+    isValidating,
   ]);
   const submit = useCallback((event?: SyntheticEvent) => {
     if (event) {
       event.preventDefault();
     }
-    validate();
     setIsReadyToSubmit(true);
-  }, [setIsReadyToSubmit, validate]);
+    if (validator) {
+      validate();
+    }
+  }, [validator, validate, setIsReadyToSubmit]);
   return { isSubmitting, submitCount, submit };
 }
