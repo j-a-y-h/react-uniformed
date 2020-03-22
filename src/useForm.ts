@@ -24,24 +24,24 @@ export type UseFormsHook = Readonly<{
   errors: Errors | PartialValues<Validators, Error>;
   hasErrors: boolean;
   isSubmitting: boolean;
-  values: Fields;
+  reset: () => void;
   setError: ErrorHandler;
   setTouch: TouchHandler;
-  touchField: TouchFieldHandler;
   setValue: SetValueCallback<FieldValue>;
-  submitCount: number;
   submit: SubmitHandler;
+  submitCount: number;
   touches: Touches;
-  validateByName: ValidateHandler<FieldValue>;
+  touchField: TouchFieldHandler;
   validate: ValidateAllHandler<FieldValue>;
-  reset: () => void;
+  validateByName: ValidateHandler<FieldValue>;
+  values: Fields;
 }>
 type UseFormParameters = Readonly<{
-  normalizer?: NormalizerHandler;
   constraints?: ConstraintValidators | SyncedConstraint;
   initialValues?: Fields;
-  validators?: Validators | SingleValidator<FieldValue>;
+  normalizer?: NormalizerHandler;
   onSubmit: (values: Fields, event?: Event) => void | Promise<void>;
+  validators?: Validators | SingleValidator<FieldValue>;
 }>;
 
 /**
