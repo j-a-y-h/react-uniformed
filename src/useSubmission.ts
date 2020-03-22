@@ -1,10 +1,10 @@
 import {
-  useCallback, SyntheticEvent, useState, useEffect, useMemo,
+  useCallback, SyntheticEvent, useState, useEffect, useMemo, useRef,
 } from 'react';
 import { useInvokeCount, useInvoking } from './useFunctionUtils';
 
 export interface SubmissionHandler {
-  (): void | Promise<void>;
+  (event?: Event): void | Promise<void>;
 }
 export interface SubmitHandler {
   (event?: SyntheticEvent): void;
@@ -63,17 +63,20 @@ export function useSubmission({
 }: UseSubmissionProps): UseSubmissionHook {
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   // track submission count
-  const [submitWithInvokeCount, submitCount] = useInvokeCount(onSubmit);
+  const [submitWithInvokeCount, submitCount] = useInvokeCount<Event | undefined, void>(onSubmit);
   const [submitWithInvokingTracker, isSubmitting] = useInvoking(submitWithInvokeCount);
   const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
   const [validate, isValidating] = useInvoking(validationFnc);
+  // A queue of events. Using a queue as there isn't a lock preventing
+  // submit from being invoked multiple times
+  const submitEvents = useRef<(Event | undefined)[]>([]);
 
   // track when to kick off submission
   useEffect(() => {
     if (isReadyToSubmit && !isValidating) {
       setIsReadyToSubmit(false);
       if (!disabled) {
-        submitWithInvokingTracker();
+        submitWithInvokingTracker(submitEvents.current.shift());
       }
     }
   }, [
@@ -87,6 +90,8 @@ export function useSubmission({
     if (event) {
       event.preventDefault();
     }
+    // always push something because
+    submitEvents.current.push(event?.nativeEvent);
     validate();
     setIsReadyToSubmit(true);
   }, [setIsReadyToSubmit, validate]);

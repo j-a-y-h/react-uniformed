@@ -41,7 +41,7 @@ type UseFormParameters = Readonly<{
   constraints?: ConstraintValidators | SyncedConstraint;
   initialValues?: Fields;
   validators?: Validators | SingleValidator<FieldValue>;
-  onSubmit: (values: Fields) => void | Promise<void>;
+  onSubmit: (values: Fields, event?: Event) => void | Promise<void>;
 }>;
 
 /**
@@ -139,10 +139,10 @@ export function useForm({
   // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches);
   // create a submit handler
-  const handleSubmit: SubmissionHandler = useCallback(async (): Promise<void> => {
+  const handleSubmit: SubmissionHandler = useCallback(async (event?: Event): Promise<void> => {
     // note: give the handler every value so that we don't have to worry about
     // it later
-    await onSubmit(values);
+    await onSubmit(values, event);
     reset();
   }, [onSubmit, values, reset]);
   // use submission hook
