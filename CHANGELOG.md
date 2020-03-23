@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.15] - 2020-03-22
+### Fixed
+* [`useForm`] Fixed an issue where `onSubmit` was being called with the current values.
+
+## [0.0.14] - 2020-03-22
 ### Added
 * [`useSubmission`] `onSubmit` will be called with the current Event if `submit` is called with an event.
 * [`useForm`] `onSubmit` the second argument will be the event if `submit` is called with an event.
