@@ -144,7 +144,7 @@ export function useForm({
     || isMapWithValues(validators)
     || isMapWithValues(constraints)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  ) ? submissionValidator : undefined), []);
+  ) ? submissionValidator : undefined), [submissionValidator]);
 
   // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches);

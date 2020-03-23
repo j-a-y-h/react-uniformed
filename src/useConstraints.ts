@@ -11,7 +11,7 @@ type supportedTypes = 'email' | 'text' | 'url' | 'number' | 'date';
 // possible values:
 // "text" | "number" | "date" | "email" | "checkbox" |
 // "tel" | "time" | "url" | "week" | "month" | "year" | "range";
-export const supportedTypesSet = new Set(['text', 'email', 'url', 'number', 'date']);
+export const supportedTypesSet = new Set<supportedTypes>(['text', 'email', 'url', 'number', 'date']);
 
 interface Constraints {
   /**
@@ -181,7 +181,7 @@ function validateRule(name: string, rules: Constraints): void {
   );
   // throws warnings for invalid rules
   if (hasRule(rules, 'type')) {
-    const type = getRuleValue(rules, 'type') as string;
+    const type = getRuleValue(rules, 'type') as supportedTypes;
     assert.warning(
       supportedTypesSet.has(type),
       LoggingTypes.constraintError,
