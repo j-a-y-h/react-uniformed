@@ -20,11 +20,11 @@ export function useHandlers<T, K extends T[]>(
   ...handlers: Handler<T, K, void>[]
 ): Handler<T, K, void> {
   return useCallback((...args: K): void => {
-    handlers.forEach((func, index): void => {
+    handlers.forEach((func): void => {
       assert.error(
         typeof func === 'function',
         LoggingTypes.typeError,
-        `(expected: function, received: ${typeof func}) ${useHandlers.name} expects a function at index (${index}).`,
+        `(expected: function, received: ${typeof func})`,
       );
       func(...args);
     });
