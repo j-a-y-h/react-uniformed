@@ -39,6 +39,16 @@ export function useHandlers<T, K extends T[]>(
  * @return the value as a string
  */
 function getInputValue({ checked, type, value }: HTMLInputElement): string {
+  // TODO: support select and multiple select
+  /**
+   * let value = "";
+   * if (target instanceof HTMLSelectElement || target.selectedOptions) {
+   *     const values = Array.from(target.selectedOptions).map((option) => option.value);
+   *     value = target.multiple ? values : value[0];
+   * } else {
+   *     ({value} = target);
+   * }
+   */
   let ret: string = value;
   if (type === 'checkbox') {
     ret = checked
@@ -63,16 +73,6 @@ export function useSettersAsEventHandler(
     const { target } = evt;
     handler(
       (target as HTMLInputElement).name,
-      // TODO: support select and multiple select
-      /**
-       * let value = "";
-       * if (target instanceof HTMLSelectElement || target.selectedOptions) {
-       *     const values = Array.from(target.selectedOptions).map((option) => option.value);
-       *     value = target.multiple ? values : value[0];
-       * } else {
-       *     ({value} = target);
-       * }
-       */
       getInputValue(target as HTMLInputElement),
       target,
     );
