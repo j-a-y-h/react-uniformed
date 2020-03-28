@@ -1,4 +1,6 @@
+import React from "react";
 import { renderHook } from '@testing-library/react-hooks'
+import { render, fireEvent } from '@testing-library/react';
 import { useHandlers, useSettersAsEventHandler, useValidateAsSetter } from '../src';
 
 describe("useHandlers", () => {
@@ -22,17 +24,25 @@ describe("useHandlers", () => {
 });
 describe("useSettersAsEventHandler", () => {
   it("calls handlers with the following arguments (name: string, value: string, target: EventTarget)", () => {
-    const argumentsPassed: string[] = [];
-    const first = jest.fn().mockImplementation((...args) => argumentsPassed.push(...args));
-    const second = jest.fn().mockImplementation((...args) => argumentsPassed.push(...args));
+    const first = jest.fn();
+    const second = jest.fn();
     const { result } = renderHook(() => useSettersAsEventHandler(first, second));
-    const name = "testing";
-    const value = "testing value";
-    const target = { name, value };
-    result.current({ target } as any);
-    expect(argumentsPassed).toEqual([name, value, target, name, value, target]);
+    // @ts-ignore
+    let renderer = render(<input name="test" type="checkbox" onChange={result.current} />);
+    // @ts-ignore
+    fireEvent.click(renderer.container.firstChild);
+    expect(first).toBeCalledWith("test", "on", renderer.container.firstChild);
+    expect(second).toBeCalledWith("test", "on", renderer.container.firstChild);
   });
-  it.todo('supports checkboxes');
+  it('supports checkboxes', () => {
+    const fn = jest.fn();
+    const { result } = renderHook(() => useSettersAsEventHandler(fn));
+    let renderer = render(<input name="test" type="checkbox" onChange={result.current} />);
+    expect(renderer.container.querySelector("input")!.checked).toBe(false);
+    fireEvent.click(renderer.container.firstChild);
+    expect(renderer.container.firstChild!.checked).toBe(true);
+    expect(fn).toBeCalledWith("test", "on", expect.any(HTMLInputElement));
+  });
   it.todo('checkboxes without value defaults to on');
 });
 
