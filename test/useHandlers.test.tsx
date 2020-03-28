@@ -32,6 +32,8 @@ describe("useSettersAsEventHandler", () => {
     result.current({ target } as any);
     expect(argumentsPassed).toEqual([name, value, target, name, value, target]);
   });
+  it.todo('supports checkboxes');
+  it.todo('checkboxes without value defaults to on');
 });
 
 describe('useValidateAsSetter', () => {
