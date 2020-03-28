@@ -54,8 +54,10 @@ describe("useSettersAsEventHandler", () => {
     fireEvent.click(renderer.container.firstChild);
     expect(renderer.container.firstChild!.checked).toBe(true);
     expect(fn).toBeCalledWith("test", "test-value", expect.any(HTMLInputElement));
+    fireEvent.click(renderer.container.firstChild);
+    expect(renderer.container.firstChild!.checked).toBe(false);
+    expect(fn).toBeCalledWith("test", "", expect.any(HTMLInputElement));
   });
-  it.todo('checkboxes without value defaults to on');
 });
 
 describe('useValidateAsSetter', () => {
