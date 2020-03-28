@@ -32,6 +32,24 @@ export function useHandlers<T, K extends T[]>(
   }, handlers);
 }
 
+/**
+ * Gets the value for the specified input.
+ *
+ * @param input the specified input
+ * @return the value as a string
+ */
+function getInputValue({ checked, type, value }: HTMLInputElement): string {
+  let ret: string = value;
+  if (type === 'checkbox') {
+    ret = checked
+      // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#Value
+      // If the value attribute was omitted, the default value for the checkbox is 'on'.
+      ? value || 'on'
+      : '';
+  }
+  return ret;
+}
+
 export function useSettersAsEventHandler(
   ...handlers: eventLikeHandlers[]
 ): ReactOrNativeEventListener {
@@ -55,7 +73,7 @@ export function useSettersAsEventHandler(
        *     ({value} = target);
        * }
        */
-      (target as HTMLInputElement).value,
+      getInputValue(target as HTMLInputElement),
       target,
     );
   }, [handler]);
