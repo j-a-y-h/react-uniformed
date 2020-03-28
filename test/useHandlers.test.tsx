@@ -38,10 +38,22 @@ describe("useSettersAsEventHandler", () => {
     const fn = jest.fn();
     const { result } = renderHook(() => useSettersAsEventHandler(fn));
     let renderer = render(<input name="test" type="checkbox" onChange={result.current} />);
-    expect(renderer.container.querySelector("input")!.checked).toBe(false);
+    expect(renderer.container.firstChild!.checked).toBe(false);
     fireEvent.click(renderer.container.firstChild);
     expect(renderer.container.firstChild!.checked).toBe(true);
     expect(fn).toBeCalledWith("test", "on", expect.any(HTMLInputElement));
+    fireEvent.click(renderer.container.firstChild);
+    expect(renderer.container.firstChild!.checked).toBe(false);
+    expect(fn).toBeCalledWith("test", "", expect.any(HTMLInputElement));
+  });
+  it('supports checkboxes with values', () => {
+    const fn = jest.fn();
+    const { result } = renderHook(() => useSettersAsEventHandler(fn));
+    let renderer = render(<input name="test" type="checkbox" value="test-value" onChange={result.current} />);
+    expect(renderer.container.querySelector("input")!.checked).toBe(false);
+    fireEvent.click(renderer.container.firstChild);
+    expect(renderer.container.firstChild!.checked).toBe(true);
+    expect(fn).toBeCalledWith("test", "test-value", expect.any(HTMLInputElement));
   });
   it.todo('checkboxes without value defaults to on');
 });
