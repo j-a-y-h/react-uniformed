@@ -11,6 +11,9 @@
 <dd><p>Keeps track of certain statistics on a function. Eg: if the function
 is invoking and how many times the function was called.</p>
 </dd>
+<dt><a href="#getInputValue">getInputValue(input)</a> ⇒</dt>
+<dd><p>Gets the value for the specified input.</p>
+</dd>
 <dt><a href="#useValidateAsSetter">useValidateAsSetter(validate, values)</a> ⇒ <code>eventLikeHandlers</code></dt>
 <dd><p>Creates a function that accepts a name and value as parameters.
 When the returned function is invoked, it will call the specified
@@ -183,6 +186,30 @@ is invoking and how many times the function was called.
 | --- | --- |
 | fnc | the specified function |
 
+<a name="getInputValue"></a>
+
+## getInputValue(input) ⇒
+Gets the value for the specified input.
+
+**Kind**: global function  
+**Returns**: the value as a string  
+
+| Param | Description |
+| --- | --- |
+| input | the specified input |
+
+<a name="getInputValue..ret"></a>
+
+### getInputValue~ret
+let value = "";
+if (target instanceof HTMLSelectElement || target.selectedOptions) {
+    const values = Array.from(target.selectedOptions).map((option) => option.value);
+    value = target.multiple ? values : value[0];
+} else {
+    ({value} = target);
+}
+
+**Kind**: inner property of [<code>getInputValue</code>](#getInputValue)  
 <a name="useValidateAsSetter"></a>
 
 ## useValidateAsSetter(validate, values) ⇒ <code>eventLikeHandlers</code>
