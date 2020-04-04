@@ -23,6 +23,7 @@ import { ConstraintValidators, SyncedConstraint, useConstraints } from './useCon
 export type UseFormsHook = Readonly<{
   errors: Errors | PartialValues<Validators, Error>;
   hasErrors: boolean;
+  isDirty: boolean;
   isSubmitting: boolean;
   reset: () => void;
   setError: ErrorHandler;
@@ -111,7 +112,7 @@ export function useForm({
   const { values, setValue, resetValues } = useFields(initialValues, normalizer);
   const constraintsHook = useConstraints(constraints);
   const {
-    touches, resetTouches, setTouch, touchField, setTouches,
+    touches, resetTouches, setTouch, touchField, setTouches, isDirty,
   } = useTouch();
     // picks between constraints or validators
   const validatorsInput = useMemo(() => (typeof validators === 'function' || isMapWithValues(validators)
@@ -164,6 +165,7 @@ export function useForm({
   return {
     errors,
     hasErrors,
+    isDirty,
     isSubmitting,
     reset,
     setError,

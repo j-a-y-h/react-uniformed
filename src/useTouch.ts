@@ -10,6 +10,10 @@ export interface TouchFieldHandler {
 }
 export interface UseTouchHook {
   readonly touches: Touches;
+  /**
+   * Set to true if any field is touched
+   */
+  readonly isDirty: boolean;
   readonly setTouch: TouchHandler;
   readonly touchField: TouchFieldHandler;
   readonly resetTouches: () => void;
@@ -22,10 +26,11 @@ export function useTouch(): UseTouchHook {
     setValue: setTouch,
     resetValues: resetTouches,
     setValues: setTouches,
+    hasValue: isDirty,
   } = useGenericValues<boolean>();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   const touchField = useCallback((name: string): void => setTouch(name, true), []);
   return {
-    touches, setTouch, resetTouches, touchField, setTouches,
+    touches, setTouch, resetTouches, touchField, setTouches, isDirty,
   };
 }
