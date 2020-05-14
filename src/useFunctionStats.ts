@@ -32,7 +32,8 @@ export function useFunctionStats<T, K>(
     invokeCount.current += 1;
     setIsInvoking(true);
     let ret = fnc(...args);
-    if ((ret as Promise<K>)?.then) {
+    // @ts-expect-error
+    if (ret?.then) {
       ret = Promise.resolve(ret)
         .catch((error) => {
           setIsInvoking(false);
