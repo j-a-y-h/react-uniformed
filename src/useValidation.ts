@@ -32,7 +32,7 @@ interface UseValidatorHook<T> {
   readonly resetErrors: () => void;
 }
 interface UseValidatorHookPartial<T, K> {
-  readonly errors: PartialValues<K, Error>;
+  readonly errors: PartialValues<K, validErrorValues>;
   readonly hasErrors: boolean;
   readonly setError: ErrorHandler<keyof K>;
   readonly validateByName: ValidateHandler<T, keyof K>;
