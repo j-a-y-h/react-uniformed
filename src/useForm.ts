@@ -110,9 +110,8 @@ const SUBMISSION_ERROR_KEY = '__useFormSubmissionError__';
  * </form>
  *
  * @example
- * // Setting errors from the server
+ * // Validation errors from the server
  *
- * // submissionError is set when the onSubmit handler throws an error
  * const { submit, setValue, validate, submissionError, values } = useForm({
  *   onSubmit(values, {setError}) {
  *      const data = fetch('http://api.example.com', { body: values })
@@ -122,17 +121,33 @@ const SUBMISSION_ERROR_KEY = '__useFormSubmissionError__';
  *
  *      if (data.errors) {
  *        data.errors.forEach(({error, fieldName}) => {
- *          // update the form with errors from the server
+ *          // update the form with errors from the server.
+ *          // note that the form will not be reset if setError is called
  *          setError(fieldName, error);
  *        });
- *        // If there are any errors after submission then this function must throw
- *        // or return Promise.reject() in order to avoid the form resetting.
- *        // submissionError will be set to the value that was thrown.
- *        // In this example submissionError === 'submission failed'
- *        throw 'submission failed';
  *      }
  *   }
  * });
+ *
+ * @example
+ * // Errors trying to post form
+ *
+ * // submissionError is set when the onSubmit handler throws an error
+ * const { submit, setValue, validate, submissionError, values } = useForm({
+ *   onSubmit(values, {setError}) {
+ *      const data = fetch('http://api.example.com', { body: values })
+ *        .then(res => res.json())
+ *        // throwing an error or rejecting a promise will set submissionError
+ *        .catch(() => Promise.reject('Unexpected error'));
+ *
+ *      // If there are any errors after submission then this function must throw an error,
+ *      // return Promise.reject(), or call setError in order to avoid the form resetting.
+ *      // submissionError will be set to the value that was thrown.
+ *      // In this example submissionError === 'submission failed'
+ *      throw 'submission failed';
+ *   }
+ * });
+ *
  */
 export function useForm({
   onSubmit,
@@ -178,8 +193,15 @@ export function useForm({
     // note: give the handler every value so that we don't have to worry about
     // it later
     try {
-      await onSubmit(values, { setError });
-      reset();
+      let shouldReset = true;
+      const wrappedSetError = (name: string, error: string): void => {
+        shouldReset = false;
+        setError(name, error);
+      };
+      await onSubmit(values, { setError: wrappedSetError });
+      if (shouldReset) {
+        reset();
+      }
     } catch (e) {
       setError(SUBMISSION_ERROR_KEY, String(e));
     }
