@@ -40,6 +40,7 @@ export type UseFormsHook = Readonly<{
 
 type onSubmitModifiers = Readonly<{
   setError: ErrorHandler<string>;
+  setFeedback: (feedback: string, isErrorFeedback?: boolean) => void;
 }>;
 
 type UseFormParameters = Readonly<{
@@ -198,14 +199,21 @@ export function useForm({
         shouldReset = false;
         setError(name, error);
       };
-      await onSubmit(values, { setError: wrappedSetError });
+      const setFeedback = (feedback: string, isErrorFeedback?: boolean): void => {
+        if (isErrorFeedback) {
+          setError(SUBMISSION_ERROR_KEY, feedback);
+        } else {
+          setValue(SUBMISSION_ERROR_KEY, feedback);
+        }
+      };
+      await onSubmit(values, { setError: wrappedSetError, setFeedback });
       if (shouldReset) {
         reset();
       }
     } catch (e) {
       setError(SUBMISSION_ERROR_KEY, String(e));
     }
-  }, [onSubmit, values, reset, setError]);
+  }, [onSubmit, values, reset, setError, setValue]);
   // use submission hook
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit: handleSubmit,
