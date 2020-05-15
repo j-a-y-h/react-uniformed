@@ -17,21 +17,27 @@ function Form({values, errors, submit, changeRef, emails}) {
   return (
     <div>
       <h1>Performance Test (Input Count: {emails.length})</h1>
-      {JSON.stringify(values, null, 2)}
       <br/>
       {JSON.stringify(errors, null, 2)}
-      <form onSubmit={submit}>
-      <button type="submit">Submit</button>
-      {emails.map(key => (
-        <input key={key} name={key} ref={changeRef} />
-      ))}
-       {errors.email && <div>{errors.email}</div>}
-        <input
-            name="username"
-            ref={changeRef}
-        />
-        {errors.username && <div>{errors.username}</div>}
-      </form>
+      <table>
+      <tr>
+        <td>
+          <form onSubmit={submit}>
+            <button type="submit">Submit</button>
+            <br />
+            {emails.map(key => (
+              <input key={key} name={key} ref={changeRef} />
+            ))}
+            {errors.email && <div>{errors.email}</div>}
+            <input name="username" ref={changeRef} />
+            {errors.username && <div>{errors.username}</div>}
+          </form>
+        </td>
+        <td style={{verticalAlign: "top", width: "25%"}}>
+          <pre>{JSON.stringify(values, null, 2)}</pre>
+        </td>
+      </tr>
+      </table>
     </div>
   );
 }
