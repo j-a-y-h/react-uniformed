@@ -6,11 +6,10 @@ export default {
 }
 
 const createArray = (length) => Array.from({ length }, (_, k) => k + 1);
-const createKeys = (prefix, length = 1000) => createArray(length).map((_, i) => `${prefix}${i}`);
+const createKeys = (prefix, length = 5000) => createArray(length).map((_, i) => `${prefix}${i}`);
 
 const emailKeys = createKeys("email");
 export function Basic1000InputTest() {
-  // @ts-expect-error
   // Create constraint settings for 1000 emails and a username input
   const constraints = React.useMemo(() => emailKeys.reduce((constraints, key) => {
     constraints[key] = {
@@ -23,7 +22,7 @@ export function Basic1000InputTest() {
       console.log("Validated-------");
       return (value === 'admin' ? true : 'Nice try!')
     },
-  }));
+  }), []);
   const { setValue, values, submit, errors, validateByName } = useForm({
     // @ts-expect-error
       constraints,
@@ -31,7 +30,7 @@ export function Basic1000InputTest() {
         console.log(values);
       },
   })
-  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(setValue, validateByName);
+  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(setValue);
   return (
     <div>
       {JSON.stringify(values, null, 2)}
