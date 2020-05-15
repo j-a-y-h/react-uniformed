@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Errors, ErrorHandler } from './useErrors';
+import { Errors, ErrorHandler, validErrorValues } from './useErrors';
 import { useHandlers } from './useHandlers';
 import {
   useFields, FieldValue, Fields, NormalizerHandler,
@@ -21,7 +21,7 @@ import {
 import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
 
 export type UseFormsHook = Readonly<{
-  errors: Errors | PartialValues<Validators, Error>;
+  errors: Errors | PartialValues<Validators, validErrorValues>;
   hasErrors: boolean;
   isSubmitting: boolean;
   values: Fields;
