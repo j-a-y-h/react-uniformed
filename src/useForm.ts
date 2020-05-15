@@ -20,22 +20,27 @@ import {
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
 
+type SubmitFeedback = Readonly<{
+  error?: string;
+  message?: string;
+}>;
+
 export type UseFormsHook = Readonly<{
   errors: Errors | PartialValues<Validators, validErrorValues>;
   hasErrors: boolean;
   isSubmitting: boolean;
-  values: Fields;
+  reset: () => void;
   setError: ErrorHandler;
   setTouch: TouchHandler;
-  touchField: TouchFieldHandler;
   setValue: SetValueCallback<FieldValue>;
-  submitCount: number;
   submit: SubmitHandler;
-  submissionError?: string;
+  submitCount: number;
+  submitFeedback: SubmitFeedback;
   touches: Touches;
-  validateByName: ValidateHandler<FieldValue>;
+  touchField: TouchFieldHandler;
   validate: ValidateAllHandler<FieldValue>;
-  reset: () => void;
+  validateByName: ValidateHandler<FieldValue>;
+  values: Fields;
 }>
 
 type onSubmitModifiers = Readonly<{
@@ -51,7 +56,7 @@ type UseFormParameters = Readonly<{
   onSubmit: (values: Fields, api: onSubmitModifiers) => void | never | Promise<void | never>;
 }>;
 
-const SUBMISSION_ERROR_KEY = '__useFormSubmissionError__';
+const HIDDEN_SUBMISSION_FEEDBACK_KEY = '__useFormSubmissionError__';
 
 /**
  * A hook for managing form states.
@@ -157,7 +162,7 @@ export function useForm({
   validators = {},
   constraints = {},
 }: UseFormParameters): UseFormsHook {
-  const { values, setValue, resetValues } = useFields(initialValues, normalizer);
+  const { values: rawValues, setValue, resetValues } = useFields(initialValues, normalizer);
   const constraintsHook = useConstraints(constraints);
   const {
     touches, resetTouches, setTouch, touchField, setTouches,
@@ -173,7 +178,8 @@ export function useForm({
     validate, validateByName, errors: rawErrors, resetErrors, setError, hasErrors,
   } = useValidation(validatorsInput);
   // extract the submission error and the reset of the errors
-  const { [SUBMISSION_ERROR_KEY]: submissionError, ...errors } = rawErrors;
+  const { [HIDDEN_SUBMISSION_FEEDBACK_KEY]: submissionError, ...errors } = rawErrors;
+  const { [HIDDEN_SUBMISSION_FEEDBACK_KEY]: submissionSuccess, ...values } = rawValues;
   // create a submission validator handler
   const submissionValidator = useCallback((): void => {
     const newTouches = Object.keys(values).reduce((
@@ -201,9 +207,9 @@ export function useForm({
       };
       const setFeedback = (feedback: string, isErrorFeedback?: boolean): void => {
         if (isErrorFeedback) {
-          setError(SUBMISSION_ERROR_KEY, feedback);
+          wrappedSetError(HIDDEN_SUBMISSION_FEEDBACK_KEY, feedback);
         } else {
-          setValue(SUBMISSION_ERROR_KEY, feedback);
+          setValue(HIDDEN_SUBMISSION_FEEDBACK_KEY, feedback);
         }
       };
       await onSubmit(values, { setError: wrappedSetError, setFeedback });
@@ -211,7 +217,7 @@ export function useForm({
         reset();
       }
     } catch (e) {
-      setError(SUBMISSION_ERROR_KEY, String(e));
+      setError(HIDDEN_SUBMISSION_FEEDBACK_KEY, String(e));
     }
   }, [onSubmit, values, reset, setError, setValue]);
   // use submission hook
@@ -230,7 +236,10 @@ export function useForm({
     setValue,
     submit,
     submitCount,
-    submissionError,
+    submitFeedback: {
+      error: submissionError,
+      message: submissionSuccess,
+    },
     touches,
     touchField,
     validate,
