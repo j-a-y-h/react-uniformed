@@ -45,7 +45,7 @@ export type UseFormsHook = Readonly<{
 
 type onSubmitModifiers = Readonly<{
   setError: ErrorHandler<string>;
-  setFeedback: (feedback: string, isErrorFeedback?: boolean) => void;
+  setFeedback: (feedback: string) => void;
 }>;
 
 type UseFormParameters = Readonly<{
@@ -127,12 +127,9 @@ const HIDDEN_SUBMISSION_FEEDBACK_KEY = '__useFormSubmissionError__';
  *        // the submitFeedback.message value will be set for this case.
  *        setFeedback("Thank you for submitting!");
  *      } else {
- *        // if the second argument is true,
- *        // then the submitFeedback.error value will be set
- *        setFeedback("Something went wrong processing this form", true);
- *        // the above is equivalent to throwing an error or return Promise.reject();
- *        // throw "Something went wrong processing this form"
- *        // or
+ *        // if an error occurs then the submitFeedback.error value will be set
+ *        throw "Something went wrong processing this form"
+ *        // or when you return Promise.reject
  *        // return Promise.reject("Something went wrong processing this form");
  *      }
  *   }
@@ -146,7 +143,7 @@ const HIDDEN_SUBMISSION_FEEDBACK_KEY = '__useFormSubmissionError__';
  * @example
  * // Validation errors from the server
  *
- * const { submit, setValue, validate, submissionError, values } = useForm({
+ * const { hasErrors } = useForm({
  *   onSubmit(values, {setError}) {
  *      const data = fetch('http://api.example.com', { body: values })
  *        .then(res => res.json())
@@ -216,13 +213,9 @@ export function useForm({
       setValue(HIDDEN_SUBMISSION_FEEDBACK_KEY, undefined);
     };
     try {
-      const setFeedback = (feedback: string, isErrorFeedback?: boolean): void => {
-        if (isErrorFeedback) {
-          wrappedSetError(HIDDEN_SUBMISSION_FEEDBACK_KEY, feedback);
-        } else {
-          setValue(HIDDEN_SUBMISSION_FEEDBACK_KEY, feedback);
-          setError(HIDDEN_SUBMISSION_FEEDBACK_KEY, '');
-        }
+      const setFeedback = (feedback: string): void => {
+        setValue(HIDDEN_SUBMISSION_FEEDBACK_KEY, feedback);
+        setError(HIDDEN_SUBMISSION_FEEDBACK_KEY, '');
       };
       await onSubmit(values, { setError: wrappedSetError, setFeedback });
       if (shouldReset) {
