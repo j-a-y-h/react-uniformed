@@ -116,6 +116,34 @@ const HIDDEN_SUBMISSION_FEEDBACK_KEY = '__useFormSubmissionError__';
  * </form>
  *
  * @example
+ * // Setting feedback on submit
+ *
+ * const { submitFeedback } = useForm({
+ *   onSubmit(values, {setFeedback}) {
+ *      const data = await fetch('http://api.example.com', { body: values })
+ *        .then(res => res.json());
+ *
+ *      if (data) {
+ *        // the submitFeedback.message value will be set for this case.
+ *        setFeedback("Thank you for submitting!");
+ *      } else {
+ *        // if the second argument is true,
+ *        // then the submitFeedback.error value will be set
+ *        setFeedback("Something went wrong processing this form", true);
+ *        // the above is equivalent to throwing an error or return Promise.reject();
+ *        // throw "Something went wrong processing this form"
+ *        // or
+ *        // return Promise.reject("Something went wrong processing this form");
+ *      }
+ *   }
+ * });
+ *
+ * // if an error occurred
+ * submitFeedback.error === "Something went wrong processing this form"
+ * // or if the submission was successful
+ * submitFeedback.message === "Thank you for submitting!";
+ *
+ * @example
  * // Validation errors from the server
  *
  * const { submit, setValue, validate, submissionError, values } = useForm({
@@ -132,25 +160,6 @@ const HIDDEN_SUBMISSION_FEEDBACK_KEY = '__useFormSubmissionError__';
  *          setError(fieldName, error);
  *        });
  *      }
- *   }
- * });
- *
- * @example
- * // Errors trying to post form
- *
- * // submissionError is set when the onSubmit handler throws an error
- * const { submit, setValue, validate, submissionError, values } = useForm({
- *   onSubmit(values, {setError}) {
- *      const data = fetch('http://api.example.com', { body: values })
- *        .then(res => res.json())
- *        // throwing an error or rejecting a promise will set submissionError
- *        .catch(() => Promise.reject('Unexpected error'));
- *
- *      // If there are any errors after submission then this function must throw an error,
- *      // return Promise.reject(), or call setError in order to avoid the form resetting.
- *      // submissionError will be set to the value that was thrown.
- *      // In this example submissionError === 'submission failed'
- *      throw 'submission failed';
  *   }
  * });
  *
@@ -200,17 +209,19 @@ export function useForm({
   const handleSubmit: SubmissionHandler = useCallback(async (): Promise<void> => {
     // note: give the handler every value so that we don't have to worry about
     // it later
+    let shouldReset = true;
+    const wrappedSetError = (name: string, error: string): void => {
+      shouldReset = false;
+      setError(name, error);
+      setValue(HIDDEN_SUBMISSION_FEEDBACK_KEY, undefined);
+    };
     try {
-      let shouldReset = true;
-      const wrappedSetError = (name: string, error: string): void => {
-        shouldReset = false;
-        setError(name, error);
-      };
       const setFeedback = (feedback: string, isErrorFeedback?: boolean): void => {
         if (isErrorFeedback) {
           wrappedSetError(HIDDEN_SUBMISSION_FEEDBACK_KEY, feedback);
         } else {
           setValue(HIDDEN_SUBMISSION_FEEDBACK_KEY, feedback);
+          setError(HIDDEN_SUBMISSION_FEEDBACK_KEY, '');
         }
       };
       await onSubmit(values, { setError: wrappedSetError, setFeedback });
@@ -218,7 +229,7 @@ export function useForm({
         reset();
       }
     } catch (e) {
-      setError(HIDDEN_SUBMISSION_FEEDBACK_KEY, String(e));
+      wrappedSetError(HIDDEN_SUBMISSION_FEEDBACK_KEY, String(e));
     }
   }, [onSubmit, values, reset, setError, setValue]);
   // use submission hook
@@ -230,7 +241,7 @@ export function useForm({
   // track feedback from the form submission
   const submitFeedback = useMemo(() => ({
     error: submissionError,
-    message: submissionFeedback as string,
+    message: submissionError ? undefined : submissionFeedback as string,
   }), [submissionError, submissionFeedback]);
   return {
     errors,
