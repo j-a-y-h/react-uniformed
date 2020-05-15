@@ -11,6 +11,7 @@ const createKeys = (prefix, length = 5000) => createArray(length).map((_, i) => 
 const emailKeys = {
   1000: createKeys("email", 1000),
   5000: createKeys("email", 5000),
+  10000: createKeys("email", 10000),
 };
 
 function Form({values, errors, submit, changeRef, emails}) {
@@ -82,4 +83,18 @@ export function Basic5000InputTest() {
   }, [setValue]);
   const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(rafSetValue);
   return <Form emails={emailKeys[5000]} changeRef={changeRef} values={values} errors={errors} submit={submit} />
+}
+
+export function Basic10000InputTest() {
+  const { setValue, values, submit, errors } = useForm({
+      onSubmit: values => {
+        console.log(values);
+      },
+  })
+  const rafSetValue = React.useCallback((...args) => {
+    // @ts-expect-error
+    requestAnimationFrame(() => setValue(...args));
+  }, [setValue]);
+  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(rafSetValue);
+  return <Form emails={emailKeys[10000]} changeRef={changeRef} values={values} errors={errors} submit={submit} />
 }
