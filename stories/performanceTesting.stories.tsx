@@ -22,7 +22,11 @@ function Form({values, errors, submit, changeRef, emails}) {
       <table>
       <tr>
         <td>
-          <form onSubmit={submit}>
+            <form onSubmit={async (e) => {
+              const { target } = e;
+              await submit(e);
+              (target as HTMLFormElement).reset();
+            }}>
             <button type="submit">Submit</button>
             <br />
             {emails.map(key => (
@@ -67,26 +71,15 @@ export function Basic1000InputTestWithValidationOnChange() {
 }
 
 export function Basic5000InputTest() {
-  // Create constraint settings for 1000 emails and a username input
-  const constraints = React.useMemo(() => emailKeys[5000].reduce((constraints, key) => {
-    constraints[key] = {
-      required: false,//"This is required",
-      pattern: [/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, 'invalid email'],
-    };
-    return constraints;
-  }, {
-    username: value => {
-      console.log("Validated-------");
-      return (value === 'admin' ? true : 'Nice try!')
-    },
-  }), []);
   const { setValue, values, submit, errors } = useForm({
-    // @ts-expect-error
-      constraints,
       onSubmit: values => {
         console.log(values);
       },
   })
-  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(setValue);
+  const rafSetValue = React.useCallback((...args) => {
+    // @ts-expect-error
+    requestAnimationFrame(() => setValue(...args));
+  }, [setValue]);
+  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(rafSetValue);
   return <Form emails={emailKeys[5000]} changeRef={changeRef} values={values} errors={errors} submit={submit} />
 }
