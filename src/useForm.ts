@@ -179,7 +179,8 @@ export function useForm({
   } = useValidation(validatorsInput);
   // extract the submission error and the reset of the errors
   const { [HIDDEN_SUBMISSION_FEEDBACK_KEY]: submissionError, ...errors } = rawErrors;
-  const { [HIDDEN_SUBMISSION_FEEDBACK_KEY]: submissionSuccess, ...values } = rawValues;
+  // extract the submission feedback and the reset of the errors
+  const { [HIDDEN_SUBMISSION_FEEDBACK_KEY]: submissionFeedback, ...values } = rawValues;
   // create a submission validator handler
   const submissionValidator = useCallback((): void => {
     const newTouches = Object.keys(values).reduce((
@@ -226,6 +227,11 @@ export function useForm({
     validator: submissionValidator,
     disabled: hasErrors,
   });
+  // track feedback from the form submission
+  const submitFeedback = useMemo(() => ({
+    error: submissionError,
+    message: submissionFeedback as string,
+  }), [submissionError, submissionFeedback]);
   return {
     errors,
     hasErrors,
@@ -236,10 +242,7 @@ export function useForm({
     setValue,
     submit,
     submitCount,
-    submitFeedback: {
-      error: submissionError,
-      message: submissionSuccess,
-    },
+    submitFeedback,
     touches,
     touchField,
     validate,
