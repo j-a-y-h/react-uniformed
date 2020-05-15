@@ -44,7 +44,7 @@ export function Basic() {
 }
 
 export function SubmissionFails() {
-    const { setValue, isSubmitting, values, submit, submissionError } = useForm({
+    const { setValue, isSubmitting, values, submit, submitFeedback } = useForm({
       onSubmit(data) {
         return sleep(3).then(() => {
           const hasError = Boolean(Math.floor(Math.random() * 2));
@@ -61,7 +61,7 @@ export function SubmissionFails() {
     return (
       <form onSubmit={submit}>
         <div>
-          {submissionError && <span>{submissionError}</span>}
+          {submitFeedback.error && <span>{submitFeedback.error}</span>}
         </div>
         <div>
           <label>Name </label>
