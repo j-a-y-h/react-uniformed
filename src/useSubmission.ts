@@ -8,6 +8,7 @@ import { Fields } from './useFields';
 type onSubmitModifiers = Readonly<{
   setError: ErrorHandler<string>;
   setFeedback: (feedback: string) => void;
+  event?: SyntheticEvent;
 }>;
 
 export interface SubmissionHandler {
@@ -120,7 +121,8 @@ export function useSubmission({
 }: UseSubmissionProps): UseSubmissionHook {
   const [submitFeedback, dispatch] = useReducer<Reducer<SubmitFeedback, Action>>(reducer, {});
   // create a submit handler
-  const handleSubmit = useCallback(async (): Promise<void> => {
+  const handleSubmit = useCallback(async (event?: SyntheticEvent): Promise<void> => {
+    submitEvent.current = undefined;
     // note: give the handler every value so that we don't have to worry about
     // it later
     let shouldReset = true;
@@ -138,7 +140,7 @@ export function useSubmission({
           type: ActionTypes.feedback,
         });
       };
-      await onSubmit(values, { setError: wrappedSetError, setFeedback });
+      await onSubmit(values, { setError: wrappedSetError, setFeedback, event });
       if (shouldReset && reset) {
         reset();
       }
@@ -155,13 +157,13 @@ export function useSubmission({
     fnc: wrappedOnSubmit,
     invokeCount: submitCount,
     isRunning: isSubmitting,
-  } = useFunctionStats<Event | undefined, void>(handleSubmit);
+  } = useFunctionStats<SyntheticEvent | undefined, void>(handleSubmit);
   const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
   const {
     fnc: validate,
     isRunning: isValidating,
   } = useFunctionStats(validationFnc);
-  const submitEvent = useRef<Event | undefined>();
+  const submitEvent = useRef<SyntheticEvent | undefined>();
 
   // track when to kick off submission
   useEffect(() => {
@@ -180,6 +182,8 @@ export function useSubmission({
   const submit = useCallback((event?: SyntheticEvent) => {
     if (event) {
       event.preventDefault();
+      event.persist();
+      submitEvent.current = event;
     }
     setIsReadyToSubmit(true);
     if (validator) {

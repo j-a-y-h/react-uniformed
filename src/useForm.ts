@@ -7,7 +7,9 @@ import {
 import {
   useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from './useTouch';
-import { useSubmission, SubmitHandler, SubmitFeedback } from './useSubmission';
+import {
+  useSubmission, SubmitHandler, SubmitFeedback, SubmissionHandler,
+} from './useSubmission';
 import {
   useValidation,
   Validators,
@@ -43,7 +45,7 @@ type UseFormParameters = Readonly<{
   constraints?: ConstraintValidators | SyncedConstraint;
   initialValues?: Fields;
   normalizer?: NormalizerHandler;
-  onSubmit: (values: Fields, event?: Event) => void | Promise<void>;
+  onSubmit: SubmissionHandler;
   validators?: Validators | SingleValidator<FieldValue>;
 }>;
 
