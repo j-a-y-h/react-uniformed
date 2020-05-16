@@ -25,9 +25,9 @@ export interface UseSubmissionProps {
    * you want to disable if there are errors.
    */
   readonly disabled?: boolean;
-  reset?: () => void;
-  setError?: (name: string, error: string) => void;
-  values?: Fields;
+  readonly reset?: () => void;
+  readonly setError?: (name: string, error: string) => void;
+  readonly values?: Fields;
 }
 
 export interface UseSubmissionHook {
@@ -122,6 +122,9 @@ export function useSubmission({
   // track the feedback value
   const [submitFeedback, dispatch] = useReducer<Reducer<SubmitFeedback, Action>>(reducer, {});
   // track when we need to starting submitting
+  // note that validator doesn't return a value stating if the validation fails, instead the
+  // state of the form is updated with the new errors. Because of these mechanics, we need
+  // to track the state of errors using disabled prop and this isReadyToSubmit value
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   // track the submitEvent in a ref
   const submitEvent = useRef<SyntheticEvent | undefined>();
@@ -138,6 +141,7 @@ export function useSubmission({
     // note: give the handler every value so that we don't have to worry about
     // it later
     let shouldReset = true;
+    // create a setError callback function
     const wrappedSetError = (name: string, error: string): void => {
       shouldReset = false;
       if (setError) {
@@ -146,17 +150,22 @@ export function useSubmission({
       dispatch({ type: ActionTypes.reset });
     };
     try {
+      // create a setFeedback handler
       const setFeedback = (feedback: string): void => {
         dispatch({
           payload: feedback,
           type: ActionTypes.feedback,
         });
       };
+      // wait for the submit handler to return
       await onSubmit(values, { setError: wrappedSetError, setFeedback, event });
       if (shouldReset && reset) {
+        // reset the form
+        // TODO: attempt to reset the inputs as well for uncontrolled components
         reset();
       }
     } catch (e) {
+      // error occured, set the submitFeedback.error value
       dispatch({
         payload: String(e),
         type: ActionTypes.error,
@@ -185,6 +194,8 @@ export function useSubmission({
     isReadyToSubmit,
     isValidating,
   ]);
+
+  // The submit callback that is used in the form
   const submit = useCallback((event?: SyntheticEvent) => {
     if (event) {
       event.preventDefault();
