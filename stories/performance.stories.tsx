@@ -2,7 +2,7 @@ import React from "react";
 import { useForm, useSettersAsRefEventHandler } from "../src";
 
 export default {
-  title: "performanceTest"
+  title: "Performance"
 }
 
 const createArray = (length) => Array.from({ length }, (_, k) => k + 1);
