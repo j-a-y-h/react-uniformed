@@ -120,6 +120,13 @@ export function useSubmission({
   values = {},
 }: UseSubmissionProps): UseSubmissionHook {
   const [submitFeedback, dispatch] = useReducer<Reducer<SubmitFeedback, Action>>(reducer, {});
+  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
+  const submitEvent = useRef<SyntheticEvent | undefined>();
+  const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
+  const {
+    fnc: validate,
+    isRunning: isValidating,
+  } = useFunctionStats(validationFnc);
   // create a submit handler
   const handleSubmit = useCallback(async (event?: SyntheticEvent): Promise<void> => {
     submitEvent.current = undefined;
@@ -151,19 +158,12 @@ export function useSubmission({
       });
     }
   }, [onSubmit, values, reset, setError]);
-  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   // track submission count
   const {
     fnc: wrappedOnSubmit,
     invokeCount: submitCount,
     isRunning: isSubmitting,
   } = useFunctionStats<SyntheticEvent | undefined, void>(handleSubmit);
-  const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
-  const {
-    fnc: validate,
-    isRunning: isValidating,
-  } = useFunctionStats(validationFnc);
-  const submitEvent = useRef<SyntheticEvent | undefined>();
 
   // track when to kick off submission
   useEffect(() => {
