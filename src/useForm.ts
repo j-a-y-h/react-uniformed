@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, SyntheticEvent } from 'react';
 import { Errors, ErrorHandler, validErrorValues } from './useErrors';
 import { useHandlers } from './useHandlers';
 import {
@@ -27,7 +27,7 @@ export type UseFormsHook = Readonly<{
   hasErrors: boolean;
   isDirty: boolean;
   isSubmitting: boolean;
-  reset: () => void;
+  reset: (event?: SyntheticEvent) => void;
   setError: ErrorHandler;
   setTouch: TouchHandler;
   setValue: SetValueCallback<FieldValue>;
@@ -197,8 +197,15 @@ export function useForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ) ? submissionValidator : undefined), [submissionValidator]);
 
+  // used to reset the form using DOM apis
+  const resetUncontrolledForm = useCallback((event?: SyntheticEvent) => {
+    if (event?.target instanceof HTMLElement) {
+      event.target.closest('form')?.reset();
+    }
+  }, []);
+
   // create reset handlers
-  const reset = useHandlers(resetValues, resetErrors, resetTouches);
+  const reset = useHandlers(resetValues, resetErrors, resetTouches, resetUncontrolledForm);
 
   // use submission hook
   const {

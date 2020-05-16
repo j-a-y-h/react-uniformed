@@ -25,7 +25,7 @@ export interface UseSubmissionProps {
    * you want to disable if there are errors.
    */
   readonly disabled?: boolean;
-  readonly reset?: () => void;
+  readonly reset?: (event?: SyntheticEvent) => void;
   readonly setError?: (name: string, error: string) => void;
   readonly values?: Fields;
 }
@@ -161,8 +161,7 @@ export function useSubmission({
       await onSubmit(values, { setError: wrappedSetError, setFeedback, event });
       if (shouldReset && reset) {
         // reset the form
-        // TODO: attempt to reset the inputs as well for uncontrolled components
-        reset();
+        reset(event);
       }
     } catch (e) {
       // error occured, set the submitFeedback.error value
