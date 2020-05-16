@@ -202,29 +202,7 @@ export function useForm({
 
   // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches);
-  // create a submit handler
-  const handleSubmit: SubmissionHandler = useCallback(async (): Promise<void> => {
-    // note: give the handler every value so that we don't have to worry about
-    // it later
-    let shouldReset = true;
-    const wrappedSetError = (name: string, error: string): void => {
-      shouldReset = false;
-      setError(name, error);
-      setValue(HIDDEN_SUBMISSION_FEEDBACK_KEY, undefined);
-    };
-    try {
-      const setFeedback = (feedback: string): void => {
-        setValue(HIDDEN_SUBMISSION_FEEDBACK_KEY, feedback);
-        setError(HIDDEN_SUBMISSION_FEEDBACK_KEY, '');
-      };
-      await onSubmit(values, { setError: wrappedSetError, setFeedback });
-      if (shouldReset) {
-        reset();
-      }
-    } catch (e) {
-      wrappedSetError(HIDDEN_SUBMISSION_FEEDBACK_KEY, String(e));
-    }
-  }, [onSubmit, values, reset, setError, setValue]);
+
   // use submission hook
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit: handleSubmit,
