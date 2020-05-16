@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+* [`useForm`, `useSubmission`] Fixed an issue with async `onSubmit` handlers that resulted in the `onSubmit` function being called with empty values.
+
+### Changed
+* [`useForm`] `reset` function now supports an optional `event: SyntheticEvent` parameter. This parameter is
+used to call `.closest('form').reset()` on the `event.target` so that uncontrolled forms like those composed using `useSettersAsRefEventHandler` are resetted.
+* [`useForm`] `onSubmit` now resets uncontrolled forms. See comment above about `reset` function.
+
+### Added
+* [`useForm`, `useSubmission`] Both hooks now return a `submitFeedback` object that has an `error` or `message` property. The `error` property is set when `onSubmit` throws an error or returns `Promise.reject()`. The `message` property is set after calling `setFeedback`.  Only one of those properties can be set at the same time.  Also note that throwing an error or returning `Promise.reject()` aborts the form reset step.
+* [`useForm`, `useSubmission`] `onSubmit` now accepts a `values` object as the first parameter and an `onSubmitModifiers` object as a new second argument.  `onSubmitModifiers` is an object that consist of a `setError: (name: string, error: string) => void` function, a `setFeedback: (feedback: string) => void` function, and the optional `event: SyntheticEvent` event object. `setError` will set an error value for the input with the specified name as well as prevent the form from resetting.  `setFeedback` will set the `message` property for the `submitFeedback` value (see bullet above). `event` is the event that was passed to the `submit` function.
+* [`useSubmission`] Added three more props (`reset`, `setError`, `values`) to help streamline the useSubmission hook. `reset` is a function used to reset the form values after submission.  `setError` is a fucntion used to set an error for a sepecified form input. `values` is an optional object map of the form values.
 
 ## [0.0.17] - 2020-05-13
 ### Fixed
