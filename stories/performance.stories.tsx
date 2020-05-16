@@ -26,9 +26,13 @@ function Form({values, errors, submit, changeRef, emails}) {
             <button type="submit">Submit</button>
             <br />
             {emails.map(key => (
-              <input key={key} name={key} ref={changeRef} />
+              <>
+                <label>{key}:</label>
+                <input key={key} name={key} ref={changeRef} />
+                <span style={{color: 'red'}}>{errors[key] && <div>{errors[key]}</div>}</span>
+                <br />
+              </>
             ))}
-            {errors.email && <div>{errors.email}</div>}
             <input name="username" ref={changeRef} />
             {errors.username && <div>{errors.username}</div>}
           </form>
@@ -51,7 +55,7 @@ export function BigFormWithValidation() {
   const { setValue, submit, errors, values, validateByName } = useForm({
     constraints: (values) => {
       return Object.keys(values).reduce((cur, key) => {
-        return {...cur, [key]: {type: 'email', required: true, pattern: [/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, 'invalid email']}}
+        return {...cur, [key]: {type: ['email', 'Please enter a valid email'], required: true}}
       }, {})
     },
     onSubmit: data => alert(JSON.stringify(data)),
