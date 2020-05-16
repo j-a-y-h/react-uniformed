@@ -37,7 +37,7 @@ React refs. The React ref is used to synchronize the state of the input in the D
 and the state of the form in the Virtual DOM.
 This hook is generally only needed for larger forms or larger React Virtual DOM.</p>
 </dd>
-<dt><a href="#useSubmission">useSubmission(param)</a> ⇒ <code>Object</code></dt>
+<dt><a href="#useSubmission">useSubmission(param)</a> ⇒ <code>UseSubmissionHook</code></dt>
 <dd><p>Handles the form submission. Runs validation before calling the <code>onSubmit</code> function
 if a validator was passed in.  If no validator was passed in, then the <code>onSubmit</code> function
 will be invoked.  The validator function must set the state on disabled to true, if there
@@ -169,6 +169,53 @@ const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
     onChange={handleChange}
   />
 </form>
+```
+**Example**
+```js
+// Setting feedback on submit
+
+const { submitFeedback } = useForm({
+  onSubmit(values, {setFeedback}) {
+     const data = await fetch('http://api.example.com', { body: values })
+       .then(res => res.json());
+
+     if (data) {
+       // the submitFeedback.message value will be set for this case.
+       setFeedback("Thank you for submitting!");
+     } else {
+       // if an error occurs then the submitFeedback.error value will be set
+       throw "Something went wrong processing this form"
+       // or when you return Promise.reject
+       // return Promise.reject("Something went wrong processing this form");
+     }
+  }
+});
+
+// if an error occurred
+submitFeedback.error === "Something went wrong processing this form"
+// or if the submission was successful
+submitFeedback.message === "Thank you for submitting!";
+```
+**Example**
+```js
+// Validation errors from the server
+
+const { hasErrors } = useForm({
+  onSubmit(values, {setError}) {
+     const data = fetch('http://api.example.com', { body: values })
+       .then(res => res.json())
+       // throwing an error or rejecting a promise will set submissionError
+       .catch(() => Promise.reject('Unexpected error'));
+
+     if (data.errors) {
+       data.errors.forEach(({error, fieldName}) => {
+         // update the form with errors from the server.
+         // note that the form will not be reset if setError is called
+         setError(fieldName, error);
+       });
+     }
+  }
+});
 ```
 <a name="useFunctionStats"></a>
 
@@ -332,7 +379,7 @@ const changeRef = useSettersAsRefEventHandler(setValue);
 ```
 <a name="useSubmission"></a>
 
-## useSubmission(param) ⇒ <code>Object</code>
+## useSubmission(param) ⇒ <code>UseSubmissionHook</code>
 Handles the form submission. Runs validation before calling the `onSubmit` function
 if a validator was passed in.  If no validator was passed in, then the `onSubmit` function
 will be invoked.  The validator function must set the state on disabled to true, if there
@@ -352,9 +399,8 @@ Below is a flow diagram for this hook
 ```
 
 **Kind**: global function
-**Returns**: <code>Object</code> - returns a
-handler for onSubmit events, a count of how many times submit was called, and the
-state of the submission progress.
+**Returns**: <code>UseSubmissionHook</code> - returns a handler for onSubmit events,
+ a count of how many times submit was called, and the state of the submission progress.
 **See**: [useFunctionStats](#useFunctionStats)
 
 | Param | Description |
@@ -362,6 +408,9 @@ state of the submission progress.
 | param | the props the pass in |
 | param.validator | the specified validator. If your validation logic is async, then you should return a promise in your function otherwise this won't work as expected. |
 | param.onSubmit | the specified onSubmit handler. If your onSubmit handler is async, then you should return a promise in your function otherwise this won't work as expected. |
+| param.reset | An optional method used to reset the state of the form after submission. |
+| param.setError | An optional function that is passed to the specified onSubmit handler.  When setError is called while submitting, the form will not call the specified reset function. |
+| param.values | the specified values to use when submitting the form |
 
 **Example**
 ```js
@@ -381,6 +430,53 @@ state of the submission progress.
   const { isSubmitting, submit, submitCount } = useSubmission({
     onSubmit, validator
   });
+```
+**Example**
+```js
+// Setting feedback on submit
+
+const { submitFeedback } = useSubmission({
+  onSubmit(values, {setFeedback}) {
+     const data = await fetch('http://api.example.com', { body: values })
+       .then(res => res.json());
+
+     if (data) {
+       // the submitFeedback.message value will be set for this case.
+       setFeedback("Thank you for submitting!");
+     } else {
+       // if an error occurs then the submitFeedback.error value will be set
+       throw "Something went wrong processing this form"
+       // or when you return Promise.reject
+       // return Promise.reject("Something went wrong processing this form");
+     }
+  }
+});
+
+// if an error occurred
+submitFeedback.error === "Something went wrong processing this form"
+// or if the submission was successful
+submitFeedback.message === "Thank you for submitting!";
+```
+**Example**
+```js
+// Validation errors from the server
+
+const { submitFeedback } = useSubmission({
+  onSubmit(values, {setError}) {
+     const data = fetch('http://api.example.com', { body: values })
+       .then(res => res.json())
+       // throwing an error or rejecting a promise will set submissionError
+       .catch(() => Promise.reject('Unexpected error'));
+
+     if (data.errors) {
+       data.errors.forEach(({error, fieldName}) => {
+         // update the form with errors from the server.
+         // note that the form will not be reset if setError is called
+         setError(fieldName, error);
+       });
+     }
+  }
+});
 ```
 <a name="useValidation"></a>
 
