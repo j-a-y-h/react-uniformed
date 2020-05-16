@@ -197,8 +197,8 @@ export function useSubmission({
   // The submit callback that is used in the form
   const submit = useCallback((event?: SyntheticEvent) => {
     if (event) {
-      event.preventDefault();
-      event.persist();
+      event.preventDefault?.();
+      event.persist?.();
       submitEvent.current = event;
     }
     setIsReadyToSubmit(true);
