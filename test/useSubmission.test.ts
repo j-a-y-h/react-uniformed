@@ -127,6 +127,8 @@ describe("useSubmission", () => {
     describe.each([
         ['throws an error', () => { throw "TEST" }, 'TEST'],
         ['returns Promise.reject', () => Promise.reject("HARRY"), 'HARRY'],
+        ['throws an empty error', () => { throw "" }, 'Error occurred'],
+        ['returns an Promise.reject', () => Promise.reject(), 'Error occurred'],
     ])("when onSubmit %s", (_, onSubmit, TEST_VARIABLE) => {
         it("doesn't call reset", async () => {
             const reset = jest.fn();
@@ -146,6 +148,36 @@ describe("useSubmission", () => {
             });
             await waitForNextUpdate();
             expect(result.current.submitFeedback.error).toBe(TEST_VARIABLE);
+        });
+    });
+    describe('when reset is passed', () => {
+        it('calls reset if no errors', async () => {
+            const reset = jest.fn();
+            const { result, waitForNextUpdate } = renderHook(() => useSubmission({
+                onSubmit() { },
+                reset,
+            }));
+            expect(reset).not.toBeCalled();
+            act(() => {
+                result.current.submit();
+            });
+            await waitForNextUpdate();
+            expect(reset).toHaveBeenCalledTimes(1);
+        });
+    });
+    describe('when validator is passed', () => {
+        it('validator is called when submit is called', async () => {
+            const validator = jest.fn();
+            const { result, waitForNextUpdate } = renderHook(() => useSubmission({
+                onSubmit() { },
+                validator,
+            }));
+            expect(validator).not.toBeCalled();
+            act(() => {
+                result.current.submit();
+            });
+            await waitForNextUpdate();
+            expect(validator).toHaveBeenCalledTimes(1);
         });
     });
 });
