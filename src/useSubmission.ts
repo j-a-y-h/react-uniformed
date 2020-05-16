@@ -214,7 +214,7 @@ export function useSubmission({
     } catch (e) {
       // error occured, set the submitFeedback.error value
       dispatch({
-        payload: String(e),
+        payload: String(e || 'Error occurred'),
         type: ActionTypes.error,
       });
     }
