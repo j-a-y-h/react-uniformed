@@ -46,6 +46,33 @@ function Form({values, errors, submit, changeRef, emails}) {
     </div>
   );
 }
+
+export function VeryBigFormWithValidation() {
+  const { setValue, submit, errors, validateByName } = useForm({
+    constraints: (values) => {
+      return Object.keys(values).reduce((cur, key) => {
+        return {...cur, [key]: {type: 'email', required: true}}
+      }, {})
+    },
+    onSubmit: data => alert(JSON.stringify(data)),
+  });
+  const handleChange = useSettersAsRefEventHandler<HTMLInputElement>(setValue, validateByName);
+  return (
+    <form onSubmit={submit}>
+      {Object.keys(errors).map(e => (
+        <p style={{ color: "red" }}>{errors[e]}</p>
+      ))}
+      {new Array(1000).fill(undefined).map((_, i) => i).map((i) => {
+        return (<div key={i}>
+          <label>Email {i}</label>
+          <input name={`email${i}`} ref={handleChange} type="text" />
+        </div>)
+      })}
+      <input type="submit" />
+    </form>
+  );
+}
+
 export function Basic1000InputTestWithValidationOnChange() {
   // Create constraint settings for 1000 emails and a username input
   const constraints = React.useMemo(() => emailKeys[1000].reduce((constraints, key) => {
