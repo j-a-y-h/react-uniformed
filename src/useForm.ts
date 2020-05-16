@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, SyntheticEvent } from 'react';
 import { Errors, ErrorHandler, validErrorValues } from './useErrors';
 import { useHandlers } from './useHandlers';
 import {
@@ -7,7 +7,9 @@ import {
 import {
   useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from './useTouch';
-import { useSubmission, SubmissionHandler, SubmitHandler } from './useSubmission';
+import {
+  useSubmission, SubmitHandler, SubmitFeedback, SubmissionHandler,
+} from './useSubmission';
 import {
   useValidation,
   Validators,
@@ -19,29 +21,32 @@ import {
   SetValueCallback, MutableValues, PartialValues, isMapWithValues,
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
+import { resetForm } from './utils';
 
 export type UseFormsHook = Readonly<{
   errors: Errors | PartialValues<Errors, validErrorValues>;
   hasErrors: boolean;
   isDirty: boolean;
   isSubmitting: boolean;
-  reset: () => void;
+  reset: (event?: SyntheticEvent) => void;
   setError: ErrorHandler;
   setTouch: TouchHandler;
   setValue: SetValueCallback<FieldValue>;
   submit: SubmitHandler;
   submitCount: number;
+  submitFeedback: SubmitFeedback;
   touches: Touches;
   touchField: TouchFieldHandler;
   validate: ValidateAllHandler<FieldValue>;
   validateByName: ValidateHandler<FieldValue>;
   values: Fields;
 }>
+
 type UseFormParameters = Readonly<{
   constraints?: ConstraintValidators | SyncedConstraint;
   initialValues?: Fields;
   normalizer?: NormalizerHandler;
-  onSubmit: (values: Fields, event?: Event) => void | Promise<void>;
+  onSubmit: SubmissionHandler;
   validators?: Validators | SingleValidator<FieldValue>;
 }>;
 
@@ -101,6 +106,52 @@ type UseFormParameters = Readonly<{
  *     onChange={handleChange}
  *   />
  * </form>
+ *
+ * @example
+ * // Setting feedback on submit
+ *
+ * const { submitFeedback } = useForm({
+ *   onSubmit(values, {setFeedback}) {
+ *      const data = await fetch('http://api.example.com', { body: values })
+ *        .then(res => res.json());
+ *
+ *      if (data) {
+ *        // the submitFeedback.message value will be set for this case.
+ *        setFeedback("Thank you for submitting!");
+ *      } else {
+ *        // if an error occurs then the submitFeedback.error value will be set
+ *        throw "Something went wrong processing this form"
+ *        // or when you return Promise.reject
+ *        // return Promise.reject("Something went wrong processing this form");
+ *      }
+ *   }
+ * });
+ *
+ * // if an error occurred
+ * submitFeedback.error === "Something went wrong processing this form"
+ * // or if the submission was successful
+ * submitFeedback.message === "Thank you for submitting!";
+ *
+ * @example
+ * // Validation errors from the server
+ *
+ * const { hasErrors } = useForm({
+ *   onSubmit(values, {setError}) {
+ *      const data = fetch('http://api.example.com', { body: values })
+ *        .then(res => res.json())
+ *        // throwing an error or rejecting a promise will set submissionError
+ *        .catch(() => Promise.reject('Unexpected error'));
+ *
+ *      if (data.errors) {
+ *        data.errors.forEach(({error, fieldName}) => {
+ *          // update the form with errors from the server.
+ *          // note that the form will not be reset if setError is called
+ *          setError(fieldName, error);
+ *        });
+ *      }
+ *   }
+ * });
+ *
  */
 export function useForm({
   onSubmit,
@@ -148,19 +199,21 @@ export function useForm({
   ) ? submissionValidator : undefined), [submissionValidator]);
 
   // create reset handlers
-  const reset = useHandlers(resetValues, resetErrors, resetTouches);
-  // create a submit handler
-  const handleSubmit: SubmissionHandler = useCallback(async (event?: Event): Promise<void> => {
-    // note: give the handler every value so that we don't have to worry about
-    // it later
-    await onSubmit(values, event);
-    reset();
-  }, [onSubmit, values, reset]);
+  const reset = useHandlers(resetValues, resetErrors, resetTouches, resetForm);
+
   // use submission hook
-  const { isSubmitting, submit, submitCount } = useSubmission({
-    onSubmit: handleSubmit,
+  const {
+    isSubmitting,
+    submit,
+    submitCount,
+    submitFeedback,
+  } = useSubmission({
+    onSubmit,
     validator,
     disabled: hasErrors,
+    setError,
+    values,
+    reset,
   });
   return {
     errors,
@@ -173,6 +226,7 @@ export function useForm({
     setValue,
     submit,
     submitCount,
+    submitFeedback,
     touches,
     touchField,
     validate,

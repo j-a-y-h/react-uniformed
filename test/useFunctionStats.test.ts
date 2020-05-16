@@ -11,13 +11,14 @@ describe("useFunctionStats", () => {
         });
         expect(result.current.invokeCount).toEqual(3);
     });
-    it("supports async functions", () => {
-        const { result } = renderHook(() => useFunctionStats(async () => { }));
+    it("supports async functions", async () => {
+        const { result, wait } = renderHook(() => useFunctionStats(async () => { }));
         act(() => {
             result.current.fnc();
             result.current.fnc();
             result.current.fnc();
         });
+        await wait(() => !result.current.isRunning);
         expect(result.current.invokeCount).toEqual(3);
     });
     it("supports sync function", async () => {

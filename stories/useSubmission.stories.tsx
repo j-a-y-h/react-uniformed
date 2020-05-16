@@ -31,6 +31,7 @@ export function Form() {
   return (
     <form onSubmit={submit}>
       {isSubmitting && (<p>Is Submitting...</p>)}
+      {hasErrors && (<p>There is a random error.</p>)}
       <div>
         <label>Name </label>
         <input
@@ -39,7 +40,7 @@ export function Form() {
           value="John"
         />
       </div>
-      <input type="submit" />
+      <input disabled={isSubmitting} type="submit" />
       <div>
         <label>Submit count: {submitCount}</label>
       </div>

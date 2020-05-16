@@ -37,7 +37,7 @@ React refs. The React ref is used to synchronize the state of the input in the D
 and the state of the form in the Virtual DOM.
 This hook is generally only needed for larger forms or larger React Virtual DOM.</p>
 </dd>
-<dt><a href="#useSubmission">useSubmission(param)</a> ⇒ <code>Object</code></dt>
+<dt><a href="#useSubmission">useSubmission(param)</a> ⇒ <code>UseSubmissionHook</code></dt>
 <dd><p>Handles the form submission. Runs validation before calling the <code>onSubmit</code> function
 if a validator was passed in.  If no validator was passed in, then the <code>onSubmit</code> function
 will be invoked.  The validator function must set the state on disabled to true, if there
@@ -62,15 +62,15 @@ were errors. Disabled will prevent this hook from calling the <code>onSubmit</co
 ## useConstraints(rules) ⇒
 A declarative way of validating inputs based upon HTML 5 constraints
 
-**Kind**: global function  
+**Kind**: global function
 **Returns**: maps the rules to an object map with the value
-being a function that accepts value as the only argument.  
+being a function that accepts value as the only argument.
 
 | Param | Description |
 | --- | --- |
 | rules | an object mapping that consist of HTML5ValidatorRules as value or validator function that accepts value as the only argument. |
 
-**Example**  
+**Example**
 ```js
 // BASIC
  const validator = useConstraints({
@@ -110,8 +110,8 @@ being a function that accepts value as the only argument.
 ## useForm(props) ⇒ <code>UseFormsHook</code>
 A hook for managing form states.
 
-**Kind**: global function  
-**Returns**: <code>UseFormsHook</code> - the APIs used to manage the state of a function.  
+**Kind**: global function
+**Returns**: <code>UseFormsHook</code> - the APIs used to manage the state of a function.
 **See**
 
 - [useConstraints](#useConstraints)
@@ -132,7 +132,7 @@ A hook for managing form states.
 | props.validators | <code>Validators</code> \| <code>SingleValidator.&lt;FieldValue&gt;</code> | the validators used to validate values |
 | props.constraints | <code>ConstraintValidators</code> \| <code>SyncedConstraint</code> | the constraints api |
 
-**Example**  
+**Example**
 ```js
 const { submit, setValue, values } = useForm({
   onSubmit: data => alert(JSON.stringify(data))
@@ -148,7 +148,7 @@ const handleChange = useSettersAsEventHandler(setValue);
    />
 </form>
 ```
-**Example**  
+**Example**
 ```js
 // using validate in change events
 
@@ -170,17 +170,64 @@ const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
   />
 </form>
 ```
+**Example**
+```js
+// Setting feedback on submit
+
+const { submitFeedback } = useForm({
+  onSubmit(values, {setFeedback}) {
+     const data = await fetch('http://api.example.com', { body: values })
+       .then(res => res.json());
+
+     if (data) {
+       // the submitFeedback.message value will be set for this case.
+       setFeedback("Thank you for submitting!");
+     } else {
+       // if an error occurs then the submitFeedback.error value will be set
+       throw "Something went wrong processing this form"
+       // or when you return Promise.reject
+       // return Promise.reject("Something went wrong processing this form");
+     }
+  }
+});
+
+// if an error occurred
+submitFeedback.error === "Something went wrong processing this form"
+// or if the submission was successful
+submitFeedback.message === "Thank you for submitting!";
+```
+**Example**
+```js
+// Validation errors from the server
+
+const { hasErrors } = useForm({
+  onSubmit(values, {setError}) {
+     const data = fetch('http://api.example.com', { body: values })
+       .then(res => res.json())
+       // throwing an error or rejecting a promise will set submissionError
+       .catch(() => Promise.reject('Unexpected error'));
+
+     if (data.errors) {
+       data.errors.forEach(({error, fieldName}) => {
+         // update the form with errors from the server.
+         // note that the form will not be reset if setError is called
+         setError(fieldName, error);
+       });
+     }
+  }
+});
+```
 <a name="useFunctionStats"></a>
 
 ## useFunctionStats(fnc) ⇒ <code>UseFunctionStats.&lt;T, K&gt;</code>
 Keeps track of certain statistics on a function. Eg: if the function
 is invoking and how many times the function was called.
 
-**Kind**: global function  
+**Kind**: global function
 **Returns**: <code>UseFunctionStats.&lt;T, K&gt;</code> - Returns a object.
 - `isRunning`: determines if a function was running
 - `fnc`: the specified function
-- `invokeCount`: the number to times the function was called  
+- `invokeCount`: the number to times the function was called
 
 | Param | Description |
 | --- | --- |
@@ -191,8 +238,8 @@ is invoking and how many times the function was called.
 ## getInputValue(input) ⇒
 Gets the value for the specified input.
 
-**Kind**: global function  
-**Returns**: the value as a string  
+**Kind**: global function
+**Returns**: the value as a string
 
 | Param | Description |
 | --- | --- |
@@ -209,7 +256,7 @@ if (target instanceof HTMLSelectElement || target.selectedOptions) {
     ({value} = target);
 }
 
-**Kind**: inner property of [<code>getInputValue</code>](#getInputValue)  
+**Kind**: inner property of [<code>getInputValue</code>](#getInputValue)
 <a name="useValidateAsSetter"></a>
 
 ## useValidateAsSetter(validate, values) ⇒ <code>eventLikeHandlers</code>
@@ -218,8 +265,8 @@ When the returned function is invoked, it will call the specified
 validate function with the specified values merged in with the name
 and value passed to the invoked function.
 
-**Kind**: global function  
-**Returns**: <code>eventLikeHandlers</code> - a function that can be invoked with a name and value.  
+**Kind**: global function
+**Returns**: <code>eventLikeHandlers</code> - a function that can be invoked with a name and value.
 **See**
 
 - [useSettersAsEventHandler](useSettersAsEventHandler)
@@ -231,7 +278,7 @@ and value passed to the invoked function.
 | validate | <code>ValidateAllHandler.&lt;FieldValue&gt;</code> | a validation function that accepts an object of values |
 | values | <code>Fields</code> | a values object |
 
-**Example**  
+**Example**
 ```js
 // used with useForms
 const {validate, values, setValue} = useForms(...);
@@ -248,9 +295,9 @@ function supports nesting with brackets. E.g. referencing an
 array value indexed at 0 `arrayName[0]`; referencing an object
 value indexed at country `locations[country]`.
 
-**Kind**: global function  
-**Returns**: <code>NormalizerHandler</code> - Returns a normalizer handler  
-**Example**  
+**Kind**: global function
+**Returns**: <code>NormalizerHandler</code> - Returns a normalizer handler
+**Example**
 ```js
 // jsx
    <input name="users[0]" value="John">
@@ -276,14 +323,14 @@ Creates a single normalizer function from the specified list of normalizers.
 note: order matters when passing normalizers. This means that the results or value
 of the first normalizer is passed to the next normalizer.
 
-**Kind**: global function  
-**Returns**: <code>NormalizerHandler</code> - returns a normalizer handler  
+**Kind**: global function
+**Returns**: <code>NormalizerHandler</code> - returns a normalizer handler
 
 | Param | Type | Description |
 | --- | --- | --- |
 | normalizers | <code>Array.&lt;(NormalizerHandler\|UseNormalizersOption)&gt;</code> | if you pass a normalizer handler then it will apply to all fields. You can specify a specific list of fields by passing in |
 
-**Example**  
+**Example**
 ```js
 useNormalizers(
    // apply to all fields
@@ -313,14 +360,14 @@ React refs. The React ref is used to synchronize the state of the input in the D
 and the state of the form in the Virtual DOM.
 This hook is generally only needed for larger forms or larger React Virtual DOM.
 
-**Kind**: global function  
-**Returns**: <code>Ref</code> - returns a React ref function.  
+**Kind**: global function
+**Returns**: <code>Ref</code> - returns a React ref function.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | args | <code>Array.&lt;eventLikeHandlers&gt;</code> \| <code>Array.&lt;UseEventHandlersWithRefProps&gt;</code> | a list of functions used to set a value or an object with `event`,  `handlers`, and `mountedValues` as properties. - `handlers`: a list of functinos used to set a value. - `event?`: the event to register this handler to. (defaults to `'change'`). - `mountedValues?`: used to set values on mount of the ref. |
 
-**Example**  
+**Example**
 ```js
 import {useSettersAsRefEventHandler} from "react-uniformed";
 
@@ -332,7 +379,7 @@ const changeRef = useSettersAsRefEventHandler(setValue);
 ```
 <a name="useSubmission"></a>
 
-## useSubmission(param) ⇒ <code>Object</code>
+## useSubmission(param) ⇒ <code>UseSubmissionHook</code>
 Handles the form submission. Runs validation before calling the `onSubmit` function
 if a validator was passed in.  If no validator was passed in, then the `onSubmit` function
 will be invoked.  The validator function must set the state on disabled to true, if there
@@ -351,19 +398,21 @@ Below is a flow diagram for this hook
                                                        onSubmit(Event)
 ```
 
-**Kind**: global function  
-**Returns**: <code>Object</code> - returns a
-handler for onSubmit events, a count of how many times submit was called, and the
-state of the submission progress.  
-**See**: [useFunctionStats](#useFunctionStats)  
+**Kind**: global function
+**Returns**: <code>UseSubmissionHook</code> - returns a handler for onSubmit events,
+ a count of how many times submit was called, and the state of the submission progress.
+**See**: [useFunctionStats](#useFunctionStats)
 
 | Param | Description |
 | --- | --- |
 | param | the props the pass in |
 | param.validator | the specified validator. If your validation logic is async, then you should return a promise in your function otherwise this won't work as expected. |
 | param.onSubmit | the specified onSubmit handler. If your onSubmit handler is async, then you should return a promise in your function otherwise this won't work as expected. |
+| param.reset | An optional method used to reset the state of the form after submission. |
+| param.setError | An optional function that is passed to the specified onSubmit handler.  When setError is called while submitting, the form will not call the specified reset function. |
+| param.values | the specified values to use when submitting the form |
 
-**Example**  
+**Example**
 ```js
 // this example is if you are not using the useForm hook. Note: the useForm hook
   // handles all of this.
@@ -382,19 +431,66 @@ state of the submission progress.
     onSubmit, validator
   });
 ```
+**Example**
+```js
+// Setting feedback on submit
+
+const { submitFeedback } = useSubmission({
+  onSubmit(values, {setFeedback}) {
+     const data = await fetch('http://api.example.com', { body: values })
+       .then(res => res.json());
+
+     if (data) {
+       // the submitFeedback.message value will be set for this case.
+       setFeedback("Thank you for submitting!");
+     } else {
+       // if an error occurs then the submitFeedback.error value will be set
+       throw "Something went wrong processing this form"
+       // or when you return Promise.reject
+       // return Promise.reject("Something went wrong processing this form");
+     }
+  }
+});
+
+// if an error occurred
+submitFeedback.error === "Something went wrong processing this form"
+// or if the submission was successful
+submitFeedback.message === "Thank you for submitting!";
+```
+**Example**
+```js
+// Validation errors from the server
+
+const { submitFeedback } = useSubmission({
+  onSubmit(values, {setError}) {
+     const data = fetch('http://api.example.com', { body: values })
+       .then(res => res.json())
+       // throwing an error or rejecting a promise will set submissionError
+       .catch(() => Promise.reject('Unexpected error'));
+
+     if (data.errors) {
+       data.errors.forEach(({error, fieldName}) => {
+         // update the form with errors from the server.
+         // note that the form will not be reset if setError is called
+         setError(fieldName, error);
+       });
+     }
+  }
+});
+```
 <a name="useValidation"></a>
 
 ## useValidation(validator) ⇒
 A hook for performing validation.
 
-**Kind**: global function  
-**Returns**: returns an useValidation object  
+**Kind**: global function
+**Returns**: returns an useValidation object
 
 | Param | Description |
 | --- | --- |
 | validator | A validation map or a validation function. |
 
-**Example**  
+**Example**
 ```js
 // validate using validation maps
 const {validateByName, errors} = useValidation({

@@ -2,54 +2,93 @@ import React from "react";
 import { useForm, useSettersAsRefEventHandler } from "../src";
 
 export default {
-  title: "performance"
+  title: "Performance"
 }
 
-export function VeryBigFormWithValidation() {
-  const { setValue, submit, errors, validateByName } = useForm({
+const createArray = (length) => Array.from({ length }, (_, k) => k + 1);
+const createKeys = (prefix, length = 5000) => createArray(length).map((_, i) => `${prefix}${i}`);
+
+const emailKeys = {
+  1000: createKeys("email", 1000),
+  5000: createKeys("email", 5000),
+  10000: createKeys("email", 10000),
+};
+
+function Form({values, errors, submit, changeRef, emails}) {
+  return (
+    <div>
+      <h1>Performance Test (Input Count: {emails.length})</h1>
+      <br/>
+      <table>
+      <tr>
+        <td style={{verticalAlign: "top", width: "25%"}}>
+            <form onSubmit={submit}>
+            <button type="submit">Submit</button>
+            <br />
+            {emails.map(key => (
+              <>
+                <label>{key}:</label>
+                <input key={key} name={key} ref={changeRef} />
+                <span style={{color: 'red'}}>{errors[key] && <div>{errors[key]}</div>}</span>
+                <br />
+              </>
+            ))}
+            <input name="username" ref={changeRef} />
+            {errors.username && <div>{errors.username}</div>}
+          </form>
+        </td>
+        <td style={{verticalAlign: "top", width: "25%"}}>
+          <p>Errors</p>
+          <pre>{JSON.stringify(errors, null, 2)}</pre>
+        </td>
+        <td style={{verticalAlign: "top", width: "25%"}}>
+          <p>Values</p>
+          <pre>{JSON.stringify(values, null, 2)}</pre>
+        </td>
+      </tr>
+      </table>
+    </div>
+  );
+}
+
+export function BigFormWithValidation() {
+  const { setValue, submit, errors, values, validateByName } = useForm({
     constraints: (values) => {
       return Object.keys(values).reduce((cur, key) => {
-        return {...cur, [key]: {type: 'email', required: true}}
+        return {...cur, [key]: {type: ['email', 'Please enter a valid email'], required: true}}
       }, {})
     },
     onSubmit: data => alert(JSON.stringify(data)),
   });
   const handleChange = useSettersAsRefEventHandler<HTMLInputElement>(setValue, validateByName);
-  return (
-    <form onSubmit={submit}>
-      {Object.keys(errors).map(e => (
-        <p style={{ color: "red" }}>{errors[e]}</p>
-      ))}
-      {new Array(1000).fill(undefined).map((_, i) => i).map((i) => {
-        return (<div key={i}>
-          <label>Email {i}</label>
-          <input name={`email${i}`} ref={handleChange} type="text" />
-        </div>)
-      })}
-      <input type="submit" />
-    </form>
-  );
+
+  return <Form emails={emailKeys[1000]} changeRef={handleChange} values={values} errors={errors} submit={submit} />
 }
 
-let renderCount = 0;
-export function RenderCount() {
-  renderCount++;
-  const { setValue, submit } = useForm({
-    onSubmit: (values) => alert(JSON.stringify(values, null, 2)),
-  });
-  const handleChange = useSettersAsRefEventHandler<HTMLInputElement>(setValue);
-  return (
-    <form onSubmit={submit}>
-      <div>Render Count: {renderCount}</div>
-      <div>
-        <label>Name </label>
-        <input
-          type="text"
-          name="name"
-          ref={handleChange}
-        />
-      </div>
-      <input type="submit" />
-    </form>
-  );
+export function Basic5000InputTest() {
+  const { setValue, values, submit, errors } = useForm({
+      onSubmit: values => {
+        console.log(values);
+      },
+  })
+  const rafSetValue = React.useCallback((...args) => {
+    // @ts-expect-error
+    requestAnimationFrame(() => setValue(...args));
+  }, [setValue]);
+  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(rafSetValue);
+  return <Form emails={emailKeys[5000]} changeRef={changeRef} values={values} errors={errors} submit={submit} />
+}
+
+export function Basic10000InputTest() {
+  const { setValue, values, submit, errors } = useForm({
+      onSubmit: values => {
+        console.log(values);
+      },
+  })
+  const rafSetValue = React.useCallback((...args) => {
+    // @ts-expect-error
+    requestAnimationFrame(() => setValue(...args));
+  }, [setValue]);
+  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(rafSetValue);
+  return <Form emails={emailKeys[10000]} changeRef={changeRef} values={values} errors={errors} submit={submit} />
 }

@@ -66,6 +66,9 @@ export function useSettersAsRefEventHandler<
     // note: React will call input with null when the component is unmounting
     if (input) {
       const { name } = input as unknown as HTMLInputElement;
+      // TODO: solve potential memory leak, in the else block removeEventListener,
+      // and when this function
+      // is called with new eventHandler
       input.addEventListener(event, eventHandler);
       if (mountedValues && name && mountedValues[name]) {
         // need to set the mounted values

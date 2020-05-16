@@ -1,3 +1,5 @@
+import { SyntheticEvent } from 'react';
+
 const projectName = 'react-uniformed';
 
 export enum LoggingTypes {
@@ -7,6 +9,12 @@ export enum LoggingTypes {
 }
 interface Logger {
   (message?: string, ...optionalParams: string[]): void;
+}
+
+export function resetForm(event?: SyntheticEvent): void {
+  if (event?.target instanceof HTMLElement) {
+    event.target.closest('form')?.reset();
+  }
 }
 
 // eslint-disable-next-line import/prefer-default-export
