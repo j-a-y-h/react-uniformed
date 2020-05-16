@@ -20,16 +20,44 @@ export function useHandlers<T, K extends T[]>(
   ...handlers: Handler<T, K, void>[]
 ): Handler<T, K, void> {
   return useCallback((...args: K): void => {
-    handlers.forEach((func, index): void => {
+    handlers.forEach((func): void => {
       assert.error(
         typeof func === 'function',
         LoggingTypes.typeError,
-        `(expected: function, received: ${typeof func}) ${useHandlers.name} expects a function at index (${index}).`,
+        `(expected: function, received: ${typeof func})`,
       );
       func(...args);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, handlers);
+}
+
+/**
+ * Gets the value for the specified input.
+ *
+ * @param input the specified input
+ * @return the value as a string
+ */
+function getInputValue({ checked, type, value }: HTMLInputElement): string {
+  // TODO: support select and multiple select
+  /**
+   * let value = "";
+   * if (target instanceof HTMLSelectElement || target.selectedOptions) {
+   *     const values = Array.from(target.selectedOptions).map((option) => option.value);
+   *     value = target.multiple ? values : value[0];
+   * } else {
+   *     ({value} = target);
+   * }
+   */
+  let ret: string = value;
+  if (type === 'checkbox') {
+    ret = checked
+      // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#Value
+      // If the value attribute was omitted, the default value for the checkbox is 'on'.
+      ? value || 'on'
+      : '';
+  }
+  return ret;
 }
 
 export function useSettersAsEventHandler(
@@ -45,17 +73,7 @@ export function useSettersAsEventHandler(
     const { target } = evt;
     handler(
       (target as HTMLInputElement).name,
-      // TODO: support select and multiple select
-      /**
-       * let value = "";
-       * if (target instanceof HTMLSelectElement || target.selectedOptions) {
-       *     const values = Array.from(target.selectedOptions).map((option) => option.value);
-       *     value = target.multiple ? values : value[0];
-       * } else {
-       *     ({value} = target);
-       * }
-       */
-      (target as HTMLInputElement).value,
+      getInputValue(target as HTMLInputElement),
       target,
     );
   }, [handler]);

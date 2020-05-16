@@ -7,7 +7,7 @@ import {
 import {
   useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from './useTouch';
-import { useSubmission, SubmitHandler, SubmissionHandler, SubmitFeedback } from './useSubmission';
+import { useSubmission, SubmitHandler, SubmitFeedback } from './useSubmission';
 import {
   useValidation,
   Validators,
@@ -16,13 +16,14 @@ import {
   SingleValidator,
 } from './useValidation';
 import {
-  SetValueCallback, MutableValues, PartialValues, hasValue,
+  SetValueCallback, MutableValues, PartialValues, isMapWithValues,
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
 
 export type UseFormsHook = Readonly<{
-  errors: Errors | PartialValues<Validators, validErrorValues>;
+  errors: Errors | PartialValues<Errors, validErrorValues>;
   hasErrors: boolean;
+  isDirty: boolean;
   isSubmitting: boolean;
   reset: () => void;
   setError: ErrorHandler;
@@ -39,11 +40,11 @@ export type UseFormsHook = Readonly<{
 }>
 
 type UseFormParameters = Readonly<{
-  normalizer?: NormalizerHandler;
   constraints?: ConstraintValidators | SyncedConstraint;
   initialValues?: Fields;
+  normalizer?: NormalizerHandler;
+  onSubmit: (values: Fields, event?: Event) => void | Promise<void>;
   validators?: Validators | SingleValidator<FieldValue>;
-  onSubmit: SubmissionHandler;
 }>;
 
 /**
@@ -159,10 +160,10 @@ export function useForm({
   const { values, setValue, resetValues } = useFields(initialValues, normalizer);
   const constraintsHook = useConstraints(constraints);
   const {
-    touches, resetTouches, setTouch, touchField, setTouches,
+    touches, resetTouches, setTouch, touchField, setTouches, isDirty,
   } = useTouch();
     // picks between constraints or validators
-  const validatorsInput = useMemo(() => (typeof validators === 'function' || hasValue(validators)
+  const validatorsInput = useMemo(() => (typeof validators === 'function' || isMapWithValues(validators)
     ? validators
     : constraintsHook
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,6 +184,16 @@ export function useForm({
     validate(values);
     setTouches(newTouches);
   }, [validate, values, setTouches]);
+  // note: useSubmission will skip validation if no function was passed.
+  //  In order to take advantage of this, we must pass undefined if useForm
+  //  was invoked with a validation function
+  const validator = useMemo((): undefined | (() => void) => ((
+    typeof validators === 'function'
+    || typeof constraints === 'function'
+    || isMapWithValues(validators)
+    || isMapWithValues(constraints)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  ) ? submissionValidator : undefined), [submissionValidator]);
 
   // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches);
@@ -195,7 +206,7 @@ export function useForm({
     submitFeedback,
   } = useSubmission({
     onSubmit,
-    validator: submissionValidator,
+    validator,
     disabled: hasErrors,
     setError,
     values,
@@ -204,6 +215,7 @@ export function useForm({
   return {
     errors,
     hasErrors,
+    isDirty,
     isSubmitting,
     reset,
     setError,

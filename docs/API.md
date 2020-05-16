@@ -7,12 +7,12 @@
 <dt><a href="#useForm">useForm(props)</a> ⇒ <code>UseFormsHook</code></dt>
 <dd><p>A hook for managing form states.</p>
 </dd>
-<dt><a href="#useInvokeCount">useInvokeCount(fnc)</a> ⇒ <code>Array.&lt;function(), number&gt;</code></dt>
-<dd><p>Counts the number of times the specified function is invoked.</p>
+<dt><a href="#useFunctionStats">useFunctionStats(fnc)</a> ⇒ <code>UseFunctionStats.&lt;T, K&gt;</code></dt>
+<dd><p>Keeps track of certain statistics on a function. Eg: if the function
+is invoking and how many times the function was called.</p>
 </dd>
-<dt><a href="#useInvoking">useInvoking(fnc)</a> ⇒ <code>Array.&lt;function(), boolean&gt;</code></dt>
-<dd><p>Determines if the specified function is being called. This function
-is only useful for async functions.</p>
+<dt><a href="#getInputValue">getInputValue(input)</a> ⇒</dt>
+<dd><p>Gets the value for the specified input.</p>
 </dd>
 <dt><a href="#useValidateAsSetter">useValidateAsSetter(validate, values)</a> ⇒ <code>eventLikeHandlers</code></dt>
 <dd><p>Creates a function that accepts a name and value as parameters.
@@ -38,9 +38,20 @@ and the state of the form in the Virtual DOM.
 This hook is generally only needed for larger forms or larger React Virtual DOM.</p>
 </dd>
 <dt><a href="#useSubmission">useSubmission(param)</a> ⇒ <code>Object</code></dt>
-<dd><p>Handles the form submission. Calls the specified validator and only
-calls the onSubmit function if the validator returns error free.</p>
-</dd>
+<dd><p>Handles the form submission. Runs validation before calling the <code>onSubmit</code> function
+if a validator was passed in.  If no validator was passed in, then the <code>onSubmit</code> function
+will be invoked.  The validator function must set the state on disabled to true, if there
+were errors. Disabled will prevent this hook from calling the <code>onSubmit</code> function.</p>
+<p>Below is a flow diagram for this hook</p>
+<pre><code>               submit(Event)
+                    |
+  (no) - (validator is a function?) - (yes)
+   |                                    |
+ onSubmit(Event)                   validator()
+                                        |
+                      (no) - (disabled set to `false`?) - (yes)
+                                                            |
+                                                       onSubmit(Event)</code></pre></dd>
 <dt><a href="#useValidation">useValidation(validator)</a> ⇒</dt>
 <dd><p>A hook for performing validation.</p>
 </dd>
@@ -51,15 +62,15 @@ calls the onSubmit function if the validator returns error free.</p>
 ## useConstraints(rules) ⇒
 A declarative way of validating inputs based upon HTML 5 constraints
 
-**Kind**: global function  
+**Kind**: global function
 **Returns**: maps the rules to an object map with the value
-being a function that accepts value as the only argument.  
+being a function that accepts value as the only argument.
 
 | Param | Description |
 | --- | --- |
 | rules | an object mapping that consist of HTML5ValidatorRules as value or validator function that accepts value as the only argument. |
 
-**Example**  
+**Example**
 ```js
 // BASIC
  const validator = useConstraints({
@@ -99,8 +110,8 @@ being a function that accepts value as the only argument.
 ## useForm(props) ⇒ <code>UseFormsHook</code>
 A hook for managing form states.
 
-**Kind**: global function  
-**Returns**: <code>UseFormsHook</code> - the APIs used to manage the state of a function.  
+**Kind**: global function
+**Returns**: <code>UseFormsHook</code> - the APIs used to manage the state of a function.
 **See**
 
 - [useConstraints](#useConstraints)
@@ -121,7 +132,7 @@ A hook for managing form states.
 | props.validators | <code>Validators</code> \| <code>SingleValidator.&lt;FieldValue&gt;</code> | the validators used to validate values |
 | props.constraints | <code>ConstraintValidators</code> \| <code>SyncedConstraint</code> | the constraints api |
 
-**Example**  
+**Example**
 ```js
 const { submit, setValue, values } = useForm({
   onSubmit: data => alert(JSON.stringify(data))
@@ -137,7 +148,7 @@ const handleChange = useSettersAsEventHandler(setValue);
    />
 </form>
 ```
-**Example**  
+**Example**
 ```js
 // using validate in change events
 
@@ -159,59 +170,46 @@ const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
   />
 </form>
 ```
-**Example**  
-```js
-// Setting errors from the server
+<a name="useFunctionStats"></a>
 
-// submissionError is set when the onSubmit handler throws an error
-const { submit, setValue, validate, submissionError, values } = useForm({
-  onSubmit(values, {setError}) {
-     const data = fetch('http://api.example.com', { body: values })
-       .then(res => res.json())
-       // throwing an error or rejecting a promise will set submissionError
-       .catch(() => Promise.reject('Unexpected error'));
+## useFunctionStats(fnc) ⇒ <code>UseFunctionStats.&lt;T, K&gt;</code>
+Keeps track of certain statistics on a function. Eg: if the function
+is invoking and how many times the function was called.
 
-     if (data.errors) {
-       data.errors.forEach(({error, fieldName}) => {
-         // update the form with errors from the server
-         setError(fieldName, error);
-       });
-       // If there are any errors after submission then this function must throw
-       // or return Promise.reject() in order to avoid the form resetting.
-       // submissionError will be set to the value that was thrown.
-       // In this example submissionError === 'submission failed'
-       throw 'submission failed';
-     }
-  }
-});
-```
-<a name="useInvokeCount"></a>
-
-## useInvokeCount(fnc) ⇒ <code>Array.&lt;function(), number&gt;</code>
-Counts the number of times the specified function is invoked.
-
-**Kind**: global function  
-**Returns**: <code>Array.&lt;function(), number&gt;</code> - an array where the first index is a function and
-the second index is the number of times the function was called.  
+**Kind**: global function
+**Returns**: <code>UseFunctionStats.&lt;T, K&gt;</code> - Returns a object.
+- `isRunning`: determines if a function was running
+- `fnc`: the specified function
+- `invokeCount`: the number to times the function was called
 
 | Param | Description |
 | --- | --- |
 | fnc | the specified function |
 
-<a name="useInvoking"></a>
+<a name="getInputValue"></a>
 
-## useInvoking(fnc) ⇒ <code>Array.&lt;function(), boolean&gt;</code>
-Determines if the specified function is being called. This function
-is only useful for async functions.
+## getInputValue(input) ⇒
+Gets the value for the specified input.
 
-**Kind**: global function  
-**Returns**: <code>Array.&lt;function(), boolean&gt;</code> - an array where the first index is a function and
-the second index is the state of the invocation for the function.  
+**Kind**: global function
+**Returns**: the value as a string
 
 | Param | Description |
 | --- | --- |
-| fnc | the specified function |
+| input | the specified input |
 
+<a name="getInputValue..ret"></a>
+
+### getInputValue~ret
+let value = "";
+if (target instanceof HTMLSelectElement || target.selectedOptions) {
+    const values = Array.from(target.selectedOptions).map((option) => option.value);
+    value = target.multiple ? values : value[0];
+} else {
+    ({value} = target);
+}
+
+**Kind**: inner property of [<code>getInputValue</code>](#getInputValue)
 <a name="useValidateAsSetter"></a>
 
 ## useValidateAsSetter(validate, values) ⇒ <code>eventLikeHandlers</code>
@@ -220,8 +218,8 @@ When the returned function is invoked, it will call the specified
 validate function with the specified values merged in with the name
 and value passed to the invoked function.
 
-**Kind**: global function  
-**Returns**: <code>eventLikeHandlers</code> - a function that can be invoked with a name and value.  
+**Kind**: global function
+**Returns**: <code>eventLikeHandlers</code> - a function that can be invoked with a name and value.
 **See**
 
 - [useSettersAsEventHandler](useSettersAsEventHandler)
@@ -233,7 +231,7 @@ and value passed to the invoked function.
 | validate | <code>ValidateAllHandler.&lt;FieldValue&gt;</code> | a validation function that accepts an object of values |
 | values | <code>Fields</code> | a values object |
 
-**Example**  
+**Example**
 ```js
 // used with useForms
 const {validate, values, setValue} = useForms(...);
@@ -250,9 +248,9 @@ function supports nesting with brackets. E.g. referencing an
 array value indexed at 0 `arrayName[0]`; referencing an object
 value indexed at country `locations[country]`.
 
-**Kind**: global function  
-**Returns**: <code>NormalizerHandler</code> - Returns a normalizer handler  
-**Example**  
+**Kind**: global function
+**Returns**: <code>NormalizerHandler</code> - Returns a normalizer handler
+**Example**
 ```js
 // jsx
    <input name="users[0]" value="John">
@@ -278,14 +276,14 @@ Creates a single normalizer function from the specified list of normalizers.
 note: order matters when passing normalizers. This means that the results or value
 of the first normalizer is passed to the next normalizer.
 
-**Kind**: global function  
-**Returns**: <code>NormalizerHandler</code> - returns a normalizer handler  
+**Kind**: global function
+**Returns**: <code>NormalizerHandler</code> - returns a normalizer handler
 
 | Param | Type | Description |
 | --- | --- | --- |
 | normalizers | <code>Array.&lt;(NormalizerHandler\|UseNormalizersOption)&gt;</code> | if you pass a normalizer handler then it will apply to all fields. You can specify a specific list of fields by passing in |
 
-**Example**  
+**Example**
 ```js
 useNormalizers(
    // apply to all fields
@@ -315,14 +313,14 @@ React refs. The React ref is used to synchronize the state of the input in the D
 and the state of the form in the Virtual DOM.
 This hook is generally only needed for larger forms or larger React Virtual DOM.
 
-**Kind**: global function  
-**Returns**: <code>Ref</code> - returns a React ref function.  
+**Kind**: global function
+**Returns**: <code>Ref</code> - returns a React ref function.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | args | <code>Array.&lt;eventLikeHandlers&gt;</code> \| <code>Array.&lt;UseEventHandlersWithRefProps&gt;</code> | a list of functions used to set a value or an object with `event`,  `handlers`, and `mountedValues` as properties. - `handlers`: a list of functinos used to set a value. - `event?`: the event to register this handler to. (defaults to `'change'`). - `mountedValues?`: used to set values on mount of the ref. |
 
-**Example**  
+**Example**
 ```js
 import {useSettersAsRefEventHandler} from "react-uniformed";
 
@@ -335,13 +333,29 @@ const changeRef = useSettersAsRefEventHandler(setValue);
 <a name="useSubmission"></a>
 
 ## useSubmission(param) ⇒ <code>Object</code>
-Handles the form submission. Calls the specified validator and only
-calls the onSubmit function if the validator returns error free.
+Handles the form submission. Runs validation before calling the `onSubmit` function
+if a validator was passed in.  If no validator was passed in, then the `onSubmit` function
+will be invoked.  The validator function must set the state on disabled to true, if there
+were errors. Disabled will prevent this hook from calling the `onSubmit` function.
 
-**Kind**: global function  
+Below is a flow diagram for this hook
+```
+               submit(Event)
+                    |
+  (no) - (validator is a function?) - (yes)
+   |                                    |
+ onSubmit(Event)                   validator()
+                                        |
+                      (no) - (disabled set to `false`?) - (yes)
+                                                            |
+                                                       onSubmit(Event)
+```
+
+**Kind**: global function
 **Returns**: <code>Object</code> - returns a
 handler for onSubmit events, a count of how many times submit was called, and the
-state of the submission progress.  
+state of the submission progress.
+**See**: [useFunctionStats](#useFunctionStats)
 
 | Param | Description |
 | --- | --- |
@@ -349,7 +363,7 @@ state of the submission progress.
 | param.validator | the specified validator. If your validation logic is async, then you should return a promise in your function otherwise this won't work as expected. |
 | param.onSubmit | the specified onSubmit handler. If your onSubmit handler is async, then you should return a promise in your function otherwise this won't work as expected. |
 
-**Example**  
+**Example**
 ```js
 // this example is if you are not using the useForm hook. Note: the useForm hook
   // handles all of this.
@@ -373,14 +387,14 @@ state of the submission progress.
 ## useValidation(validator) ⇒
 A hook for performing validation.
 
-**Kind**: global function  
-**Returns**: returns an useValidation object  
+**Kind**: global function
+**Returns**: returns an useValidation object
 
 | Param | Description |
 | --- | --- |
 | validator | A validation map or a validation function. |
 
-**Example**  
+**Example**
 ```js
 // validate using validation maps
 const {validateByName, errors} = useValidation({

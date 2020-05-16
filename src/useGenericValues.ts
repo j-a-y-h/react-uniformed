@@ -48,13 +48,28 @@ export interface UseResetableValuesHook<T> {
   readonly setValues: SetValues<T>;
   readonly resetValues: () => void;
 }
-export function hasValue<T>(values: Values<T>): boolean {
-  return !values || typeof values !== 'object' || Object.keys(values).some((key): boolean => Boolean(values[key]));
+export function isMapWithValues<T>(values: Values<T>): boolean {
+  return Boolean(
+    values && typeof values === 'object'
+    && Object.keys(values).some((key): boolean => Boolean(values[key])),
+  );
 }
+
+function resetCompare<T>(oldState: Values<T>, newState: Values<T>): boolean {
+  return (
+    (oldState !== newState)
+    && (
+      // verify that the objects are not empty
+      (typeof oldState === typeof newState && oldState && newState)
+      && (isMapWithValues(oldState) || isMapWithValues(newState))
+    )
+  );
+}
+
 function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
   let value;
   let name;
-  let newState;
+  let newState: Values<T>;
   switch (action.type) {
   case ActionTypes.update:
     ({ value, name } = action.payload as UpdatePayload<T>);
@@ -65,9 +80,9 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
   case ActionTypes.reset:
     newState = typeof action.payload === 'function'
       ? action.payload(state)
-      : action.payload;
-    return (newState !== state)
-      ? { ...newState as Values<T> }
+      : action.payload as Values<T>;
+    return resetCompare(state, newState)
+      ? { ...newState }
       : state;
   default:
     throw new Error();
@@ -79,7 +94,7 @@ export function useGenericValues<T>(initialValues: Values<T> = {}): UseResetable
   assert.error(
     !initialValues || typeof initialValues === 'object',
     LoggingTypes.typeError,
-    `(expected: Object<string, any> | undefined, received: ${typeof initialValues}) ${useGenericValues.name} expects an object map as the first argument or zero arguments.`,
+    `(expected: Object<string, any> | undefined, received: ${typeof initialValues})`,
   );
   const [values, dispatch] = useReducer<ReducerType<T>>(reducer, initialValues);
   const setValue = useCallback((name: allowableKeys, value: T): void => {
@@ -89,14 +104,14 @@ export function useGenericValues<T>(initialValues: Values<T> = {}): UseResetable
     assert.error(
       newValues && (typeof newValues === 'object' || typeof newValues === 'function'),
       LoggingTypes.invalidArgument,
-      `(expected: Object<string, any> | (currentValues) => newValues, received: ${typeof newValues}) ${useGenericValues.name}.setValues expects an object map or a function as the only argument.`,
+      `(expected: Object<string, any> | (currentValues) => newValues, received: ${typeof newValues})`,
     );
     dispatch({ type: ActionTypes.reset, payload: newValues });
   }, []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   const resetValues = useCallback((): void => setValues(initialValues), []);
   // note: this counts 0 and empty string as no value.
-  const hasValueCallback = useMemo((): boolean => hasValue(values), [values]);
+  const hasValueCallback = useMemo((): boolean => isMapWithValues(values), [values]);
   return {
     values, setValue, resetValues, setValues, hasValue: hasValueCallback,
   };

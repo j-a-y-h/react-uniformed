@@ -1,6 +1,6 @@
 {
   "name": "react-uniformed",
-  "version": "0.0.13",
+  "version": "0.0.17",
   "description": "Scalable forms for React using hooks",
   "main": "dist/react-uniformed.js",
   "types": "dist/index.d.ts",
@@ -89,7 +89,7 @@
     "rimraf": "^2.6.3",
     "ts-jest": "^25.1.0",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.7.5",
+    "typescript": "^3.9.0",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.2",
