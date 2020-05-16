@@ -83,30 +83,6 @@ describe("useSubmission", () => {
         });
         expect(result.current.submitFeedback.message).toBe("TEST");
     });
-    it("sets submitFeedback.error when onSubmit throws an error", () => {
-        const { result } = renderHook(() => useSubmission({
-            onSubmit: () => {
-                throw "TEST";
-             },
-        }));
-        expect(result.current.submitFeedback.error).toBeUndefined();
-        act(() => {
-            result.current.submit();
-        });
-        expect(result.current.submitFeedback.error).toBe("TEST");
-    });
-    it("sets submitFeedback.error when onSubmit returns Promise.reject", () => {
-        const { result } = renderHook(() => useSubmission({
-            onSubmit: () => {
-                return Promise.reject("TEST");
-            },
-        }));
-        expect(result.current.submitFeedback.error).toBeUndefined();
-        act(() => {
-            result.current.submit();
-        });
-        expect(result.current.submitFeedback.error).toBe("TEST");
-    });
     it("onSubmit's setError calls the specified setError function", () => {
         const setError = jest.fn();
         const { result } = renderHook(() => useSubmission({
@@ -140,32 +116,31 @@ describe("useSubmission", () => {
         });
         expect(returnedEvent).toBeUndefined();
     });
-    it("doesn't call reset if onSubmit throws an error", () => {
-        const reset = jest.fn();
-        const { result } = renderHook(() => useSubmission({
-            reset,
-            onSubmit() {
-                throw "TEST";
-            },
-        }));
-        expect(reset).not.toBeCalled();
-        act(() => {
-            result.current.submit();
+    describe.each([
+        ['throws an error', () => { throw "TEST" }],
+        ['returns Promise.reject', () => Promise.reject("TEST")],
+    ])("when onSubmit %s", (_, onSubmit) => {
+        it("doesn't call reset", () => {
+            const reset = jest.fn();
+            const { result } = renderHook(() => useSubmission({
+                reset,
+                onSubmit,
+            }));
+            expect(reset).not.toBeCalled();
+            act(() => {
+                result.current.submit();
+            });
+            expect(reset).not.toBeCalled();
         });
-        expect(reset).not.toBeCalled();
-    });
-    it("doesn't call reset if onSubmit returns Promise.reject", () => {
-        const reset = jest.fn();
-        const { result } = renderHook(() => useSubmission({
-            reset,
-            onSubmit() {
-                return Promise.reject("ERROR");
-            },
-        }));
-        expect(reset).not.toBeCalled();
-        act(() => {
-            result.current.submit();
+        it("sets submitFeedback.error", () => {
+            const { result } = renderHook(() => useSubmission({
+                onSubmit,
+            }));
+            expect(result.current.submitFeedback.error).toBeUndefined();
+            act(() => {
+                result.current.submit();
+            });
+            expect(result.current.submitFeedback.error).toBe("TEST");
         });
-        expect(reset).not.toBeCalled();
     });
 });
