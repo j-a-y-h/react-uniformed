@@ -47,55 +47,18 @@ function Form({values, errors, submit, changeRef, emails}) {
   );
 }
 
-export function VeryBigFormWithValidation() {
-  const { setValue, submit, errors, validateByName } = useForm({
+export function BigFormWithValidation() {
+  const { setValue, submit, errors, values, validateByName } = useForm({
     constraints: (values) => {
       return Object.keys(values).reduce((cur, key) => {
-        return {...cur, [key]: {type: 'email', required: true}}
+        return {...cur, [key]: {type: 'email', required: true, pattern: [/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, 'invalid email']}}
       }, {})
     },
     onSubmit: data => alert(JSON.stringify(data)),
   });
   const handleChange = useSettersAsRefEventHandler<HTMLInputElement>(setValue, validateByName);
-  return (
-    <form onSubmit={submit}>
-      {Object.keys(errors).map(e => (
-        <p style={{ color: "red" }}>{errors[e]}</p>
-      ))}
-      {new Array(1000).fill(undefined).map((_, i) => i).map((i) => {
-        return (<div key={i}>
-          <label>Email {i}</label>
-          <input name={`email${i}`} ref={handleChange} type="text" />
-        </div>)
-      })}
-      <input type="submit" />
-    </form>
-  );
-}
 
-export function Basic1000InputTestWithValidationOnChange() {
-  // Create constraint settings for 1000 emails and a username input
-  const constraints = React.useMemo(() => emailKeys[1000].reduce((constraints, key) => {
-    constraints[key] = {
-      required: false,//"This is required",
-      pattern: [/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, 'invalid email'],
-    };
-    return constraints;
-  }, {
-    username: value => {
-      console.log("Validated-------");
-      return (value === 'admin' ? true : 'Nice try!')
-    },
-  }), []);
-  const { setValue, values, submit, errors, validateByName } = useForm({
-    // @ts-expect-error
-      constraints,
-      onSubmit: values => {
-        console.log(values);
-      },
-  })
-  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(setValue, validateByName);
-  return <Form emails={emailKeys[1000]} changeRef={changeRef} values={values} errors={errors} submit={submit} />
+  return <Form emails={emailKeys[1000]} changeRef={handleChange} values={values} errors={errors} submit={submit} />
 }
 
 export function Basic5000InputTest() {
