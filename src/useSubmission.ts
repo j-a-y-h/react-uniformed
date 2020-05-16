@@ -88,9 +88,12 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * then you should return a promise in your function otherwise this won't work as expected.
  * @param param.onSubmit the specified onSubmit handler. If your onSubmit handler is async,
  * then you should return a promise in your function otherwise this won't work as expected.
- * @return {{isSubmitting: boolean, submitCount: number, submit: Function}} returns a
- * handler for onSubmit events, a count of how many times submit was called, and the
- * state of the submission progress.
+ * @param param.reset An optional method used to reset the state of the form after submission.
+ * @param param.setError An optional function that is passed to the specified onSubmit handler.
+ *  When setError is called while submitting, the form will not call the specified reset function.
+ * @param param.values the specified values to use when submitting the form
+ * @return {UseSubmissionHook} returns a handler for onSubmit events,
+ *  a count of how many times submit was called, and the state of the submission progress.
  * @see {@link useFunctionStats}
  * @example
  *
@@ -110,6 +113,51 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  *   const { isSubmitting, submit, submitCount } = useSubmission({
  *     onSubmit, validator
  *   });
+ *
+ * @example
+ * // Setting feedback on submit
+ *
+ * const { submitFeedback } = useSubmission({
+ *   onSubmit(values, {setFeedback}) {
+ *      const data = await fetch('http://api.example.com', { body: values })
+ *        .then(res => res.json());
+ *
+ *      if (data) {
+ *        // the submitFeedback.message value will be set for this case.
+ *        setFeedback("Thank you for submitting!");
+ *      } else {
+ *        // if an error occurs then the submitFeedback.error value will be set
+ *        throw "Something went wrong processing this form"
+ *        // or when you return Promise.reject
+ *        // return Promise.reject("Something went wrong processing this form");
+ *      }
+ *   }
+ * });
+ *
+ * // if an error occurred
+ * submitFeedback.error === "Something went wrong processing this form"
+ * // or if the submission was successful
+ * submitFeedback.message === "Thank you for submitting!";
+ *
+ * @example
+ * // Validation errors from the server
+ *
+ * const { submitFeedback } = useSubmission({
+ *   onSubmit(values, {setError}) {
+ *      const data = fetch('http://api.example.com', { body: values })
+ *        .then(res => res.json())
+ *        // throwing an error or rejecting a promise will set submissionError
+ *        .catch(() => Promise.reject('Unexpected error'));
+ *
+ *      if (data.errors) {
+ *        data.errors.forEach(({error, fieldName}) => {
+ *          // update the form with errors from the server.
+ *          // note that the form will not be reset if setError is called
+ *          setError(fieldName, error);
+ *        });
+ *      }
+ *   }
+ * });
  */
 export function useSubmission({
   onSubmit,
