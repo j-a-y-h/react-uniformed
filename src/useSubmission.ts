@@ -2,9 +2,16 @@ import {
   useCallback, SyntheticEvent, useState, useEffect, useMemo, useReducer, Reducer,
 } from 'react';
 import { useInvokeCount, useInvoking } from './useFunctionUtils';
+import { ErrorHandler } from './useErrors';
+import { Fields } from './useFields';
+
+type onSubmitModifiers = Readonly<{
+  setError: ErrorHandler<string>;
+  setFeedback: (feedback: string) => void;
+}>;
 
 export interface SubmissionHandler {
-  (): void | Promise<void>;
+  (values: Fields, api: onSubmitModifiers): void | never | Promise<void | never>;
 }
 export interface SubmitHandler {
   (event?: SyntheticEvent): void;
@@ -17,12 +24,16 @@ export interface UseSubmissionProps {
    * you want to disable if there are errors.
    */
   readonly disabled?: boolean;
+  reset?: () => void;
+  setError?: (name: string, error: string) => void;
+  values?: Fields;
 }
 
 export interface UseSubmissionHook {
   readonly isSubmitting: boolean;
   readonly submitCount: number;
   readonly submit: SubmitHandler;
+  readonly submitFeedback: SubmitFeedback;
 }
 
 enum ActionTypes { error, feedback, reset }
@@ -30,7 +41,7 @@ interface Action {
   readonly type: ActionTypes;
   readonly payload?: string;
 }
-type SubmitFeedback = Readonly<{
+export type SubmitFeedback = Readonly<{
   error?: string;
   message?: string;
 }>;
@@ -89,17 +100,19 @@ export function useSubmission({
   disabled = false,
   reset,
   setError,
-  values,
+  values = {},
 }: UseSubmissionProps): UseSubmissionHook {
   const [submitFeedback, dispatch] = useReducer<Reducer<SubmitFeedback, Action>>(reducer, {});
   // create a submit handler
-  const handleSubmit: SubmissionHandler = useCallback(async (): Promise<void> => {
+  const handleSubmit = useCallback(async (): Promise<void> => {
     // note: give the handler every value so that we don't have to worry about
     // it later
     let shouldReset = true;
     const wrappedSetError = (name: string, error: string): void => {
       shouldReset = false;
-      setError(name, error);
+      if (setError) {
+        setError(name, error);
+      }
       dispatch({ type: ActionTypes.reset });
     };
     try {
@@ -110,7 +123,7 @@ export function useSubmission({
         });
       };
       await onSubmit(values, { setError: wrappedSetError, setFeedback });
-      if (shouldReset) {
+      if (shouldReset && reset) {
         reset();
       }
     } catch (e) {
@@ -122,7 +135,7 @@ export function useSubmission({
   }, [onSubmit, values, reset, setError]);
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   // track submission count
-  const [submitWithInvokeCount, submitCount] = useInvokeCount(onSubmit);
+  const [submitWithInvokeCount, submitCount] = useInvokeCount(handleSubmit);
   const [submitWithInvokingTracker, isSubmitting] = useInvoking(submitWithInvokeCount);
   const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
   const [validate, isValidating] = useInvoking(validationFnc);
@@ -149,5 +162,7 @@ export function useSubmission({
     validate();
     setIsReadyToSubmit(true);
   }, [setIsReadyToSubmit, validate]);
-  return { isSubmitting, submitCount, submit, submitFeedback };
+  return {
+    isSubmitting, submitCount, submit, submitFeedback,
+  };
 }

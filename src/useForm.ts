@@ -7,7 +7,7 @@ import {
 import {
   useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from './useTouch';
-import { useSubmission, SubmissionHandler, SubmitHandler } from './useSubmission';
+import { useSubmission, SubmitHandler, SubmissionHandler, SubmitFeedback } from './useSubmission';
 import {
   useValidation,
   Validators,
@@ -19,11 +19,6 @@ import {
   SetValueCallback, MutableValues, PartialValues, hasValue,
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
-
-type SubmitFeedback = Readonly<{
-  error?: string;
-  message?: string;
-}>;
 
 export type UseFormsHook = Readonly<{
   errors: Errors | PartialValues<Validators, validErrorValues>;
@@ -43,20 +38,13 @@ export type UseFormsHook = Readonly<{
   values: Fields;
 }>
 
-type onSubmitModifiers = Readonly<{
-  setError: ErrorHandler<string>;
-  setFeedback: (feedback: string) => void;
-}>;
-
 type UseFormParameters = Readonly<{
   normalizer?: NormalizerHandler;
   constraints?: ConstraintValidators | SyncedConstraint;
   initialValues?: Fields;
   validators?: Validators | SingleValidator<FieldValue>;
-  onSubmit: (values: Fields, api: onSubmitModifiers) => void | never | Promise<void | never>;
+  onSubmit: SubmissionHandler;
 }>;
-
-const HIDDEN_SUBMISSION_FEEDBACK_KEY = '__useFormSubmissionError__';
 
 /**
  * A hook for managing form states.
@@ -168,7 +156,7 @@ export function useForm({
   validators = {},
   constraints = {},
 }: UseFormParameters): UseFormsHook {
-  const { values: rawValues, setValue, resetValues } = useFields(initialValues, normalizer);
+  const { values, setValue, resetValues } = useFields(initialValues, normalizer);
   const constraintsHook = useConstraints(constraints);
   const {
     touches, resetTouches, setTouch, touchField, setTouches,
@@ -181,12 +169,8 @@ export function useForm({
   ), []);
     // I want to decouple validator from use form
   const {
-    validate, validateByName, errors: rawErrors, resetErrors, setError, hasErrors,
+    validate, validateByName, errors, resetErrors, setError, hasErrors,
   } = useValidation(validatorsInput);
-  // extract the submission error and the reset of the errors
-  const { [HIDDEN_SUBMISSION_FEEDBACK_KEY]: submissionError, ...errors } = rawErrors;
-  // extract the submission feedback and the reset of the errors
-  const { [HIDDEN_SUBMISSION_FEEDBACK_KEY]: submissionFeedback, ...values } = rawValues;
   // create a submission validator handler
   const submissionValidator = useCallback((): void => {
     const newTouches = Object.keys(values).reduce((
@@ -204,16 +188,19 @@ export function useForm({
   const reset = useHandlers(resetValues, resetErrors, resetTouches);
 
   // use submission hook
-  const { isSubmitting, submit, submitCount } = useSubmission({
-    onSubmit: handleSubmit,
+  const {
+    isSubmitting,
+    submit,
+    submitCount,
+    submitFeedback,
+  } = useSubmission({
+    onSubmit,
     validator: submissionValidator,
     disabled: hasErrors,
+    setError,
+    values,
+    reset,
   });
-  // track feedback from the form submission
-  const submitFeedback = useMemo(() => ({
-    error: submissionError,
-    message: submissionError ? undefined : submissionFeedback as string,
-  }), [submissionError, submissionFeedback]);
   return {
     errors,
     hasErrors,
