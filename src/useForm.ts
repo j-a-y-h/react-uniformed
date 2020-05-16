@@ -21,6 +21,7 @@ import {
   SetValueCallback, MutableValues, PartialValues, isMapWithValues,
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
+import { resetForm } from './utils';
 
 export type UseFormsHook = Readonly<{
   errors: Errors | PartialValues<Errors, validErrorValues>;
@@ -197,15 +198,8 @@ export function useForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ) ? submissionValidator : undefined), [submissionValidator]);
 
-  // used to reset the form using DOM apis
-  const resetUncontrolledForm = useCallback((event?: SyntheticEvent) => {
-    if (event?.target instanceof HTMLElement) {
-      event.target.closest('form')?.reset();
-    }
-  }, []);
-
   // create reset handlers
-  const reset = useHandlers(resetValues, resetErrors, resetTouches, resetUncontrolledForm);
+  const reset = useHandlers(resetValues, resetErrors, resetTouches, resetForm);
 
   // use submission hook
   const {
