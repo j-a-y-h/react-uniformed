@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useSubmission } from '../src';
 import { UseSubmissionProps, UseSubmissionHook } from '../src/useSubmission';
+import { SyntheticEvent } from 'react';
 
 const sleep = (duration: number) => {
 return new Promise<void>((res) => {
@@ -69,5 +70,46 @@ describe("useSubmission", () => {
         expect(result.current.isSubmitting).toBe(true);
         await waitForNextUpdate();
         expect(result.current.isSubmitting).toBe(false);
+    });
+    it("setFeedback sets submitFeedback.message", async () => {
+        const { result } = renderHook(() => useSubmission({
+            onSubmit: (_, { setFeedback }) => {
+                setFeedback("TEST");
+             },
+        }));
+        expect(result.current.submitFeedback.message).toBeUndefined();
+        act(() => {
+            result.current.submit();
+        });
+        expect(result.current.submitFeedback.message).toBe("TEST");
+    });
+    it("onSubmit's setError calls the specified setError function", async () => {
+        const setError = jest.fn();
+        const { result } = renderHook(() => useSubmission({
+            setError,
+            onSubmit: (_, { setError }) => {
+                setError("TEST", "TESTING");
+             },
+        }));
+        expect(setError).toBeCalledTimes(0);
+        act(() => {
+            result.current.submit();
+        });
+        expect(setError).toBeCalledTimes(1);
+        expect(setError).toBeCalledWith("TEST", "TESTING");
+    });
+    it("onSubmit is called with an event object if submit was called with an event object", async () => {
+        const test = {} as SyntheticEvent;
+        let returnedEvent;
+        const { result } = renderHook(() => useSubmission({
+            onSubmit: (_, { event }) => {
+                returnedEvent = event;
+             },
+        }));
+        expect(returnedEvent).toBeUndefined();
+        act(() => {
+            result.current.submit(test);
+        });
+        expect(returnedEvent).toBe(test);
     });
 });
