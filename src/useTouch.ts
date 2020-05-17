@@ -39,6 +39,35 @@ export interface UseTouchHook {
 
 /**
  * Tracks touches within a form.
+ * @example Basic example
+ * ```javascript
+ * const {touches, setTouch, resetTouches, touchField, setTouches, isDirty} = useTouch();
+ *
+ * // set touch to true for an input
+ * touchField('name');
+ * // set the touch state to false for an input
+ * setTouch('name', false);
+ * // set the touch state for multiple inputs (used by useForm is about to be submitted)
+ * setTouches({
+ *   name: true,
+ *   email: true,
+ * });
+ *
+ * // check the touch state for inputs
+ * if (touches.name || touches.email)
+ *   console.log("You touched the email and name field");
+ *
+ * // check if any of the fields have been touched (works well when you are validating
+ * // all inputs and want to only enable submitting after the user touches the form
+ * // and resolves all errors)
+ * if (isDirty && !hasError)
+ *   console.log("submitting the for is now enabled");
+ *
+ * // Use the resetTouches function when you want to reset the touch state.
+ * resetTouches();
+ * // resetTouches is used by useForm with other reset functions
+ * const reset = useHandlers(resetValues, resetErrors, resetTouches);
+ * ```
  */
 export function useTouch(): UseTouchHook {
   const {
