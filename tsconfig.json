@@ -65,6 +65,7 @@
     "out": "docs/api",
     "inputFiles": [
       "./src/useFields.ts",
+      "./src/useForm.ts",
       "./src/useHandlers.ts",
       "./src/useNormalizers.ts",
       "./src/useSettersAsRefEventHandler.ts",

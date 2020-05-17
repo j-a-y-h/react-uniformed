@@ -51,27 +51,28 @@ type UseFormParameters = Readonly<{
 }>;
 
 /**
- * A hook for managing form states.
+ * A hook that allows you to declaratively manage a form.<br>
  *
- * @param props - the props api
- * @param onSubmit -
- *  a callback function for form submissions
- * @param initialValues - the initial form values
- * @param normalizer -
- *  a handler that translates form values before setting values
- * @param validators -
- *  the validators used to validate values
- * @param constraints - the constraints api
- * @returns the APIs used to manage the state of a function.
- * See {@link useConstraints}
- * See {@link useValidation}
- * See {@link useSubmission}
- * See {@link useFields}
- * See {@link useSettersAsEventHandler}
+ * See {@link useTouch}<br/>
+ * See {@link useFields}<br/>
+ * See {@link useValidation}<br/>
+ * See {@link useSubmission}<br/>
+ * See {@link useConstraints} <br/>
+ * See {@link useValidateAsSetter}<br/>
+ * See {@link useSettersAsEventHandler}<br/>
  * See {@link useSettersAsRefEventHandler}
- * See {@link useValidateAsSetter}
- * @example
- *```
+ *
+ * @param onSubmit - passed directly to {@link useSubmission}.
+ * @param initialValues - passed as the first argument to {@link useFields}.
+ * @param normalizer - passed as the second argument to {@link useFields}.
+ * See {@link useNormalizers} for more details.
+ * @param validators - passed directly to {@link useValidation}.
+ * @param constraints - Passed directly to {@link useConstraints}. Note that you can
+ * only use one validator at a time. For instance, if you pass in a value to `validators`,
+ * then the `constraints` prop will be ignored in favor of `validators`.
+ * @returns the APIs used to manage the state of a function.
+ * @example Basic example
+ *```javascript
  * const { submit, setValue, values } = useForm({
  *   onSubmit: data => alert(JSON.stringify(data))
  * });
@@ -86,15 +87,13 @@ type UseFormParameters = Readonly<{
  *    />
  * </form>
  *```
- * @example
- * ```
- * // using validate in change events
- *
+ * @example Using `validate` in change events
+ * ```javascript
  * const { submit, setValue, validate, values } = useForm({
  *   onSubmit: data => alert(JSON.stringify(data))
  * });
- * // Although this will work, you should avoid validating all inputs on change b/c
- * // it may cost you in performance.
+ * // Warning: validating all inputs on change could lead to performance issues,
+ * // especially if you have a big form or complex validation logic.
  * const validateAllOnChange = useValidateAsSetter(validate, values);
  * // this will set the value of inputs on change and validate all form inputs
  * const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
@@ -108,53 +107,8 @@ type UseFormParameters = Readonly<{
  *   />
  * </form>
  *```
- * @example
- * ```
- * // Setting feedback on submit
- *
- * const { submitFeedback } = useForm({
- *   onSubmit(values, {setFeedback}) {
- *      const data = await fetch('http://api.example.com', { body: values })
- *        .then(res => res.json());
- *
- *      if (data) {
- *        // the submitFeedback.message value will be set for this case.
- *        setFeedback("Thank you for submitting!");
- *      } else {
- *        // if an error occurs then the submitFeedback.error value will be set
- *        throw "Something went wrong processing this form"
- *        // or when you return Promise.reject
- *        // return Promise.reject("Something went wrong processing this form");
- *      }
- *   }
- * });
- *
- * // if an error occurred
- * submitFeedback.error === "Something went wrong processing this form"
- * // or if the submission was successful
- * submitFeedback.message === "Thank you for submitting!";
- *```
- * @example
- * ```
- * // Validation errors from the server
- *
- * const { hasErrors } = useForm({
- *   onSubmit(values, {setError}) {
- *      const data = fetch('http://api.example.com', { body: values })
- *        .then(res => res.json())
- *        // throwing an error or rejecting a promise will set submissionError
- *        .catch(() => Promise.reject('Unexpected error'));
- *
- *      if (data.errors) {
- *        data.errors.forEach(({error, fieldName}) => {
- *          // update the form with errors from the server.
- *          // note that the form will not be reset if setError is called
- *          setError(fieldName, error);
- *        });
- *      }
- *   }
- * });
- *```
+ * @example Setting feedback on submit, see {@link useSubmission}
+ * @example Validation errors from the server, see {@link useSubmission}
  */
 export function useForm({
   onSubmit,
