@@ -5,7 +5,7 @@ export {
   useHandlers, useSettersAsEventHandler, useValidateAsSetter,
 } from './useHandlers';
 export { useSettersAsRefEventHandler } from './useSettersAsRefEventHandler';
-export { useSubmission } from './useSubmission';
+export { useSubmission, UseSubmissionHook, UseSubmissionProps } from './useSubmission';
 export { useTouch } from './useTouch';
 export { useValidation } from './useValidation';
 export { useConstraints } from './useConstraints';

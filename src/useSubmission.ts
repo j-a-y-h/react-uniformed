@@ -19,14 +19,14 @@ export interface SubmitHandler {
 }
 export interface UseSubmissionProps {
   readonly onSubmit: SubmissionHandler;
-  readonly validator?: () => Promise<void> | void;
+  validator?(): Promise<void> | void;
   /**
    * Determines if submission should be disabled. Generally,
    * you want to disable if there are errors.
    */
   readonly disabled?: boolean;
-  readonly reset?: (event?: SyntheticEvent) => void;
-  readonly setError?: (name: string, error: string) => void;
+  reset?(event?: SyntheticEvent): void;
+  setError?(name: string, error: string): void;
   readonly values?: Fields;
 }
 
@@ -78,9 +78,9 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  *    |                                    |
  *  onSubmit(Event)                   validator()
  *                                         |
- *                       (no) - (disabled set to `false`?) - (yes)
- *                                                             |
- *                                                        onSubmit(Event)
+ *                         (no) - (disabled is falsey?) - (yes)
+ *                                                          |
+ *                                                     onSubmit(Event)
  *```
  *
  * @param param - the props the pass in
@@ -96,28 +96,23 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  *  a count of how many times submit was called, and the state of the submission progress.
  * See {@link useFunctionStats}
  * @example
+ * This example is if you are not using the useForm hook.<br>
+ * _Note: the {@link useForm} hook handles all of this._
  *```
- *   // this example is if you are not using the useForm hook. Note: the useForm hook
- *   // handles all of this.
- *
  *   const {values} = useFields();
- *   // bind a onSubmit handler with the current form values
- *   const onSubmit = useCallback(() => {
- *     console.log(values);
- *   }, [values]);
+ *
  *   // bind the validator with the values
  *   const validator = useCallback(() => {
  *     return {}; // this is saying there are no errors
  *   }, [values]);
+ *
  *   // create the submission handler
- *   const { isSubmitting, submit, submitCount } = useSubmission({
- *     onSubmit, validator
+ *   const { isSubmitting, submit, submitCount, submitFeedback } = useSubmission({
+ *     onSubmit, validator, values
  *   });
  *```
- * @example
+ * @example Setting feedback on submit
  * ```
- * // Setting feedback on submit
- *
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setFeedback}) {
  *      const data = await fetch('http://api.example.com', { body: values })
@@ -140,10 +135,8 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * // or if the submission was successful
  * submitFeedback.message === "Thank you for submitting!";
  *```
- * @example
+ * @example Validation errors from the server
  * ```
- * // Validation errors from the server
- *
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setError}) {
  *      const data = fetch('http://api.example.com', { body: values })
