@@ -37,7 +37,7 @@
     "build": "yarn clean && webpack",
     "build:prod": "yarn test:stability && yarn bundle:prod",
     "build:js": "yarn clean && yarn tsc ./src/index.ts --target ESNEXT --outdir dist &> /dev/null",
-    "build:docs:api": "yarn typedoc",
+    "build:docs:api": "yarn typedoc --ignoreCompilerErrors",
     "build:examples": "yarn build --config ./webpack.examples.config.js && copyfiles -f examples/index.html dist",
     "storybook": "yarn start-storybook"
   },
@@ -88,7 +88,7 @@
     "rimraf": "^2.6.3",
     "ts-jest": "^25.1.0",
     "ts-loader": "^6.2.1",
-    "typedoc": "^0.17.7",
+    "typedoc": "^0.17.0-3",
     "typedoc-plugin-markdown": "^2.2.17",
     "typescript": "^3.9.0",
     "webpack": "^4.41.5",
