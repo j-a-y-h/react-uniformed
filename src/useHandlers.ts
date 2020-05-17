@@ -74,6 +74,8 @@ function getInputValue({ checked, type, value }: HTMLInputElement): string {
   return ret;
 }
 
+// TODO: break out each hook into separate files and update tsconfig.json typedoc
+
 /**
  * Converts a list of setters to a single event handler.  Setters are functions
  * that takes a specified name as the first parameter and a specified value as
@@ -137,11 +139,13 @@ export function useSettersAsEventHandler(
  * validate function with the specified values merged in with the name
  * and value passed to the invoked function.
  *
- * @param validate -
- *  a validation function that accepts an object of values
- * @param values - a values object
- * @returns a function that can be invoked with a name and value.
- * See {@link useSettersAsEventHandler}
+ * The main purpose of this hook is to use validate with `useSettersAsEventHandler` without
+ * validation being one update behind.
+ *
+ * @param validate - a validation function that accepts an object of values.
+ * @param values - a values object.
+ * @returns a function that can be invoked with a name and value.<br>
+ * See {@link useSettersAsEventHandler}<br>
  * See {@link useSettersAsRefEventHandler}
  * @example
  * ```javascript
@@ -149,7 +153,7 @@ export function useSettersAsEventHandler(
  * const {validate, values, setValue} = useForms(...);
  * const validateAll = useValidateAsSetter(validate, values);
  * // now you can use validate with onChange events and keep the validation
- * // up to date.
+ * // in sync.
  * const onChange = useSettersAsEventHandler(setValue, validateAll);
  * ```
  */
