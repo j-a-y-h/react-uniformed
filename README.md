@@ -24,7 +24,7 @@
 ##### References
 * [Validation](#validation)
 * [Performance](#performance)
-* [API](https://github.com/j-a-y-h/react-uniformed/blob/develop/docs/API.md)
+* [API](https://github.com/j-a-y-h/react-uniformed/blob/develop/docs/api/README.md)
 * [Examples](https://github.com/j-a-y-h/react-uniformed/blob/develop/examples/)
 
 ## Install
