@@ -101,17 +101,19 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * This example is if you are not using the useForm hook.<br>
  * _Note: the {@link useForm} hook handles all of this._
  *```javascript
- *  const {values} = useFields();
- *
- *  // bind the validator with the values
- *  const validator = useCallback(() => {
- *    return {}; // this is saying there are no errors
- *  }, [values]);
- *
  *  // create the submission handler
- *  const { isSubmitting, submit, submitCount, submitFeedback } = useSubmission({
- *    onSubmit, validator, values
+ *  const { isSubmitting, submit, submitCount } = useSubmission({
+ *    disabled: hasErrors,
+ *    onSubmit(values) { alert(values) },
  *  });
+ *
+ *  return (
+ *    <form onSubmit={submit}>
+ *      You have attempted to submit this form {submitCount} times.
+ *      {isSubmitting && "Please wait as we submit your form"}
+ *      <button disabled={isSubmitting}>Submit</button>
+ *    </form>
+ *  )
  *```
  * @example Setting feedback on submit
  * ```javascript
