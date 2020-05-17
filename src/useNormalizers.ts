@@ -56,13 +56,13 @@ function createNestedObject({
 }
 
 /**
- * Used to add nested object support to useFields or useForms. This
- * function supports nesting with brackets. E.g. referencing an
- * array value indexed at 0 `arrayName[0]`; referencing an object
- * value indexed at country `locations[country]`.
+ * Used to add nested object support to useFields or useForms. Nested objects
+ * must use bracket notation. E.g. referencing an
+ * array value indexed at `0` would look like this `arrayName[0]`; referencing an object
+ * value that is keyed by `'country'` would look like this `locations[country]`.
  *
  * @returns Returns a normalizer handler
- * @example
+ * @example Basic mapping
  * ```javascript
  *    // jsx
  *    <input name="users[0]" value="John">
@@ -80,6 +80,17 @@ function createNestedObject({
  *    <input name="user['string keys with spaces']" value="John">
  *    // field value
  *    {user: {"string keys with spaces": "John"}}
+ * ```
+ * @example Usage with {@link useForm} and {@link useFields}
+ * ```javascript
+ * const {values} = useFields(
+ *   {}, // initialValues must come first
+ *   normalizeNestedObjects()
+ * );
+ *
+ * const {values} = useForm({
+ *   normalizer: normalizeNestedObjects()
+ * });
  * ```
  */
 export function normalizeNestedObjects(): NormalizerHandler {
@@ -117,7 +128,7 @@ export function normalizeNestedObjects(): NormalizerHandler {
  * @returns returns a normalizer handler
  * @example
  *```javascript
- * useNormalizers(
+ * const normalizer = useNormalizers(
  *    // apply to all fields
  *    normalizeNestedObjects(),
  *    {
@@ -132,18 +143,30 @@ export function normalizeNestedObjects(): NormalizerHandler {
  *    },
  *    {
  *      // apply to username or slug field
- *      name: ["username", "slug"],
+ *      name: ["username", /^slug$/],
  *      normalizer: ({value}) => !value ? value : value.toLowerCase(),
  *    }
  * )
+ * ```
+ * @example Usage with {@link useForm} and {@link useFields}
+ * ```javascript
+ * const normalizer = useNormalizers({
+ *   name: /name$/i,
+ *   normalizer: ({value}) => !value ? value : value.toUpperCase()
+ * });
+ *
+ * const {values} = useFields(
+ *   {}, // initialValues must come first
+ *   normalizer
+ * );
+ *
+ * const {values} = useForm({ normalizer });
  * ```
  */
 export function useNormalizers(
   ...normalizers: (NormalizerHandler | UseNormalizersOption)[]
 ): NormalizerHandler {
-  const normalize = useCallback(({
-    name, value, ...opts
-  }: NormalizeSetValue) => {
+  return useCallback(({ name, value, ...opts }: NormalizeSetValue) => {
     const nameMatches = (matcher: string | RegExp): boolean => (matcher instanceof RegExp
       ? matcher.test(name)
       : matcher === name
@@ -171,5 +194,4 @@ export function useNormalizers(
     }, value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return normalize;
 }
