@@ -23,6 +23,12 @@ function assertErrorType(name: string, error: validErrorValues): void {
   );
 }
 
+/**
+ * A hook for managing form errors.
+ *
+ * This hook is used by {@link useValidation}.
+ * @returns An api for setting, reading, resetting form errors.
+ */
 export function useErrors(): UseErrorsHook {
   const {
     setValue,

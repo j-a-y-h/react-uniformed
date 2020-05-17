@@ -64,6 +64,7 @@
     "mode": "module",
     "out": "docs/api",
     "inputFiles": [
+      "./src/useErrors.ts",
       "./src/useFields.ts",
       "./src/useForm.ts",
       "./src/useHandlers.ts",

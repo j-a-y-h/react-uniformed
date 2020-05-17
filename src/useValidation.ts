@@ -92,12 +92,13 @@ export function useValidation<T extends Validators>(
 /**
  * A hook for performing validation.
  *
+ * See {@link useErrors}.
  * @param validator - A validation map or a validation function.
  * @returns returns an {@link UseValidatorHook} or {@link UseValidatorHookPartial} object.
  *
  * @example
  *
- *```
+ *```javascript
  * // validate using validation maps
  * const {validateByName, errors} = useValidation({
  *     name: (value) => value ? "" : "name is required!",
