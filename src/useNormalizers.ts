@@ -63,7 +63,7 @@ function createNestedObject({
  *
  * @returns Returns a normalizer handler
  * @example
- * ```
+ * ```javascript
  *    // jsx
  *    <input name="users[0]" value="John">
  *    // field value
@@ -113,10 +113,10 @@ export function normalizeNestedObjects(): NormalizerHandler {
  *
  * @param normalizers - if you
  * pass a normalizer handler then it will apply to all fields. You can specify
- * a specific list of fields by passing in
+ * a specific list of fields by passing in a {@link UseNormalizersOption}
  * @returns returns a normalizer handler
  * @example
- *```
+ *```javascript
  * useNormalizers(
  *    // apply to all fields
  *    normalizeNestedObjects(),
