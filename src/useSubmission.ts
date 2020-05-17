@@ -119,7 +119,7 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * ```javascript
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setFeedback}) {
- *      const data = await fetch('http://api.example.com', { body: values })
+ *      const data = await fetch('http://api.example.com', { body: values, method: 'POST' })
  *        .then(res => res.json());
  *
  *      if (data) {
@@ -143,15 +143,13 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * ```javascript
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setError}) {
- *      const data = fetch('http://api.example.com', { body: values })
- *        .then(res => res.json())
- *        // throwing an error or rejecting a promise will set submissionError
- *        .catch(() => Promise.reject('Unexpected error'));
+ *      const data = await fetch('http://api.example.com', { body: values, method: 'POST' })
+ *        .then(res => res.json());
  *
  *      if (data.errors) {
  *        data.errors.forEach(({error, fieldName}) => {
  *          // update the form with errors from the server.
- *          // note that the form will not be reset if setError is called
+ *          // note that this hook will not call reset if setError is called.
  *          setError(fieldName, error);
  *        });
  *      }
