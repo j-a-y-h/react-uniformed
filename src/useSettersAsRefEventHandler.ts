@@ -18,6 +18,17 @@ type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProp
   ? [UseEventHandlersWithRefProps<V>]
   : eventLikeHandlers[];
 
+export function useSettersAsRefEventHandler<
+  T extends HTMLElement = HTMLInputElement,
+  V extends Fields = Fields
+>(
+  props: UseEventHandlersWithRefProps<V>
+): Ref<T>;
+
+export function useSettersAsRefEventHandler<T extends HTMLElement = HTMLInputElement>(
+  ...setters: eventLikeHandlers[]
+): Ref<T>;
+
 /**
  * A hook that adds support for uncontrolled inputs using
  * React refs. The React ref is used to synchronize the state of the input in the DOM
@@ -44,7 +55,7 @@ type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProp
  * ```
  */
 export function useSettersAsRefEventHandler<
-  T extends HTMLElement = HTMLElement, V extends Fields = Fields
+  T extends HTMLElement = HTMLInputElement, V extends Fields = Fields
 >(
   ...args: useEventHandlersWithRefProps<[UseEventHandlersWithRefProps<V>] | eventLikeHandlers[], V>
 ): Ref<T> {
