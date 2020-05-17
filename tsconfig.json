@@ -60,6 +60,19 @@
     // "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
+  "typedocOptions": {
+    "mode": "modules",
+    "out": "docs/api",
+    "inputFiles": ["./src/index.ts"],
+    "exclude": "**/utils.ts",
+    "theme": "default",
+    "readme": "none",
+    "hideGenerator": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "excludeNotExported": true,
+    "plugin": "typedoc-plugin-markdown",
+  },
   "exclude": ["node_modules", "dist", "test", "examples"],
   "include": ["src"]
 }
