@@ -43,6 +43,8 @@ export function useSettersAsRefEventHandler<T extends HTMLElement = HTMLInputEle
   ...setters: eventLikeHandlers[]
 ): Ref<T>;
 
+// TODO: break out tsdoc to each overloaded method
+
 /**
  * A hook that adds support for uncontrolled inputs using
  * React refs. The React ref is used to synchronize the state of the input in the DOM
