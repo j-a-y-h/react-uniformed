@@ -41,6 +41,9 @@ export interface UseTouchHook {
  * Tracks touches within a form.
  * @example Basic example
  * ```javascript
+ * import React from 'react';
+ * import {useTouch} from "react-uniformed";
+ *
  * const {touches, setTouch, resetTouches, touchField, setTouches, isDirty} = useTouch();
  *
  * // set touch to true for an input
@@ -67,6 +70,27 @@ export interface UseTouchHook {
  * resetTouches();
  * // resetTouches is used by useForm with other reset functions
  * const reset = useHandlers(resetValues, resetErrors, resetTouches);
+ * ```
+ * @example In JSX.
+ * _Note that {@link useForm} provides a less verbose api by wrapping useFields and useTouch_
+ * ```jsx
+ * import React from 'react';
+ * import {useTouch, useFields, useHandlers, useSettersAsEventHandler} from "react-uniformed";
+ *
+ * const {values, setValue, resetValues} = useFields();
+ * const {resetTouches, touchField, isDirty} = useTouch();
+ *
+ * const handleChange = useSettersAsEventHandler(setValue, touchField);
+ * const handleReset = useHandlers(resetValues, resetTouches);
+ * return (
+ *   <form>
+ *      <label>Name:</label>
+ *      <input name="name" value={values.name} onChange={handleChange} />
+ *
+ *      <button onClick={handleReset}>Reset</button>
+ *      <button disabled={!isDirty}>Submit</button>
+ *   </form>
+ * )
  * ```
  */
 export function useTouch(): UseTouchHook {
