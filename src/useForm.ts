@@ -23,24 +23,26 @@ import {
 import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
 import { resetForm } from './utils';
 
-export type UseFormsHook = Readonly<{
-  errors: Errors | PartialValues<Errors, validErrorValues>;
-  hasErrors: boolean;
-  isDirty: boolean;
-  isSubmitting: boolean;
-  reset: (event?: SyntheticEvent) => void;
-  setError: ErrorHandler;
-  setTouch: TouchHandler;
-  setValue: SetValueCallback<FieldValue>;
-  submit: SubmitHandler;
-  submitCount: number;
-  submitFeedback: SubmitFeedback;
-  touches: Touches;
-  touchField: TouchFieldHandler;
-  validate: ValidateAllHandler<FieldValue>;
-  validateByName: ValidateHandler<FieldValue>;
-  values: Fields;
-}>
+// TODO: document the UseFormsHook
+
+export interface UseFormsHook {
+  readonly errors: Errors | PartialValues<Errors, validErrorValues>;
+  readonly hasErrors: boolean;
+  readonly isDirty: boolean;
+  readonly isSubmitting: boolean;
+  readonly reset: (event?: SyntheticEvent) => void;
+  readonly setError: ErrorHandler;
+  readonly setTouch: TouchHandler;
+  readonly setValue: SetValueCallback<FieldValue>;
+  readonly submit: SubmitHandler;
+  readonly submitCount: number;
+  readonly submitFeedback: SubmitFeedback;
+  readonly touches: Touches;
+  readonly touchField: TouchFieldHandler;
+  readonly validate: ValidateAllHandler<FieldValue>;
+  readonly validateByName: ValidateHandler<FieldValue>;
+  readonly values: Fields;
+}
 
 type UseFormParameters = Readonly<{
   constraints?: ConstraintValidators | SyncedConstraint;
