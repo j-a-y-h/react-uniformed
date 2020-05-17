@@ -66,21 +66,23 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
 
 /**
  * Handles the form submission. Runs validation before calling the `onSubmit` function
- * if a validator was passed in.  If no validator was passed in, then the `onSubmit` function
- * will be invoked.  The validator function must set the state on disabled to true, if there
- * were errors. Disabled will prevent this hook from calling the `onSubmit` function.
+ * if a `validator` is passed in.  If no validator was passed in, then the `onSubmit` function
+ * will be invoked if disabled is set to false.  The validator function must set
+ * the `disabled` prop to true, if there are errors in the form.
+ * Disabled will prevent this hook from calling the `onSubmit` function.
  *
- * Below is a flow diagram for this hook
+ * Below is a flow diagram for this hook after `submit` is called:
  *```
  *                submit(Event)
  *                     |
- *   (no) - (validator is a function?) - (yes)
- *    |                                    |
- *  onSubmit(Event)                   validator()
- *                                         |
- *                         (no) - (disabled is falsey?) - (yes)
- *                                                          |
- *                                                     onSubmit(Event)
+ *   no - (validator is a function?) - yes
+ *   |                                  |
+ *   |                              validator()
+ *   |__________________________________|
+ *                    |
+ *     no - (disabled is falsey?) - yes
+ *                                   |
+ *                              onSubmit(Event)
  *```
  *
  * @param param - the props the pass in
@@ -98,21 +100,21 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * @example
  * This example is if you are not using the useForm hook.<br>
  * _Note: the {@link useForm} hook handles all of this._
- *```
- *   const {values} = useFields();
+ *```javascript
+ *  const {values} = useFields();
  *
- *   // bind the validator with the values
- *   const validator = useCallback(() => {
- *     return {}; // this is saying there are no errors
- *   }, [values]);
+ *  // bind the validator with the values
+ *  const validator = useCallback(() => {
+ *    return {}; // this is saying there are no errors
+ *  }, [values]);
  *
- *   // create the submission handler
- *   const { isSubmitting, submit, submitCount, submitFeedback } = useSubmission({
- *     onSubmit, validator, values
- *   });
+ *  // create the submission handler
+ *  const { isSubmitting, submit, submitCount, submitFeedback } = useSubmission({
+ *    onSubmit, validator, values
+ *  });
  *```
  * @example Setting feedback on submit
- * ```
+ * ```javascript
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setFeedback}) {
  *      const data = await fetch('http://api.example.com', { body: values })
@@ -136,7 +138,7 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * submitFeedback.message === "Thank you for submitting!";
  *```
  * @example Validation errors from the server
- * ```
+ * ```javascript
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setError}) {
  *      const data = fetch('http://api.example.com', { body: values })
