@@ -18,6 +18,8 @@ type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProp
   ? [UseEventHandlersWithRefProps<V>]
   : eventLikeHandlers[];
 
+// TODO: Add examples for this use case
+
 export function useSettersAsRefEventHandler<
   T extends HTMLElement = HTMLInputElement,
   V extends Fields = Fields
@@ -25,6 +27,18 @@ export function useSettersAsRefEventHandler<
   props: UseEventHandlersWithRefProps<V>
 ): Ref<T>;
 
+/**
+ * @example
+ * ```
+ * import {useSettersAsRefEventHandler} from "react-uniformed";
+ *
+ * // useSettersAsRefEventHandler defaults to an on change event
+ * const changeRef = useSettersAsRefEventHandler(setValue);
+ *
+ * // name attribute is still required as the changeRef calls setValue(name, value) on change
+ * <input name="name" ref={changeRef} />
+ * ```
+ */
 export function useSettersAsRefEventHandler<T extends HTMLElement = HTMLInputElement>(
   ...setters: eventLikeHandlers[]
 ): Ref<T>;
@@ -42,17 +56,6 @@ export function useSettersAsRefEventHandler<T extends HTMLElement = HTMLInputEle
  * - `event?`: the event to register this handler to. (defaults to `'change'`).
  * - `mountedValues?`: used to set values on mount of the ref.
  * @returns returns a React ref function.
- *
- * @example
- * ```
- * import {useSettersAsRefEventHandler} from "react-uniformed";
- *
- * // useSettersAsRefEventHandler defaults to an on change event
- * const changeRef = useSettersAsRefEventHandler(setValue);
- *
- * // name attribute is still required as the changeRef calls setValue(name, value) on change
- * <input name="name" ref={changeRef} />
- * ```
  */
 export function useSettersAsRefEventHandler<
   T extends HTMLElement = HTMLInputElement, V extends Fields = Fields
