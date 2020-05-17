@@ -88,13 +88,15 @@ export function useValidation<T extends Validators>(
   validator: T | SingleValidator<FieldValue>
 ): UseValidatorHookPartial<FieldValue, T> | UseValidatorHook<FieldValue>;
 
+// TODO: breakout the jsdoc for each overload function
 /**
  * A hook for performing validation.
  *
  * @param validator - A validation map or a validation function.
- * @returns returns an useValidation object
+ * @returns returns an {@link UseValidatorHook} or {@link UseValidatorHookPartial} object.
  *
  * @example
+ *
  *```
  * // validate using validation maps
  * const {validateByName, errors} = useValidation({
