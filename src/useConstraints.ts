@@ -33,7 +33,7 @@ interface Constraints {
   /**
    * Determines if the field is required
    *
-   * @default false
+   * @defaultValue false
    */
   readonly required?: boolean | string | [boolean, string];
   /**
@@ -45,7 +45,7 @@ interface Constraints {
    * currently supported values are **text**, **email**, **url**.
    * email and url types are validated using the appropriate regex
    *
-   * @default text
+   * @defaultValue text
    */
   readonly type?: supportedTypes | [string, string];
 }
@@ -271,12 +271,13 @@ export function useConstraints<T extends ConstraintValidators>(
 /**
  * A declarative way of validating inputs based upon HTML 5 constraints
  *
- * @param rules an object mapping that
+ * @param rules - an object mapping that
  * consist of HTML5ValidatorRules as value or validator function that accepts value
  * as the only argument.
- * @return maps the rules to an object map with the value
+ * @returns maps the rules to an object map with the value
  * being a function that accepts value as the only argument.
  * @example
+ * ```
  *  // BASIC
  *  const validator = useConstraints({
  *      firstName: { required: true, minLength: 5, maxLength: 6 },
@@ -309,6 +310,7 @@ export function useConstraints<T extends ConstraintValidators>(
  *  // then you can bind the validator with the values so that the handler
  *  // can be used with events
  *  const handleBlur = useValidationWithValues(validator, values);
+ * ```
  */
 export function useConstraints(
   rules: ConstraintValidators | SyncedConstraint,

@@ -35,12 +35,12 @@ export function useHandlers<T, K extends T[]>(
 /**
  * Gets the value for the specified input.
  *
- * @param input the specified input
- * @return the value as a string
+ * @param input - the specified input
+ * @returns the value as a string
  */
 function getInputValue({ checked, type, value }: HTMLInputElement): string {
   // TODO: support select and multiple select
-  /**
+  /*
    * let value = "";
    * if (target instanceof HTMLSelectElement || target.selectedOptions) {
    *     const values = Array.from(target.selectedOptions).map((option) => option.value);
@@ -85,19 +85,21 @@ export function useSettersAsEventHandler(
  * validate function with the specified values merged in with the name
  * and value passed to the invoked function.
  *
- * @param {ValidateAllHandler<FieldValue>} validate
+ * @param validate -
  *  a validation function that accepts an object of values
- * @param {Fields} values a values object
- * @return {eventLikeHandlers} a function that can be invoked with a name and value.
- * @see {@link useSettersAsEventHandler}
- * @see {@link useSettersAsRefEventHandler}
+ * @param values - a values object
+ * @returns a function that can be invoked with a name and value.
+ * See {@link useSettersAsEventHandler}
+ * See {@link useSettersAsRefEventHandler}
  * @example
+ * ```
  * // used with useForms
  * const {validate, values, setValue} = useForms(...);
  * const validateAll = useValidateAsSetter(validate, values);
  * // now you can use validate with onChange events and keep the validation
  * // up to date.
  * const onChange = useSettersAsEventHandler(setValue, validateAll);
+ * ```
  */
 export function useValidateAsSetter(
   validate: ValidateAllHandler<FieldValue>,

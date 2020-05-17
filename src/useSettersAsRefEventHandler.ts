@@ -24,15 +24,16 @@ type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProp
  * and the state of the form in the Virtual DOM.
  * This hook is generally only needed for larger forms or larger React Virtual DOM.
  *
- * @param {eventLikeHandlers[] | UseEventHandlersWithRefProps[]} args
+ * @param args -
  *  a list of functions used to set a value or an object with `event`,
  *  `handlers`, and `mountedValues` as properties.
  * - `handlers`: a list of functinos used to set a value.
  * - `event?`: the event to register this handler to. (defaults to `'change'`).
  * - `mountedValues?`: used to set values on mount of the ref.
- * @return {Ref} returns a React ref function.
+ * @returns returns a React ref function.
  *
  * @example
+ * ```
  * import {useSettersAsRefEventHandler} from "react-uniformed";
  *
  * // useSettersAsRefEventHandler defaults to an on change event
@@ -40,6 +41,7 @@ type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProp
  *
  * // name attribute is still required as the changeRef calls setValue(name, value) on change
  * <input name="name" ref={changeRef} />
+ * ```
  */
 export function useSettersAsRefEventHandler<
   T extends HTMLElement = HTMLElement, V extends Fields = Fields

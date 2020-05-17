@@ -61,8 +61,9 @@ function createNestedObject({
  * array value indexed at 0 `arrayName[0]`; referencing an object
  * value indexed at country `locations[country]`.
  *
- * @return {NormalizerHandler} Returns a normalizer handler
+ * @returns Returns a normalizer handler
  * @example
+ * ```
  *    // jsx
  *    <input name="users[0]" value="John">
  *    // field value
@@ -79,6 +80,7 @@ function createNestedObject({
  *    <input name="user['string keys with spaces']" value="John">
  *    // field value
  *    {user: {"string keys with spaces": "John"}}
+ * ```
  */
 export function normalizeNestedObjects(): NormalizerHandler {
   return ({
@@ -109,12 +111,12 @@ export function normalizeNestedObjects(): NormalizerHandler {
  * note: order matters when passing normalizers. This means that the results or value
  * of the first normalizer is passed to the next normalizer.
  *
- * @param {Array<NormalizerHandler | UseNormalizersOption>} normalizers if you
+ * @param normalizers - if you
  * pass a normalizer handler then it will apply to all fields. You can specify
  * a specific list of fields by passing in
- * @return {NormalizerHandler} returns a normalizer handler
+ * @returns returns a normalizer handler
  * @example
- *
+ *```
  * useNormalizers(
  *    // apply to all fields
  *    normalizeNestedObjects(),
@@ -134,6 +136,7 @@ export function normalizeNestedObjects(): NormalizerHandler {
  *      normalizer: ({value}) => !value ? value : value.toLowerCase(),
  *    }
  * )
+ * ```
  */
 export function useNormalizers(
   ...normalizers: (NormalizerHandler | UseNormalizersOption)[]

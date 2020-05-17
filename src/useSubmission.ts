@@ -83,20 +83,20 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  *                                                        onSubmit(Event)
  *```
  *
- * @param param the props the pass in
- * @param param.validator the specified validator. If your validation logic is async,
+ * @param param - the props the pass in
+ * @param validator - the specified validator. If your validation logic is async,
  * then you should return a promise in your function otherwise this won't work as expected.
- * @param param.onSubmit the specified onSubmit handler. If your onSubmit handler is async,
+ * @param onSubmit - the specified onSubmit handler. If your onSubmit handler is async,
  * then you should return a promise in your function otherwise this won't work as expected.
- * @param param.reset An optional method used to reset the state of the form after submission.
- * @param param.setError An optional function that is passed to the specified onSubmit handler.
+ * @param reset - An optional method used to reset the state of the form after submission.
+ * @param setError - An optional function that is passed to the specified onSubmit handler.
  *  When setError is called while submitting, the form will not call the specified reset function.
- * @param param.values the specified values to use when submitting the form
- * @return {UseSubmissionHook} returns a handler for onSubmit events,
+ * @param values - the specified values to use when submitting the form
+ * @returns returns a handler for onSubmit events,
  *  a count of how many times submit was called, and the state of the submission progress.
- * @see {@link useFunctionStats}
+ * See {@link useFunctionStats}
  * @example
- *
+ *```
  *   // this example is if you are not using the useForm hook. Note: the useForm hook
  *   // handles all of this.
  *
@@ -113,8 +113,9 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  *   const { isSubmitting, submit, submitCount } = useSubmission({
  *     onSubmit, validator
  *   });
- *
+ *```
  * @example
+ * ```
  * // Setting feedback on submit
  *
  * const { submitFeedback } = useSubmission({
@@ -138,8 +139,9 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * submitFeedback.error === "Something went wrong processing this form"
  * // or if the submission was successful
  * submitFeedback.message === "Thank you for submitting!";
- *
+ *```
  * @example
+ * ```
  * // Validation errors from the server
  *
  * const { submitFeedback } = useSubmission({
@@ -158,6 +160,7 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  *      }
  *   }
  * });
+ * ```
  */
 export function useSubmission({
   onSubmit,

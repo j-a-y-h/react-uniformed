@@ -53,25 +53,25 @@ type UseFormParameters = Readonly<{
 /**
  * A hook for managing form states.
  *
- * @param {UseFormParameters} props the props api
- * @param {function(Fields): void | Promise<void>} props.onSubmit
+ * @param props - the props api
+ * @param onSubmit -
  *  a callback function for form submissions
- * @param {Fields} props.initialValues the initial form values
- * @param {NormalizerHandler} props.normalizer
+ * @param initialValues - the initial form values
+ * @param normalizer -
  *  a handler that translates form values before setting values
- * @param {Validators | SingleValidator<FieldValue>} props.validators
+ * @param validators -
  *  the validators used to validate values
- * @param {ConstraintValidators | SyncedConstraint} props.constraints the constraints api
- * @return {UseFormsHook} the APIs used to manage the state of a function.
- * @see {@link useConstraints}
- * @see {@link useValidation}
- * @see {@link useSubmission}
- * @see {@link useFields}
- * @see {@link useSettersAsEventHandler}
- * @see {@link useSettersAsRefEventHandler}
- * @see {@link useValidateAsSetter}
+ * @param constraints - the constraints api
+ * @returns the APIs used to manage the state of a function.
+ * See {@link useConstraints}
+ * See {@link useValidation}
+ * See {@link useSubmission}
+ * See {@link useFields}
+ * See {@link useSettersAsEventHandler}
+ * See {@link useSettersAsRefEventHandler}
+ * See {@link useValidateAsSetter}
  * @example
- *
+ *```
  * const { submit, setValue, values } = useForm({
  *   onSubmit: data => alert(JSON.stringify(data))
  * });
@@ -85,8 +85,9 @@ type UseFormParameters = Readonly<{
  *       onChange={handleChange}
  *    />
  * </form>
- *
+ *```
  * @example
+ * ```
  * // using validate in change events
  *
  * const { submit, setValue, validate, values } = useForm({
@@ -106,8 +107,9 @@ type UseFormParameters = Readonly<{
  *     onChange={handleChange}
  *   />
  * </form>
- *
+ *```
  * @example
+ * ```
  * // Setting feedback on submit
  *
  * const { submitFeedback } = useForm({
@@ -131,8 +133,9 @@ type UseFormParameters = Readonly<{
  * submitFeedback.error === "Something went wrong processing this form"
  * // or if the submission was successful
  * submitFeedback.message === "Thank you for submitting!";
- *
+ *```
  * @example
+ * ```
  * // Validation errors from the server
  *
  * const { hasErrors } = useForm({
@@ -151,7 +154,7 @@ type UseFormParameters = Readonly<{
  *      }
  *   }
  * });
- *
+ *```
  */
 export function useForm({
   onSubmit,
