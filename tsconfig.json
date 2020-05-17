@@ -63,7 +63,11 @@
   "typedocOptions": {
     "mode": "module",
     "out": "docs/api",
-    "inputFiles": ["./src/useValidation.ts", "./src/useFields.ts"],
+    "inputFiles": [
+      "./src/useFields.ts",
+      "./src/useTouch.ts",
+      "./src/useValidation.ts"
+    ],
     "theme": "default",
     "readme": "none",
     "excludeExternals": true,

@@ -9,17 +9,37 @@ export interface TouchFieldHandler {
   (name: string): void;
 }
 export interface UseTouchHook {
+  /**
+   * An object map that contains the touch state of an input.
+   * The key is used to indentify the input -- generally this is the input name.
+   * The value is a boolean that determines if the node is touched or not.
+   */
   readonly touches: Touches;
   /**
-   * Set to true if any field is touched
+   * Set to true if any field is touched.
    */
   readonly isDirty: boolean;
+  /**
+   * Sets the touch state for the specified input to the specified touched value.
+   */
   readonly setTouch: TouchHandler;
+  /**
+   * Sets the specified input's touch state to true.
+   */
   readonly touchField: TouchFieldHandler;
+  /**
+   * Sets all touch state to false.
+   */
   readonly resetTouches: () => void;
+  /**
+   * Replaces the touch state object with the specified touches object map.
+   */
   readonly setTouches: (touches: Touches) => void;
 }
 
+/**
+ * Tracks touches within a form.
+ */
 export function useTouch(): UseTouchHook {
   const {
     values: touches,
