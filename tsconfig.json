@@ -61,9 +61,9 @@
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
   "typedocOptions": {
-    "mode": "library",
+    "mode": "module",
     "out": "docs/api",
-    "inputFiles": "./src/index.ts",
+    "inputFiles": ["./src/useValidation.ts", "./src/useFields.ts"],
     "theme": "default",
     "readme": "none",
     "excludeExternals": true,
