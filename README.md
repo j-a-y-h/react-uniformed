@@ -1,6 +1,6 @@
 <div align="center"><p align="center">
 <h1>react-uniformed</h1>
-<strong>Declarative React forms using hooks</strong><br/><br/>
+<i>You shouldn't have to learn a library’s ridiculously complex API in order to do React forms.</b></u></i><br/><br/>
 
 [![travis](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)
 [![Downloads](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)
@@ -10,9 +10,7 @@
 
 </p></div>
 
-**react-uniformed** allows you to create declarative React forms using only React Hooks.  The simplicity of this library removes the pain of remembering another complex React library, allowing you to focus on your app's business logic. We built this library with exceptional performance so that you can maintain a great user experience regardless of your application's scale - [try the performance story](https://github.com/j-a-y-h/react-uniformed/blob/develop/stories).
-
-*You don't have to learn a new framework with a massive API in order to do forms, <u>just use **react-uniformed**</u>*
+**react-uniformed** allows you to easily create declarative React forms using only React Hooks.  The simplicity of this library removes the pain of remembering another complex React library, allowing you to focus on your app's business logic. We built this library with exceptional performance so that you can maintain a great user experience regardless of your application's scale - [try the performance story](https://github.com/j-a-y-h/react-uniformed/blob/develop/stories).
 
 ##### Overview
 * ‍️💆🏾‍♂️ Simple API
