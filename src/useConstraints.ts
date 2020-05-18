@@ -70,6 +70,7 @@ const defaultMessage = {
   pattern: 'The value must match the pattern.',
   type: 'The value must match the type.',
 };
+// TODO: break file into directory
 
 export const supportedProperties: supportedConstraints[] = [
   'required',
@@ -262,6 +263,9 @@ export function useConstraints<T extends ConstraintValidators>(
   rules: T
 ): ConstantValues<T, Validator>;
 
+/**
+ *
+ */
 export function useConstraints(rules: SyncedConstraint): SingleValidator<FieldValue>;
 
 export function useConstraints<T extends ConstraintValidators>(
@@ -276,9 +280,8 @@ export function useConstraints<T extends ConstraintValidators>(
  * as the only argument.
  * @returns maps the rules to an object map with the value
  * being a function that accepts value as the only argument.
- * @example
- * ```
- *  // BASIC
+ * @example Basic
+ * ```javascript
  *  const validator = useConstraints({
  *      firstName: { required: true, minLength: 5, maxLength: 6 },
  *      lastName: { required: true, maxLength: 100 },
@@ -287,7 +290,9 @@ export function useConstraints<T extends ConstraintValidators>(
  *      email: { required: true, type: "email" },
  *      website: { required: true, type: "url" }
  *  })
- *  // ADVANCED
+ * ```
+ * @example Advanced
+ * ```javascript
  *  const validator = useConstraints({
  *      // use min, max on date type
  *      startDate: { type: "date", min: Date.now() },
@@ -297,7 +302,10 @@ export function useConstraints<T extends ConstraintValidators>(
  *          maxLength: [55, "name must be under 55 characters"]
  *      },
  *  })
- *  // BIND CONSTRAINTS TO VALUES
+ * ```
+ * @example Binding constraints to values. This example is extremely powerful if you
+ * want to create validation logic that is dependent on other values.
+ * ```javascript
  *  const validator = useConstraints((values) => ({
  *      startDate: { type: "date", min: Date.now() },
  *      // ensure that the end date is always greater than the start date

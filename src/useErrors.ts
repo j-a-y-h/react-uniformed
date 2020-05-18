@@ -23,6 +23,9 @@ function assertErrorType(name: string, error: validErrorValues): void {
   );
 }
 
+// TODO: better docs here.
+// TODO: add examples
+
 /**
  * A hook for managing form errors.
  *
