@@ -76,20 +76,20 @@ Add validation to your form by setting the `validators` property in `useForm` an
 import {useForm, useSettersAsEventHandler} from "react-uniformed";
 
 const { setValue, validateByName, errors } = useForm({
-    // Use HTML5 style validation
-    constraints: {
-        name: { required: true, minLength: 1, maxLength: 55 },
-        // email & url types are validated using HTML standard regex
-        email: { required: true, type: "email" },
-        date: {
-            // set the error message for required by using a non empty string
-            required: "Date is required",
-            type: "date",
-            // set the error message and constraint using an array
-            min: [Date.now(), "Date must be today or later"]
-        }
-    },
-    onSubmit: data => console.log(JSON.stringify(data)),
+  // Declarative HTML5 style form validation
+  constraints: {
+    name: { required: true, minLength: 1, maxLength: 55 },
+    // email & url types are validated using HTML standard regex
+    email: { type: "email" },
+    date: {
+      // set the error message for required by using a non empty string
+      required: "Date is required",
+      type: "date",
+      // set the error message and constraint using an array
+      min: [Date.now(), "Date must be today or later"]
+    }
+  },
+  onSubmit: data => console.log(JSON.stringify(data)),
 });
 
 // validate on change with the following code
