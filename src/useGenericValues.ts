@@ -78,14 +78,13 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
       ? { ...state, [name]: value }
       : state;
   case ActionTypes.reset:
+  default:
     newState = typeof action.payload === 'function'
       ? action.payload(state)
       : action.payload as Values<T>;
     return resetCompare(state, newState)
       ? { ...newState }
       : state;
-  default:
-    throw new Error();
   }
 }
 
