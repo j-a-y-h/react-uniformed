@@ -1,6 +1,6 @@
-# react-uniformed - **Declarative React forms using hooks**
-
 <div align="center"><p align="center">
+<h1>react-uniformed</h1>
+<strong>Declarative React forms using hooks</strong><br/><br/>
 
 [![travis](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)
 [![Downloads](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)
@@ -48,12 +48,12 @@ yarn add react-uniformed
 import React from "react";
 import {useForm, useSettersAsEventHandler} from "react-uniformed";
 
-// useForm holds the state of the form (ie touches, values, errors)
+// useForm holds the state of the form (eg touches, values, errors)
 const { setValue, values, submit } = useForm({
   onSubmit: data => console.log(JSON.stringify(data)),
 });
 
-// compose your event handlers using useSettersAsEventHandler
+// compose your event handlers
 const handleChange = useSettersAsEventHandler(setValue);
 
 // jsx
