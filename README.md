@@ -114,16 +114,16 @@ const changeRef = useSettersAsRefEventHandler(setValue);
 
 ```javascript
 const {validateByName, errors} = useForm({
-    validators: {
-        // validators must return empty string for valid value
-        name: (value) => value ? "" : "email is required",
-    },
+  validators: {
+    // validators must return empty string for valid values
+    name: (value) => value ? "" : "email is required",
+  },
 });
 
 // useConstraints supports mixing validators and constraints
 const validators = useConstraints({
-    name: (value) => "name still won't be valid",
-    email: { required: true },
+  name: (value) => "name still won't be valid",
+  email: { required: true },
 });
 
 // when used with useSettersAsEventHandler the validator
@@ -133,19 +133,18 @@ const handleBlur = useSettersAsEventHandler(validateByName);
 If you prefer to validate in one function, then you can do that as well
 ```javascript
 const {
-    // note: validateByName will call the validate function on each call
-    // but the error will be the one with the corresponding name
-    validateByName,
-    // validate is available with both a validation map and a validation function
-    validate,
+  // note: validateByName will call the validate function on each call
+  // but the error will be the one with the corresponding name.
+  validateByName,
+  validate, // validate all values
 } = useForm({
-    validators(values) {
-        const errors = {name: "name will never be valid", email: ""};
-        if (!values.email) {
-            errors.email = "email is required";
-        }
-        return errors;
-    },
+  validators(values) {
+    const errors = {name: "name will never be valid", email: ""};
+    if (!values.email) {
+      errors.email = "email is required";
+    }
+    return errors;
+  },
 });
 ```
 ## More Hooks
@@ -179,6 +178,6 @@ function useForm({onSubmit, validators, constraints}) {
   const validator = useCallback(() => validate(values), [values, validate]);
 
   // Guards against submissions until all values are valid
-  const { submit } = useSubmission({ onSubmit, validator, values, disabled: hasErrors });
+  const { submit } = useSubmission({ onSubmit, validator, values, reset, disabled: hasErrors });
 }
 ```
