@@ -37,7 +37,7 @@
     "build": "yarn clean && webpack",
     "build:prod": "yarn test:stability && yarn bundle:prod",
     "build:js": "yarn clean && yarn tsc ./src/index.ts --target ESNEXT --outdir dist &> /dev/null",
-    "build:docs:api": "yarn typedoc --ignoreCompilerErrors",
+    "build:docs": "rimraf docs && yarn typedoc --ignoreCompilerErrors",
     "build:examples": "yarn build --config ./webpack.examples.config.js && copyfiles -f examples/index.html dist",
     "storybook": "yarn start-storybook"
   },
