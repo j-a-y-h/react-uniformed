@@ -1,6 +1,6 @@
 <div align="center"><p align="center">
 <h1>react-uniformed</h1>
-<i>You shouldn't have to learn a library’s ridiculously complex API in order to do React forms.</b></u></i><br/><br/>
+<b>You shouldn't have to learn a library’s ridiculously complex API in order to do React forms.</b></u></i><br/><br/>
 
 [![travis](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)
 [![Downloads](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)
