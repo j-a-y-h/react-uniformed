@@ -272,7 +272,7 @@ function mapConstraintsToValidators(rules: ConstraintValidators): Validators {
  *      email: { required: true, type: "email" },
  *      website: { required: true, type: "url" }
  *  });
- *  //
+ *  // note that empty string means the value is valid.
  *  validator.firstName("Johny") === "";
  * ```
  * @example <caption>Displaying custom messages on error.</caption>
