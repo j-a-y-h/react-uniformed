@@ -19,14 +19,14 @@ export interface SubmitHandler {
 }
 export interface UseSubmissionProps {
   readonly onSubmit: SubmissionHandler;
-  readonly validator?: () => Promise<void> | void;
+  validator?(): Promise<void> | void;
   /**
    * Determines if submission should be disabled. Generally,
    * you want to disable if there are errors.
    */
   readonly disabled?: boolean;
-  readonly reset?: (event?: SyntheticEvent) => void;
-  readonly setError?: (name: string, error: string) => void;
+  reset?(event?: SyntheticEvent): void;
+  setError?(name: string, error: string): void;
   readonly values?: Fields;
 }
 
@@ -63,63 +63,61 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
     return {};
   }
 }
-
+/* eslint-disable max-len */
 /**
  * Handles the form submission. Runs validation before calling the `onSubmit` function
- * if a validator was passed in.  If no validator was passed in, then the `onSubmit` function
- * will be invoked.  The validator function must set the state on disabled to true, if there
- * were errors. Disabled will prevent this hook from calling the `onSubmit` function.
+ * if a `validator` is passed in.  If no validator was passed in, then the `onSubmit` function
+ * will be invoked if disabled is set to false.  The validator function must set
+ * the `disabled` prop to true, if there are errors in the form.
+ * Disabled will prevent this hook from calling the `onSubmit` function.
  *
- * Below is a flow diagram for this hook
+ * Below is a flow diagram for this hook after `submit` is called:
  *```
  *                submit(Event)
  *                     |
- *   (no) - (validator is a function?) - (yes)
- *    |                                    |
- *  onSubmit(Event)                   validator()
- *                                         |
- *                       (no) - (disabled set to `false`?) - (yes)
- *                                                             |
- *                                                        onSubmit(Event)
+ *   no - (validator is a function?) - yes
+ *   |                                  |
+ *   |                              validator()
+ *   |__________________________________|
+ *                    |
+ *     no - (disabled is falsey?) - yes
+ *                                   |
+ *                              onSubmit(Event)
  *```
  *
- * @param param the props the pass in
- * @param param.validator the specified validator. If your validation logic is async,
+ * @param param - the props the pass in
+ * @param validator - the specified validator. If your validation logic is async,
  * then you should return a promise in your function otherwise this won't work as expected.
- * @param param.onSubmit the specified onSubmit handler. If your onSubmit handler is async,
+ * @param onSubmit - the specified onSubmit handler. If your onSubmit handler is async,
  * then you should return a promise in your function otherwise this won't work as expected.
- * @param param.reset An optional method used to reset the state of the form after submission.
- * @param param.setError An optional function that is passed to the specified onSubmit handler.
+ * @param reset - An optional method used to reset the state of the form after submission.
+ * @param setError - An optional function that is passed to the specified onSubmit handler.
  *  When setError is called while submitting, the form will not call the specified reset function.
- * @param param.values the specified values to use when submitting the form
- * @return {UseSubmissionHook} returns a handler for onSubmit events,
+ * @param values - the specified values to use when submitting the form
+ * @returns returns a handler for onSubmit events,
  *  a count of how many times submit was called, and the state of the submission progress.
- * @see {@link useFunctionStats}
- * @example
+ * See {@link useFunctionStats}
+ * @example <caption>This example is if you are not using the useForm hook.<br>_Note: the {@link useForm} hook handles all of this._</caption>
+ *```javascript
+ *  // create the submission handler
+ *  const { isSubmitting, submit, submitCount } = useSubmission({
+ *    disabled: hasErrors,
+ *    onSubmit(values) { alert(values) },
+ *  });
  *
- *   // this example is if you are not using the useForm hook. Note: the useForm hook
- *   // handles all of this.
- *
- *   const {values} = useFields();
- *   // bind a onSubmit handler with the current form values
- *   const onSubmit = useCallback(() => {
- *     console.log(values);
- *   }, [values]);
- *   // bind the validator with the values
- *   const validator = useCallback(() => {
- *     return {}; // this is saying there are no errors
- *   }, [values]);
- *   // create the submission handler
- *   const { isSubmitting, submit, submitCount } = useSubmission({
- *     onSubmit, validator
- *   });
- *
- * @example
- * // Setting feedback on submit
- *
+ *  return (
+ *    <form onSubmit={submit}>
+ *      You have attempted to submit this form {submitCount} times.
+ *      {isSubmitting && "Please wait as we submit your form"}
+ *      <button disabled={isSubmitting}>Submit</button>
+ *    </form>
+ *  )
+ *```
+ * @example <caption>Setting feedback on submit</caption>
+ * ```javascript
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setFeedback}) {
- *      const data = await fetch('http://api.example.com', { body: values })
+ *      const data = await fetch('http://api.example.com', { body: values, method: 'POST' })
  *        .then(res => res.json());
  *
  *      if (data) {
@@ -138,27 +136,25 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * submitFeedback.error === "Something went wrong processing this form"
  * // or if the submission was successful
  * submitFeedback.message === "Thank you for submitting!";
- *
- * @example
- * // Validation errors from the server
- *
+ *```
+ * @example <caption>Validation errors from the server</caption>
+ * ```javascript
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setError}) {
- *      const data = fetch('http://api.example.com', { body: values })
- *        .then(res => res.json())
- *        // throwing an error or rejecting a promise will set submissionError
- *        .catch(() => Promise.reject('Unexpected error'));
+ *      const data = await fetch('http://api.example.com', { body: values, method: 'POST' })
+ *        .then(res => res.json());
  *
  *      if (data.errors) {
  *        data.errors.forEach(({error, fieldName}) => {
  *          // update the form with errors from the server.
- *          // note that the form will not be reset if setError is called
+ *          // note that this hook will not call reset if setError is called.
  *          setError(fieldName, error);
  *        });
  *      }
  *   }
  * });
- */
+ * ```
+ *//* eslint-enable max-len */
 export function useSubmission({
   onSubmit,
   validator,

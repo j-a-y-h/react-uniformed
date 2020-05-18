@@ -60,6 +60,31 @@
     // "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
+  "typedocOptions": {
+    "mode": "module",
+    "out": "./docs",
+    "inputFiles": [
+      "./src/useConstraints.ts",
+      "./src/useErrors.ts",
+      "./src/useFields.ts",
+      "./src/useForm.ts",
+      "./src/useHandlers.ts",
+      "./src/useNormalizers.ts",
+      "./src/useSettersAsRefEventHandler.ts",
+      "./src/useSubmission.ts",
+      "./src/useTouch.ts",
+      "./src/useValidation.ts"
+    ],
+    "theme": "default",
+    "readme": "none",
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "stripInternal": true,
+    "disableSources": true,
+    "excludeProtected": true,
+    "excludeNotExported": true,
+    "plugin": "typedoc-plugin-markdown",
+  },
   "exclude": ["node_modules", "dist", "test", "examples"],
   "include": ["src"]
 }

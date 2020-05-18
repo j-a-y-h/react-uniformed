@@ -15,8 +15,8 @@ interface UseFunctionStats<T, K> {
  * Keeps track of certain statistics on a function. Eg: if the function
  * is invoking and how many times the function was called.
  *
- * @param fnc the specified function
- * @return {UseFunctionStats<T, K>} Returns a object.
+ * @param fnc - the specified function
+ * @returns Returns a object.
  * - `isRunning`: determines if a function was running
  * - `fnc`: the specified function
  * - `invokeCount`: the number to times the function was called

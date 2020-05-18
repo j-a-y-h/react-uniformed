@@ -18,21 +18,18 @@ type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProp
   ? [UseEventHandlersWithRefProps<V>]
   : eventLikeHandlers[];
 
+// TODO: Add examples for this use case
+
+export function useSettersAsRefEventHandler<
+  T extends HTMLElement = HTMLInputElement,
+  V extends Fields = Fields
+>(
+  props: UseEventHandlersWithRefProps<V>
+): Ref<T>;
+
 /**
- * A hook that adds support for uncontrolled inputs using
- * React refs. The React ref is used to synchronize the state of the input in the DOM
- * and the state of the form in the Virtual DOM.
- * This hook is generally only needed for larger forms or larger React Virtual DOM.
- *
- * @param {eventLikeHandlers[] | UseEventHandlersWithRefProps[]} args
- *  a list of functions used to set a value or an object with `event`,
- *  `handlers`, and `mountedValues` as properties.
- * - `handlers`: a list of functinos used to set a value.
- * - `event?`: the event to register this handler to. (defaults to `'change'`).
- * - `mountedValues?`: used to set values on mount of the ref.
- * @return {Ref} returns a React ref function.
- *
  * @example
+ * ```
  * import {useSettersAsRefEventHandler} from "react-uniformed";
  *
  * // useSettersAsRefEventHandler defaults to an on change event
@@ -40,9 +37,30 @@ type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProp
  *
  * // name attribute is still required as the changeRef calls setValue(name, value) on change
  * <input name="name" ref={changeRef} />
+ * ```
+ */
+export function useSettersAsRefEventHandler<T extends HTMLElement = HTMLInputElement>(
+  ...setters: eventLikeHandlers[]
+): Ref<T>;
+
+// TODO: break out tsdoc to each overloaded method
+
+/**
+ * A hook that adds support for uncontrolled inputs using
+ * React refs. The React ref is used to synchronize the state of the input in the DOM
+ * and the state of the form in the Virtual DOM.
+ * This hook is generally only needed for larger forms or larger React Virtual DOM.
+ *
+ * @param args -
+ *  a list of functions used to set a value or an object with `event`,
+ *  `handlers`, and `mountedValues` as properties.
+ * - `handlers`: a list of functinos used to set a value.
+ * - `event?`: the event to register this handler to. (defaults to `'change'`).
+ * - `mountedValues?`: used to set values on mount of the ref.
+ * @returns returns a React ref function.
  */
 export function useSettersAsRefEventHandler<
-  T extends HTMLElement = HTMLElement, V extends Fields = Fields
+  T extends HTMLElement = HTMLInputElement, V extends Fields = Fields
 >(
   ...args: useEventHandlersWithRefProps<[UseEventHandlersWithRefProps<V>] | eventLikeHandlers[], V>
 ): Ref<T> {

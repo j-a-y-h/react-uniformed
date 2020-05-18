@@ -5,15 +5,14 @@
 	},
 	"extends":  [
 		"eslint:recommended",
-        "airbnb",
-        "plugin:import/errors",
-        "plugin:import/warnings",
+		"airbnb",
+		"plugin:import/errors",
+		"plugin:import/warnings",
 		"plugin:import/typescript",
 		"plugin:@typescript-eslint/eslint-recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:@typescript-eslint/recommended-requiring-type-checking",
-		"plugin:jsdoc/recommended"
-    ],
+		"plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
 	"globals": {
 		"Atomics": "readonly",
 		"SharedArrayBuffer": "readonly"
@@ -30,22 +29,11 @@
 	"plugins": [
 		"react",
 		"react-hooks",
-		"jsdoc",
-		"@typescript-eslint"
+		"@typescript-eslint",
+		"eslint-plugin-tsdoc"
 	],
-	"settings": {
-		"jsdoc": {
-            "tagNamePreference": {
-                "returns": "return"
-            }
-        }
-	},
 	"rules": {
 		"indent": ["error", 2],
-		"jsdoc/require-jsdoc": "off",
-		"jsdoc/require-param-type": "off",
-		"jsdoc/require-returns-type": "off",
-		"jsdoc/no-undefined-types": "off",
 		"import/prefer-default-export": "off",
 		"react-hooks/rules-of-hooks": "error",
 		"react-hooks/exhaustive-deps": "error",
@@ -60,6 +48,7 @@
 			"builtinGlobals": false,
 			"hoist": "never",
 			"allow": []
-		}]
+		}],
+		"tsdoc/syntax": "error"
 	}
 }

@@ -16,6 +16,20 @@ interface ReactOrNativeEventListener {
   (event: Event | SyntheticEvent): void;
 }
 
+/**
+ * Consolidates the specified list of functions into one function. This is useful
+ * for calling a list of functions with similar parameters. A great use case is creating
+ * a reset form function from a list of reset functions (see example below). In fact, the
+ * `reset` function from {@link useForm} is created using this function.
+ * @param handlers - the list of specified functions
+ * @returns A single function.  When this function is invoked, it will call each specified
+ * function in the order it was passed to this hook with the same arguments from the invocation.
+ * @example
+ * ```javascript
+ * // create a reset form function by merging reset functions from other form hooks.
+ * const reset = useHandlers(resetValues, resetErrors, resetTouches);
+ * ```
+ */
 export function useHandlers<T, K extends T[]>(
   ...handlers: Handler<T, K, void>[]
 ): Handler<T, K, void> {
@@ -35,12 +49,12 @@ export function useHandlers<T, K extends T[]>(
 /**
  * Gets the value for the specified input.
  *
- * @param input the specified input
- * @return the value as a string
+ * @param input - the specified input
+ * @returns the value as a string
  */
 function getInputValue({ checked, type, value }: HTMLInputElement): string {
   // TODO: support select and multiple select
-  /**
+  /*
    * let value = "";
    * if (target instanceof HTMLSelectElement || target.selectedOptions) {
    *     const values = Array.from(target.selectedOptions).map((option) => option.value);
@@ -60,6 +74,46 @@ function getInputValue({ checked, type, value }: HTMLInputElement): string {
   return ret;
 }
 
+// TODO: break out each hook into separate files and update tsconfig.json typedoc
+
+/**
+ * Converts a list of setters to a single event handler.  Setters are functions
+ * that takes a specified name as the first parameter and a specified value as
+ * the second param. Note that this hook is built on top of {@link useHandlers}.
+ * @param handlers - A list of setters that will be used in an event handler
+ * @returns An event handler that can be used in events like onChange or onBlur.  In order
+ * for this hook to call each setter with a name and value param, the inputs that this
+ * is used on must have a name attribute that maps to the specified.
+ * @example <caption>Create an onChange event handler</caption>
+ * ```javascript
+ * // set values and touches on change
+ * const handleChange = useSettersAsEventHandler(setValue, touchField);
+ *
+ * // set values and touches on change as well as validate
+ * const handleChange = useSettersAsEventHandler(setValue, touchField, validateByName);
+ *
+ * <input
+ *   name="username"
+ *   value={values.username}
+ *   onChange={handleChange}
+ * />
+ * ```
+ * @example <caption>Creating an onBlur event handler</caption>
+ * ```javascript
+ * // set values and touches on change
+ * const handleChange = useSettersAsEventHandler(setValue, touchField);
+ *
+ * // validation may be expensive so validate on blur.
+ * const handleBlur = useSettersAsEventHandler(validateByName);
+ *
+ * <input
+ *   name="username"
+ *   value={values.username}
+ *   onChange={handleChange}
+ *   onBlur={handleBlur}
+ * />
+ * ```
+ */
 export function useSettersAsEventHandler(
   ...handlers: eventLikeHandlers[]
 ): ReactOrNativeEventListener {
@@ -85,19 +139,23 @@ export function useSettersAsEventHandler(
  * validate function with the specified values merged in with the name
  * and value passed to the invoked function.
  *
- * @param {ValidateAllHandler<FieldValue>} validate
- *  a validation function that accepts an object of values
- * @param {Fields} values a values object
- * @return {eventLikeHandlers} a function that can be invoked with a name and value.
- * @see {@link useSettersAsEventHandler}
- * @see {@link useSettersAsRefEventHandler}
+ * The main purpose of this hook is to use validate with `useSettersAsEventHandler` without
+ * validation being one update behind.
+ *
+ * @param validate - a validation function that accepts an object of values.
+ * @param values - a values object.
+ * @returns a function that can be invoked with a name and value.<br>
+ * See {@link useSettersAsEventHandler}<br>
+ * See {@link useSettersAsRefEventHandler}
  * @example
+ * ```javascript
  * // used with useForms
  * const {validate, values, setValue} = useForms(...);
  * const validateAll = useValidateAsSetter(validate, values);
  * // now you can use validate with onChange events and keep the validation
- * // up to date.
+ * // in sync.
  * const onChange = useSettersAsEventHandler(setValue, validateAll);
+ * ```
  */
 export function useValidateAsSetter(
   validate: ValidateAllHandler<FieldValue>,

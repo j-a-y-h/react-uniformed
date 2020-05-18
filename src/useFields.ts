@@ -3,6 +3,7 @@ import {
   useGenericValues, UseResetableValuesHook,
 } from './useGenericValues';
 
+// TODO: switch to generic so that we don't get annoyed by ts when using this in an input.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FieldValue = string | number | boolean | undefined | null | MutableFields | any[];
 
@@ -18,13 +19,13 @@ export interface UseFieldsHook extends Omit<UseResetableValuesHook<FieldValue>, 
   readonly setValue: SetField;
 }
 
-export type NormalizeSetValue = Readonly<{
-  name: string;
-  value: FieldValue;
-  currentValues: Fields;
-  eventTarget?: EventTarget | null;
-  normalizeName: (normalizedName: string) => void;
-}>;
+export interface NormalizeSetValue {
+  readonly name: string;
+  readonly value: FieldValue;
+  readonly currentValues: Fields;
+  readonly eventTarget?: EventTarget | null;
+  normalizeName(normalizedName: string): void;
+}
 export interface NormalizerHandler {
   (valuesUpdate: NormalizeSetValue): FieldValue;
 }
@@ -43,7 +44,17 @@ function getResetValue(currentValue: FieldValue): FieldValue {
   }
 }
 
+// TODO: add examples
+
 // eslint-disable-next-line import/prefer-default-export
+/**
+ * A hook for managing form values.
+ *
+ * @param initialValues - The initial values for the form
+ * @param normalizer - A normalizer handler that transforms the field values.
+ * See {@link useNormalizers}.
+ * @returns An api for setting, reading, resetting form values.
+ */
 export function useFields(
   initialValues?: Fields,
   normalizer?: NormalizerHandler,
