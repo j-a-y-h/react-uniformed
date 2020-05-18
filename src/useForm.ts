@@ -73,7 +73,7 @@ type UseFormParameters = Readonly<{
  * only use one validator at a time. For instance, if you pass in a value to `validators`,
  * then the `constraints` prop will be ignored in favor of `validators`.
  * @returns the APIs used to manage the state of a function.
- * @example Basic example
+ * @example <caption>Basic example</caption>
  *```javascript
  * const { submit, setValue, values } = useForm({
  *   onSubmit: data => alert(JSON.stringify(data))
@@ -89,7 +89,7 @@ type UseFormParameters = Readonly<{
  *    />
  * </form>
  *```
- * @example Using `validate` in change events
+ * @example <caption>Using `validate` in change events</caption>
  * ```javascript
  * const { submit, setValue, validate, values } = useForm({
  *   onSubmit: data => alert(JSON.stringify(data))
@@ -109,8 +109,8 @@ type UseFormParameters = Readonly<{
  *   />
  * </form>
  *```
- * @example Setting feedback on submit, see {@link useSubmission}
- * @example Validation errors from the server, see {@link useSubmission}
+ * @example <caption>Setting feedback on submit, see {@link useSubmission}</caption>
+ * @example <caption>Validation errors from the server, see {@link useSubmission}</caption>
  */
 export function useForm({
   onSubmit,

@@ -262,7 +262,7 @@ function mapConstraintsToValidators(rules: ConstraintValidators): Validators {
 /* eslint-disable import/prefer-default-export */
 
 /**
- * @example Basic
+ * @example <caption>Basic</caption>
  * ```javascript
  *  const validator = useConstraints({
  *      firstName: { required: true, minLength: 5, maxLength: 6 },
@@ -275,7 +275,7 @@ function mapConstraintsToValidators(rules: ConstraintValidators): Validators {
  *  //
  *  validator.firstName("Johny") === "";
  * ```
- * @example Displaying custom messages on error.
+ * @example <caption>Displaying custom messages on error.</caption>
  * ```javascript
  *  const validator = useConstraints({
  *      // use min, max on date type
@@ -287,7 +287,7 @@ function mapConstraintsToValidators(rules: ConstraintValidators): Validators {
  *      },
  *  })
  * ```
- * @example Usage with {@link useForm}
+ * @example <caption>Usage with {@link useForm}</caption>
  * ```javascript
  *  useForm({
  *    constraints: {
@@ -307,8 +307,7 @@ export function useConstraints<T extends ConstraintValidators>(
 /**
  * A declarative way of creating validation logic that is dependent on other values.
  *
- * @example Binding constraints to values. This example is extremely powerful if you
- * want to create validation logic that is dependent on other values.
+ * @example <caption>Binding constraints to values.</caption>
  * ```javascript
  *  const validator = useConstraints((values) => ({
  *      startDate: { type: "date", min: Date.now() },
@@ -323,7 +322,7 @@ export function useConstraints<T extends ConstraintValidators>(
  *  // can be used with events
  *  const handleBlur = useValidationWithValues(validator, values);
  * ```
- * @example Usage with {@link useForm}
+ * @example <caption>Usage with {@link useForm}</caption>
  *
  * ```javascript
  *  useForm({

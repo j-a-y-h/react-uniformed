@@ -62,7 +62,7 @@ function createNestedObject({
  * value that is keyed by `'country'` would look like this `locations[country]`.
  *
  * @returns Returns a normalizer handler
- * @example Basic mapping
+ * @example <caption>Basic mapping</caption>
  * ```javascript
  *    // jsx
  *    <input name="users[0]" value="John">
@@ -81,7 +81,7 @@ function createNestedObject({
  *    // field value
  *    {user: {"string keys with spaces": "John"}}
  * ```
- * @example Usage with {@link useForm} and {@link useFields}
+ * @example <caption>Usage with {@link useForm} and {@link useFields}</caption>
  * ```javascript
  * const {values} = useFields(
  *   {}, // initialValues must come first
@@ -148,7 +148,7 @@ export function normalizeNestedObjects(): NormalizerHandler {
  *    }
  * )
  * ```
- * @example Usage with {@link useForm} and {@link useFields}
+ * @example <caption>Usage with {@link useForm} and {@link useFields}</caption>
  * ```javascript
  * const normalizer = useNormalizers({
  *   name: /name$/i,

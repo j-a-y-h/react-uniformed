@@ -37,9 +37,12 @@ export interface UseTouchHook {
   readonly setTouches: (touches: Touches) => void;
 }
 
+/* eslint-disable max-len */
 /**
  * Tracks touches within a form.
- * @example Basic example
+ *
+ *
+ * @example <caption>Basic example</caption>
  * ```javascript
  * import React from 'react';
  * import {useTouch} from "react-uniformed";
@@ -71,9 +74,8 @@ export interface UseTouchHook {
  * // resetTouches is used by useForm with other reset functions
  * const reset = useHandlers(resetValues, resetErrors, resetTouches);
  * ```
- * @example In JSX.
- * _Note that {@link useForm} provides a less verbose api by wrapping useFields and useTouch_
- * ```jsx
+ * @example <caption>In JSX. _Note that {@link useForm} provides a less verbose api by wrapping useFields and useTouch_</caption>
+ * ```javascript
  * import React from 'react';
  * import {useTouch, useFields, useHandlers, useSettersAsEventHandler} from "react-uniformed";
  *
@@ -94,6 +96,7 @@ export interface UseTouchHook {
  * ```
  */
 export function useTouch(): UseTouchHook {
+  /* eslint-enable max-len */
   const {
     values: touches,
     setValue: setTouch,

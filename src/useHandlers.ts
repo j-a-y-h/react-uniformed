@@ -84,7 +84,7 @@ function getInputValue({ checked, type, value }: HTMLInputElement): string {
  * @returns An event handler that can be used in events like onChange or onBlur.  In order
  * for this hook to call each setter with a name and value param, the inputs that this
  * is used on must have a name attribute that maps to the specified.
- * @example Create an onChange event handler
+ * @example <caption>Create an onChange event handler</caption>
  * ```javascript
  * // set values and touches on change
  * const handleChange = useSettersAsEventHandler(setValue, touchField);
@@ -98,7 +98,7 @@ function getInputValue({ checked, type, value }: HTMLInputElement): string {
  *   onChange={handleChange}
  * />
  * ```
- * @example Creating an onBlur event handler
+ * @example <caption>Creating an onBlur event handler</caption>
  * ```javascript
  * // set values and touches on change
  * const handleChange = useSettersAsEventHandler(setValue, touchField);

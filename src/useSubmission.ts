@@ -63,7 +63,7 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
     return {};
   }
 }
-
+/* eslint-disable max-len */
 /**
  * Handles the form submission. Runs validation before calling the `onSubmit` function
  * if a `validator` is passed in.  If no validator was passed in, then the `onSubmit` function
@@ -97,9 +97,7 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * @returns returns a handler for onSubmit events,
  *  a count of how many times submit was called, and the state of the submission progress.
  * See {@link useFunctionStats}
- * @example
- * This example is if you are not using the useForm hook.<br>
- * _Note: the {@link useForm} hook handles all of this._
+ * @example <caption>This example is if you are not using the useForm hook.<br>_Note: the {@link useForm} hook handles all of this._</caption>
  *```javascript
  *  // create the submission handler
  *  const { isSubmitting, submit, submitCount } = useSubmission({
@@ -115,7 +113,7 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  *    </form>
  *  )
  *```
- * @example Setting feedback on submit
+ * @example <caption>Setting feedback on submit</caption>
  * ```javascript
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setFeedback}) {
@@ -139,7 +137,7 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  * // or if the submission was successful
  * submitFeedback.message === "Thank you for submitting!";
  *```
- * @example Validation errors from the server
+ * @example <caption>Validation errors from the server</caption>
  * ```javascript
  * const { submitFeedback } = useSubmission({
  *   onSubmit(values, {setError}) {
@@ -156,7 +154,7 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
  *   }
  * });
  * ```
- */
+ *//* eslint-enable max-len */
 export function useSubmission({
   onSubmit,
   validator,
