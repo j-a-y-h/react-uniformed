@@ -156,29 +156,29 @@ import {
     useFields, useTouch, useValidation, useHandlers, useSubmission
 } from "react-uniformed";
 
-function useForm() {
-    // tracks the input values
-    const { values, setValue, resetValues } = useFields();
+function useForm({onSubmit, validators, constraints}) {
+  // tracks the input values
+  const { values, setValue, resetValues } = useFields();
 
-    // tracks the touch state of inputs
-    const { touches, touchField, resetTouches } = useTouch();
+  // tracks the touch state of inputs
+  const { touches, touchField, resetTouches, isDirty } = useTouch();
 
-    // handles validation
-    const { validateByName, validate, errors, resetErrors } = useValidation({
-        name: () => "",
-    });
+  // handles validation
+  const {
+    validateByName,
+    validate,
+    errors,
+    resetErrors,
+    hasErrors,
+  } = useValidation(validators || constraints); // this is not the real implementation
 
-    // composes a "form reset" function
-    const reset = useHandlers(resetValues, resetErrors, resetTouches);
+  // composes a "form reset" function
+  const reset = useHandlers(resetValues, resetErrors, resetTouches);
 
-    // creates a validation handler that binds the values
-    const validator = useCallback(() => validate(values), [values, validate]);
+  // creates a validation handler that binds the values
+  const validator = useCallback(() => validate(values), [values, validate]);
 
-    // useSubmission doesn't concern it self with the values of the form,
-    // so we must bind the onSubmit handler and the validator with the values
-    const onSubmit = useCallback(() => console.log(values), [values]);
-
-    // Guards against submissions until all values are valid
-    const { submit } = useSubmission({ onSubmit, validator });
+  // Guards against submissions until all values are valid
+  const { submit } = useSubmission({ onSubmit, validator, values, disabled: hasErrors });
 }
 ```
