@@ -38,36 +38,29 @@ Yarn
 yarn add react-uniformed
 ```
 
-## Getting Started
+## Quick Start
 ```javascript
+import React from "react";
 import {useForm, useSettersAsEventHandler} from "react-uniformed";
 
 // useForm holds the state of the form (ie touches, values, errors)
 const { setValue, values, submit } = useForm({
-    onSubmit: data => console.log(JSON.stringify(data)),
+  onSubmit: data => console.log(JSON.stringify(data)),
 });
 
 // compose your event handlers using useSettersAsEventHandler
 const handleChange = useSettersAsEventHandler(setValue);
 
-return (
-    {/* the submit function is only called after the form passes validation */}
-    <form onSubmit={submit}>
-        <label>Name</label>
-        <input
-            name="name"
-            value={values.name}
-            onChange={handleChange}
-        />
-        <label>Email</label>
-        <input
-            name="email"
-            value={values.email}
-            onChange={handleChange}
-        />
-        <input type="submit" />
-    </form>
-  );
+// jsx
+<form onSubmit={submit}>
+  <label>Name</label>
+  <input name="name" value={values.name} onChange={handleChange}/>
+
+  <label>Email</label>
+  <input name="email" value={values.email} onChange={handleChange} />
+
+  <button>Submit</button>
+</form>
 ```
 
 ## Validation
@@ -89,12 +82,16 @@ const { setValue, validateByName, errors } = useForm({
       min: [Date.now(), "Date must be today or later"]
     }
   },
+  // the onSubmit function is only called after the form passes validation.
   onSubmit: data => console.log(JSON.stringify(data)),
 });
 
-// validate on change with the following code
+// No configs for when to validate the form because useSettersAsEventHandler
+// allows you to configure your event handlers how ever you want to.
+
+// validate on change
 // const handleChange = useSettersAsEventHandler(setValue, validateByName);
-// or validate on blur
+// validate on blur
 const handleBlur = useSettersAsEventHandler(validateByName);
 ```
 
