@@ -65,7 +65,7 @@ A declarative way of validating inputs based upon HTML 5 constraints.
      email: { required: true, type: "email" },
      website: { required: true, type: "url" }
  });
- //
+ // note that empty string means the value is valid.
  validator.firstName("Johny") === "";
 ```
 
