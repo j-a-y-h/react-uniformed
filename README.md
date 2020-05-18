@@ -10,7 +10,7 @@
 
 </p></div>
 
-**react-uniformed** allows you to create declarative React forms using only React Hooks.  The simplicity of this library removes the pain of remembering another complex React library, allowing you to focus on your app's business logic. We built this library with exceptional performance so that you can maintain a great user experience regardless of your application's scale - [try the performance story](https://github.com/j-a-y-h/react-uniformed/tree/develop/stories).
+**react-uniformed** allows you to create declarative React forms using only React Hooks.  The simplicity of this library removes the pain of remembering another complex React library, allowing you to focus on your app's business logic. We built this library with exceptional performance so that you can maintain a great user experience regardless of your application's scale - [try the performance story](https://github.com/j-a-y-h/react-uniformed/blob/develop/stories).
 
 *You don't have to learn a new framework with a massive API in order to do forms, <u>just use **react-uniformed**</u>*
 
@@ -20,11 +20,17 @@
 * 📜 HTML standard validation
 * 🚀 Controlled & Uncontrolled inputs support
 
-##### References
+##### Documentation
+* [API Reference](https://github.com/j-a-y-h/react-uniformed/blob/develop/docs/README.md)
+* [Quick Start](#quick-start)
 * [Validation](#validation)
 * [Performance](#performance)
-* [API](https://github.com/j-a-y-h/react-uniformed/blob/develop/docs/README.md)
-* [Examples](https://github.com/j-a-y-h/react-uniformed/blob/develop/examples/)
+
+##### Examples
+* [codesandbox.io](https://codesandbox.io/s/react-uniformed-nwj10)
+* [Storybook](https://github.com/j-a-y-h/react-uniformed/blob/develop/stories)
+* [Code Examples](https://github.com/j-a-y-h/react-uniformed/blob/develop/examples/)
+
 
 ## Install
 
