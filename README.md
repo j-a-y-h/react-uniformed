@@ -1,6 +1,6 @@
-# react-uniformed - **Lightweight / Fast / Simple / Scalable**
-
 <div align="center"><p align="center">
+<h1>react-uniformed</h1>
+<b>You shouldn't have to learn a library’s ridiculously complex API in order to do React forms.</b></u></i><br/><br/>
 
 [![travis](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)](https://travis-ci.com/j-a-y-h/react-uniformed.svg?branch=develop)
 [![Downloads](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)](https://img.shields.io/npm/dt/react-uniformed.svg?style=flat)
@@ -10,22 +10,25 @@
 
 </p></div>
 
-**react-uniformed** is a lightweight library that simplifies the creation of declarative React forms using only React Hooks. Additionally, this library will out perform all of the popular React form libraries without adding complexity to your code.
-
-*You don't have to learn a new framework with a massive API in order to do forms, <u>just use **react-uniformed**</u>*
+**react-uniformed** allows you to easily create declarative React forms using only React Hooks.  The simplicity of this library removes the pain of remembering another complex React library, allowing you to focus on your app's business logic. We built this library with exceptional performance so that you can maintain a great user experience regardless of your application's scale - [try the performance story](https://github.com/j-a-y-h/react-uniformed/blob/develop/stories).
 
 ##### Overview
 * ‍️💆🏾‍♂️ Simple API
-* 🐐  Lightweight / Fast / Scalable
 * 🙅🏻‍♀️ Zero dependencies
 * 📜 HTML standard validation
 * 🚀 Controlled & Uncontrolled inputs support
 
-##### References
+##### Documentation
+* [API Reference](https://github.com/j-a-y-h/react-uniformed/blob/develop/docs/README.md)
+* [Quick Start](#quick-start)
 * [Validation](#validation)
 * [Performance](#performance)
-* [API](https://github.com/j-a-y-h/react-uniformed/blob/develop/docs/README.md)
-* [Examples](https://github.com/j-a-y-h/react-uniformed/blob/develop/examples/)
+
+##### Examples
+* [codesandbox.io](https://codesandbox.io/s/react-uniformed-nwj10)
+* [Storybook](https://github.com/j-a-y-h/react-uniformed/blob/develop/stories)
+* [Code Examples](https://github.com/j-a-y-h/react-uniformed/blob/develop/examples/)
+
 
 ## Install
 
@@ -38,36 +41,26 @@ Yarn
 yarn add react-uniformed
 ```
 
-## Getting Started
+## Quick Start
 ```javascript
+import React from "react";
 import {useForm, useSettersAsEventHandler} from "react-uniformed";
 
-// useForm holds the state of the form (ie touches, values, errors)
+// useForm holds the state of the form (eg touches, values, errors)
 const { setValue, values, submit } = useForm({
-    onSubmit: data => console.log(JSON.stringify(data)),
+  onSubmit: data => console.log(JSON.stringify(data)),
 });
 
-// compose your event handlers using useSettersAsEventHandler
+// compose your event handlers
 const handleChange = useSettersAsEventHandler(setValue);
 
-return (
-    {/* the submit function is only called after the form passes validation */}
-    <form onSubmit={submit}>
-        <label>Name</label>
-        <input
-            name="name"
-            value={values.name}
-            onChange={handleChange}
-        />
-        <label>Email</label>
-        <input
-            name="email"
-            value={values.email}
-            onChange={handleChange}
-        />
-        <input type="submit" />
-    </form>
-  );
+// jsx
+<form onSubmit={submit}>
+  <label>Name</label>
+  <input name="name" value={values.name} onChange={handleChange} />
+
+  <button>Submit</button>
+</form>
 ```
 
 ## Validation
@@ -76,25 +69,29 @@ Add validation to your form by setting the `validators` property in `useForm` an
 import {useForm, useSettersAsEventHandler} from "react-uniformed";
 
 const { setValue, validateByName, errors } = useForm({
-    // Use HTML5 style validation
-    constraints: {
-        name: { required: true, minLength: 1, maxLength: 55 },
-        // email & url types are validated using HTML standard regex
-        email: { required: true, type: "email" },
-        date: {
-            // set the error message for required by using a non empty string
-            required: "Date is required",
-            type: "date",
-            // set the error message and constraint using an array
-            min: [Date.now(), "Date must be today or later"]
-        }
-    },
-    onSubmit: data => console.log(JSON.stringify(data)),
+  // Declarative HTML5 style form validation
+  constraints: {
+    name: { required: true, minLength: 1, maxLength: 55 },
+    // email & url types are validated using HTML standard regex
+    email: { type: "email" },
+    date: {
+      // set the error message for required by using a non empty string
+      required: "Date is required",
+      type: "date",
+      // set the error message and constraint using an array
+      min: [Date.now(), "Date must be today or later"]
+    }
+  },
+  // the onSubmit function is only called after the form passes validation.
+  onSubmit: data => console.log(JSON.stringify(data)),
 });
 
-// validate on change with the following code
+// No configs for when to validate the form because useSettersAsEventHandler
+// allows you to configure your event handlers how ever you want to.
+
+// validate on change
 // const handleChange = useSettersAsEventHandler(setValue, validateByName);
-// or validate on blur
+// validate on blur
 const handleBlur = useSettersAsEventHandler(validateByName);
 ```
 
@@ -114,16 +111,16 @@ const changeRef = useSettersAsRefEventHandler(setValue);
 
 ```javascript
 const {validateByName, errors} = useForm({
-    validators: {
-        // validators must return empty string for valid value
-        name: (value) => value ? "" : "email is required",
-    },
+  validators: {
+    // validators must return empty string for valid values
+    name: (value) => value ? "" : "email is required",
+  },
 });
 
 // useConstraints supports mixing validators and constraints
 const validators = useConstraints({
-    name: (value) => "name still won't be valid",
-    email: { required: true },
+  name: (value) => "name still won't be valid",
+  email: { required: true },
 });
 
 // when used with useSettersAsEventHandler the validator
@@ -133,19 +130,18 @@ const handleBlur = useSettersAsEventHandler(validateByName);
 If you prefer to validate in one function, then you can do that as well
 ```javascript
 const {
-    // note: validateByName will call the validate function on each call
-    // but the error will be the one with the corresponding name
-    validateByName,
-    // validate is available with both a validation map and a validation function
-    validate,
+  // note: validateByName will call the validate function on each call
+  // but the error will be the one with the corresponding name.
+  validateByName,
+  validate, // validate all values
 } = useForm({
-    validators(values) {
-        const errors = {name: "name will never be valid", email: ""};
-        if (!values.email) {
-            errors.email = "email is required";
-        }
-        return errors;
-    },
+  validators(values) {
+    const errors = {name: "name will never be valid", email: ""};
+    if (!values.email) {
+      errors.email = "email is required";
+    }
+    return errors;
+  },
 });
 ```
 ## More Hooks
@@ -156,29 +152,29 @@ import {
     useFields, useTouch, useValidation, useHandlers, useSubmission
 } from "react-uniformed";
 
-function useForm() {
-    // tracks the input values
-    const { values, setValue, resetValues } = useFields();
+function useForm({onSubmit, validators, constraints}) {
+  // tracks the input values
+  const { values, setValue, resetValues } = useFields();
 
-    // tracks the touch state of inputs
-    const { touches, touchField, resetTouches } = useTouch();
+  // tracks the touch state of inputs
+  const { touches, touchField, resetTouches, isDirty } = useTouch();
 
-    // handles validation
-    const { validateByName, validate, errors, resetErrors } = useValidation({
-        name: () => "",
-    });
+  // handles validation
+  const {
+    validateByName,
+    validate,
+    errors,
+    resetErrors,
+    hasErrors,
+  } = useValidation(validators || constraints); // this is not the real implementation
 
-    // composes a "form reset" function
-    const reset = useHandlers(resetValues, resetErrors, resetTouches);
+  // composes a "form reset" function
+  const reset = useHandlers(resetValues, resetErrors, resetTouches);
 
-    // creates a validation handler that binds the values
-    const validator = useCallback(() => validate(values), [values, validate]);
+  // creates a validation handler that binds the values
+  const validator = useCallback(() => validate(values), [values, validate]);
 
-    // useSubmission doesn't concern it self with the values of the form,
-    // so we must bind the onSubmit handler and the validator with the values
-    const onSubmit = useCallback(() => console.log(values), [values]);
-
-    // Guards against submissions until all values are valid
-    const { submit } = useSubmission({ onSubmit, validator });
+  // Guards against submissions until all values are valid
+  const { submit } = useSubmission({ onSubmit, validator, values, reset, disabled: hasErrors });
 }
 ```

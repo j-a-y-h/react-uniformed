@@ -9,9 +9,8 @@ const createArray = (length) => Array.from({ length }, (_, k) => k + 1);
 const createKeys = (prefix, length = 5000) => createArray(length).map((_, i) => `${prefix}${i}`);
 
 const emailKeys = {
+  100: createKeys("email", 100),
   1000: createKeys("email", 1000),
-  5000: createKeys("email", 5000),
-  10000: createKeys("email", 10000),
 };
 
 function Form({values, errors, submit, changeRef, emails}) {
@@ -26,12 +25,12 @@ function Form({values, errors, submit, changeRef, emails}) {
             <button type="submit">Submit</button>
             <br />
             {emails.map(key => (
-              <>
+              <React.Fragment key={key}>
                 <label>{key}:</label>
-                <input key={key} name={key} ref={changeRef} />
+                <input name={key} ref={changeRef} />
                 <span style={{color: 'red'}}>{errors[key] && <div>{errors[key]}</div>}</span>
                 <br />
-              </>
+              </React.Fragment>
             ))}
             <input name="username" ref={changeRef} />
             {errors.username && <div>{errors.username}</div>}
@@ -62,33 +61,19 @@ export function BigFormWithValidation() {
   });
   const handleChange = useSettersAsRefEventHandler<HTMLInputElement>(setValue, validateByName);
 
+  return <Form emails={emailKeys[100]} changeRef={handleChange} values={values} errors={errors} submit={submit} />
+}
+
+export function BigFormWith1000Inputs() {
+  const { setValue, submit, errors, values, validateByName } = useForm({
+    constraints: (values) => {
+      return Object.keys(values).reduce((cur, key) => {
+        return {...cur, [key]: {type: ['email', 'Please enter a valid email'], required: true}}
+      }, {})
+    },
+    onSubmit: data => alert(JSON.stringify(data)),
+  });
+  const handleChange = useSettersAsRefEventHandler<HTMLInputElement>(setValue, validateByName);
+
   return <Form emails={emailKeys[1000]} changeRef={handleChange} values={values} errors={errors} submit={submit} />
-}
-
-export function Basic5000InputTest() {
-  const { setValue, values, submit, errors } = useForm({
-      onSubmit: values => {
-        console.log(values);
-      },
-  })
-  const rafSetValue = React.useCallback((...args) => {
-    // @ts-expect-error
-    requestAnimationFrame(() => setValue(...args));
-  }, [setValue]);
-  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(rafSetValue);
-  return <Form emails={emailKeys[5000]} changeRef={changeRef} values={values} errors={errors} submit={submit} />
-}
-
-export function Basic10000InputTest() {
-  const { setValue, values, submit, errors } = useForm({
-      onSubmit: values => {
-        console.log(values);
-      },
-  })
-  const rafSetValue = React.useCallback((...args) => {
-    // @ts-expect-error
-    requestAnimationFrame(() => setValue(...args));
-  }, [setValue]);
-  const changeRef = useSettersAsRefEventHandler<HTMLInputElement>(rafSetValue);
-  return <Form emails={emailKeys[10000]} changeRef={changeRef} values={values} errors={errors} submit={submit} />
 }
