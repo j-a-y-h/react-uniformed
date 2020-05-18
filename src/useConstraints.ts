@@ -338,11 +338,11 @@ export function useConstraints<T extends ConstraintValidators>(
  *  });
  * ```
  *
- * @param rules - A validator function that accepts a value map as the only argument. The return
- * value of the specified function must be of type {@link ConstraintValidators}.
+ * @param syncedConstraint - A validator function that accepts a value map as the only argument.
+ * The return value of the specified function must be of type {@link ConstraintValidators}.
  * @returns A validation function similar to the `validate` function from {@link useValidation}.
  */
-export function useConstraints(rules: SyncedConstraint): SingleValidator<FieldValue>;
+export function useConstraints(syncedConstraint: SyncedConstraint): SingleValidator<FieldValue>;
 
 export function useConstraints<T extends ConstraintValidators>(
   rules: SyncedConstraint | T
