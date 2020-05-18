@@ -59,10 +59,7 @@ const handleChange = useSettersAsEventHandler(setValue);
 // jsx
 <form onSubmit={submit}>
   <label>Name</label>
-  <input name="name" value={values.name} onChange={handleChange}/>
-
-  <label>Email</label>
-  <input name="email" value={values.email} onChange={handleChange} />
+  <input name="name" value={values.name} onChange={handleChange} />
 
   <button>Submit</button>
 </form>
