@@ -257,29 +257,11 @@ function mapConstraintsToValidators(rules: ConstraintValidators): Validators {
   }, {});
 }
 
+// TODO: clean up docs if necessary
+
 /* eslint-disable import/prefer-default-export */
 
-export function useConstraints<T extends ConstraintValidators>(
-  rules: T
-): ConstantValues<T, Validator>;
-
 /**
- *
- */
-export function useConstraints(rules: SyncedConstraint): SingleValidator<FieldValue>;
-
-export function useConstraints<T extends ConstraintValidators>(
-  rules: SyncedConstraint | T
-): ConstantValues<T, Validator> | SingleValidator<FieldValue>;
-
-/**
- * A declarative way of validating inputs based upon HTML 5 constraints
- *
- * @param rules - an object mapping that
- * consist of HTML5ValidatorRules as value or validator function that accepts value
- * as the only argument.
- * @returns maps the rules to an object map with the value
- * being a function that accepts value as the only argument.
  * @example Basic
  * ```javascript
  *  const validator = useConstraints({
@@ -289,9 +271,11 @@ export function useConstraints<T extends ConstraintValidators>(
  *      location: { required: true, pattern: /(europe|africa)/},
  *      email: { required: true, type: "email" },
  *      website: { required: true, type: "url" }
- *  })
+ *  });
+ *  //
+ *  validator.firstName("Johny") === "";
  * ```
- * @example Advanced
+ * @example Displaying custom messages on error.
  * ```javascript
  *  const validator = useConstraints({
  *      // use min, max on date type
@@ -303,6 +287,26 @@ export function useConstraints<T extends ConstraintValidators>(
  *      },
  *  })
  * ```
+ * @example Usage with {@link useForm}
+ * ```javascript
+ *  useForm({
+ *    constraints: {
+ *      location: { required: true, pattern: /(europe|africa)/},
+ *      email: { required: true, type: "email" },
+ *    },
+ *  })
+ * ```
+ * @param rules - an object map that consist of {@link Constraints} or {@link Validator} as values.
+ * @returns maps the rules to an object map where the value is a function. Each function
+ * accepts only one argument that is the value to validate when invoked.
+ */
+export function useConstraints<T extends ConstraintValidators>(
+  rules: T
+): ConstantValues<T, Validator>;
+
+/**
+ * A declarative way of creating validation logic that is dependent on other values.
+ *
  * @example Binding constraints to values. This example is extremely powerful if you
  * want to create validation logic that is dependent on other values.
  * ```javascript
@@ -319,6 +323,36 @@ export function useConstraints<T extends ConstraintValidators>(
  *  // can be used with events
  *  const handleBlur = useValidationWithValues(validator, values);
  * ```
+ * @example Usage with {@link useForm}
+ *
+ * ```javascript
+ *  useForm({
+ *    constraints(values) {
+ *      startDate: { type: "date", min: Date.now() },
+ *      // ensure that the end date is always greater than the start date
+ *      endDate: {
+ *          type: "date",
+ *          min: [values.startDate, "end date must be greater than start date"]
+ *      },
+ *    }
+ *  });
+ * ```
+ *
+ * @param rules - A validator function that accepts a value map as the only argument. The return
+ * value of the specified function must be of type {@link ConstraintValidators}.
+ * @returns A validation function similar to the `validate` function from {@link useValidation}.
+ */
+export function useConstraints(rules: SyncedConstraint): SingleValidator<FieldValue>;
+
+export function useConstraints<T extends ConstraintValidators>(
+  rules: SyncedConstraint | T
+): ConstantValues<T, Validator> | SingleValidator<FieldValue>;
+
+/**
+ * A declarative way of validating inputs based upon HTML 5 constraints.
+ *
+ * @returns If you are using this outside of {@link useForm},
+ * then it is recommended that you use this with {@link useValidation}.
  */
 export function useConstraints(
   rules: ConstraintValidators | SyncedConstraint,
