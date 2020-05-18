@@ -1,4 +1,4 @@
-# react-uniformed - **Lightweight / Fast / Simple / Scalable**
+# react-uniformed - **Declarative React forms using hooks**
 
 <div align="center"><p align="center">
 
@@ -10,13 +10,12 @@
 
 </p></div>
 
-**react-uniformed** is a lightweight library that simplifies the creation of declarative React forms using only React Hooks. Additionally, this library will out perform all of the popular React form libraries without adding complexity to your code.
+**react-uniformed** allows you to create declarative React forms using only React Hooks.  The simplicity of this library removes the pain of remembering another complex React library, allowing you to focus on your app's business logic. We built this library with exceptional performance so that you can maintain a great user experience regardless of your application's scale - [try the performance story](https://github.com/j-a-y-h/react-uniformed/tree/develop/stories).
 
 *You don't have to learn a new framework with a massive API in order to do forms, <u>just use **react-uniformed**</u>*
 
 ##### Overview
 * ‍️💆🏾‍♂️ Simple API
-* 🐐  Lightweight / Fast / Scalable
 * 🙅🏻‍♀️ Zero dependencies
 * 📜 HTML standard validation
 * 🚀 Controlled & Uncontrolled inputs support
