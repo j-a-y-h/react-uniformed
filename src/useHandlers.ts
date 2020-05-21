@@ -39,5 +39,3 @@ export function useHandlers<T, K extends T[]>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, handlers);
 }
-
-// TODO: break out each hook into separate files and update tsconfig.json typedoc
