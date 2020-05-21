@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { Values, MutableValues, ConstantValues } from './useGenericValues';
+import { Values, MutableValues, ConstantValues } from '../useGenericValues';
 import {
   Validator, Validators, SingleValidator, validateValidators,
-} from './useValidation';
-import { assert, LoggingTypes } from './utils';
-import { Errors } from './useErrors';
-import { FieldValue, Fields } from './useFields';
+} from '../useValidation';
+import { assert, LoggingTypes } from '../utils';
+import { Errors } from '../useErrors';
+import { FieldValue, Fields } from '../useFields';
 
 type supportedTypes = 'email' | 'text' | 'url' | 'number' | 'date';
 // possible values:
