@@ -65,7 +65,6 @@ export const defaultMessage = {
   pattern: 'The value must match the pattern.',
   type: 'The value must match the type.',
 };
-// TODO: break file into directory
 
 export const supportedProperties: supportedConstraints[] = [
   'required',
