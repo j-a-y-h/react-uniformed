@@ -1,6 +1,6 @@
-[react-uniformed](../README.md) › ["useConstraints/useConstraints"](_useconstraints_useconstraints_.md)
+[react-uniformed](../README.md) › ["useConstraints"](_useconstraints_useconstraints_.md)
 
-# Module: "useConstraints/useConstraints"
+# Module: "useConstraints"
 
 ## Index
 
