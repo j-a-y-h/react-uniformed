@@ -1,9 +1,10 @@
 import {
   useCallback, Ref,
 } from 'react';
-import { useSettersAsEventHandler, eventLikeHandlers } from './useHandlers';
+import { eventLikeHandlers } from './useHandlers';
 import { assert, LoggingTypes } from './utils';
 import { Fields } from './useFields';
+import { useSettersAsEventHandler } from './useSettersAsEventHandler';
 
 interface UseEventHandlersWithRefProps<V> {
   readonly event?: keyof HTMLElementEventMap;

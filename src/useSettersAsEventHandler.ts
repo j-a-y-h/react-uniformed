@@ -1,6 +1,7 @@
 import { useCallback, SyntheticEvent } from 'react';
-import { eventLikeHandlers, reactOrNativeEvent, keyValueEvent } from './useHandlers';
-import { useHandlers } from '.';
+import {
+  eventLikeHandlers, reactOrNativeEvent, keyValueEvent, useHandlers,
+} from './useHandlers';
 import { assert, LoggingTypes } from './utils';
 
 interface ReactOrNativeEventListener {
