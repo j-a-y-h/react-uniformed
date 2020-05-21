@@ -7,8 +7,7 @@
 ### Modules
 
 * ["normalizeNestedObjects"](modules/_normalizenestedobjects_.md)
-* ["useConstraints/types"](modules/_useconstraints_types_.md)
-* ["useConstraints/useConstraints"](modules/_useconstraints_useconstraints_.md)
+* ["useConstraints"](modules/_useconstraints_useconstraints_.md)
 * ["useErrors"](modules/_useerrors_.md)
 * ["useFields"](modules/_usefields_.md)
 * ["useForm"](modules/_useform_.md)
