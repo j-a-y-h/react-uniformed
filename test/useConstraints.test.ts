@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { useConstraints } from "../src";
-import { supportedTypesSet, supportedProperties } from "../src/useConstraints";
+import { supportedTypesSet, supportedProperties } from "../src/useConstraints/types";
 
 describe("useConstraints", () => {
     const ERROR = "__required__";

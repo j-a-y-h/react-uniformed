@@ -20,7 +20,8 @@ import {
 import {
   SetValueCallback, MutableValues, PartialValues, isMapWithValues,
 } from './useGenericValues';
-import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
+import { ConstraintValidators, SyncedConstraint } from './useConstraints/types';
+import { useConstraints } from './useConstraints';
 import { resetForm } from './utils';
 
 // TODO: document the UseFormsHook
