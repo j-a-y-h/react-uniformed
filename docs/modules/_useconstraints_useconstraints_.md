@@ -1,51 +1,12 @@
-[react-uniformed](../README.md) › ["useConstraints"](_useconstraints_.md)
+[react-uniformed](../README.md) › ["useConstraints/useConstraints"](_useconstraints_useconstraints_.md)
 
-# Module: "useConstraints"
+# Module: "useConstraints/useConstraints"
 
 ## Index
 
-### Interfaces
-
-* [SyncedConstraint](../interfaces/_useconstraints_.syncedconstraint.md)
-
-### Type aliases
-
-* [ConstraintValidators](_useconstraints_.md#constraintvalidators)
-
-### Variables
-
-* [supportedProperties](_useconstraints_.md#const-supportedproperties)
-* [supportedTypesSet](_useconstraints_.md#const-supportedtypesset)
-
 ### Functions
 
-* [useConstraints](_useconstraints_.md#useconstraints)
-
-## Type aliases
-
-###  ConstraintValidators
-
-Ƭ **ConstraintValidators**: *Values‹Constraints | [Validator](../interfaces/_usevalidation_.validator.md)›*
-
-## Variables
-
-### `Const` supportedProperties
-
-• **supportedProperties**: *supportedConstraints[]* = [
-  'required',
-  'type',
-  'pattern',
-  'maxLength',
-  'minLength',
-  'max',
-  'min',
-]
-
-___
-
-### `Const` supportedTypesSet
-
-• **supportedTypesSet**: *Set‹"number" | "email" | "text" | "url" | "date"›* = new Set<supportedTypes>(['text', 'email', 'url', 'number', 'date'])
+* [useConstraints](_useconstraints_useconstraints_.md#useconstraints)
 
 ## Functions
 
@@ -94,20 +55,20 @@ A declarative way of validating inputs based upon HTML 5 constraints.
 
 **Type parameters:**
 
-▪ **T**: *[ConstraintValidators](_useconstraints_.md#constraintvalidators)*
+▪ **T**: *[ConstraintValidators](_useconstraints_types_.md#constraintvalidators)*
 
 **Parameters:**
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`rules` | T | an object map that consist of {@link Constraints} or [Validator](../interfaces/_usevalidation_.validator.md) as values. |
+`rules` | T | an object map that consist of [Constraints](../interfaces/_useconstraints_types_.constraints.md) or [Validator](../interfaces/_usevalidation_.validator.md) as values. |
 
 **Returns:** *ConstantValues‹T, [Validator](../interfaces/_usevalidation_.validator.md)›*
 
 maps the rules to an object map where the value is a function. Each function
 accepts only one argument that is the value to validate when invoked.
 
-▸ **useConstraints**(`syncedConstraint`: [SyncedConstraint](../interfaces/_useconstraints_.syncedconstraint.md)): *[SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
+▸ **useConstraints**(`syncedConstraint`: [SyncedConstraint](../interfaces/_useconstraints_types_.syncedconstraint.md)): *[SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
 
 A declarative way of creating validation logic that is dependent on other values.
 
@@ -146,25 +107,25 @@ A declarative way of creating validation logic that is dependent on other values
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`syncedConstraint` | [SyncedConstraint](../interfaces/_useconstraints_.syncedconstraint.md) | A validator function that accepts a value map as the only argument. The return value of the specified function must be of type [ConstraintValidators](_useconstraints_.md#constraintvalidators). |
+`syncedConstraint` | [SyncedConstraint](../interfaces/_useconstraints_types_.syncedconstraint.md) | A validator function that accepts a value map as the only argument. The return value of the specified function must be of type [ConstraintValidators](_useconstraints_types_.md#constraintvalidators). |
 
 **Returns:** *[SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
 
 A validation function similar to the `validate` function from [useValidation](_usevalidation_.md#usevalidation).
 
-▸ **useConstraints**<**T**>(`rules`: [SyncedConstraint](../interfaces/_useconstraints_.syncedconstraint.md) | T): *ConstantValues‹T, [Validator](../interfaces/_usevalidation_.validator.md)› | [SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
+▸ **useConstraints**<**T**>(`rules`: [SyncedConstraint](../interfaces/_useconstraints_types_.syncedconstraint.md) | T): *ConstantValues‹T, [Validator](../interfaces/_usevalidation_.validator.md)› | [SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
 
 A declarative way of validating inputs based upon HTML 5 constraints.
 
 **Type parameters:**
 
-▪ **T**: *[ConstraintValidators](_useconstraints_.md#constraintvalidators)*
+▪ **T**: *[ConstraintValidators](_useconstraints_types_.md#constraintvalidators)*
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`rules` | [SyncedConstraint](../interfaces/_useconstraints_.syncedconstraint.md) &#124; T |
+`rules` | [SyncedConstraint](../interfaces/_useconstraints_types_.syncedconstraint.md) &#124; T |
 
 **Returns:** *ConstantValues‹T, [Validator](../interfaces/_usevalidation_.validator.md)› | [SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
 
