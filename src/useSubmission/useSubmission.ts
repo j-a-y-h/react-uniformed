@@ -1,9 +1,6 @@
-import {
-  useCallback, SyntheticEvent, useState, useEffect, useMemo, useRef,
-} from 'react';
-import { useFunctionStats } from './useFunctionStats';
+import { useCallback, SyntheticEvent, useRef } from 'react';
 import { UseSubmissionProps, UseSubmissionHook } from './types';
-import { useHandleSubmit } from './submit';
+import { useHandleSubmit, useSubmit } from './submit';
 
 /* eslint-disable max-len */
 /**
@@ -105,56 +102,24 @@ export function useSubmission({
   setError,
   values = {},
 }: UseSubmissionProps): UseSubmissionHook {
-  // track when we need to starting submitting
-  // note that validator doesn't return a value stating if the validation fails, instead the
-  // state of the form is updated with the new errors. Because of these mechanics, we need
-  // to track the state of errors using disabled prop and this isReadyToSubmit value
-  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
-
   // track the submitEvent in a ref
   const submitEvent = useRef<SyntheticEvent | undefined>();
 
-  // memoize the validator function
-  const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
-  const {
-    fnc: validate,
-    isRunning: isValidating,
-  } = useFunctionStats(validationFnc);
-
-  const resetSubmitEvent = useCallback(() => { submitEvent.current = undefined; }, [submitEvent]);
+  const setSubmitEvent = useCallback((event) => { submitEvent.current = event; }, [submitEvent]);
   const {
     handleSubmit, submitCount, isSubmitting, submitFeedback,
   } = useHandleSubmit({
-    onSubmit, values, reset, setError, resetSubmitEvent,
+    onSubmit, values, reset, setError, setSubmitEvent,
   });
 
-  // track when to kick off submission
-  useEffect(() => {
-    if (isReadyToSubmit && !isValidating) {
-      setIsReadyToSubmit(false);
-      if (!disabled) {
-        handleSubmit(submitEvent.current);
-      }
-    }
-  }, [
-    disabled,
-    handleSubmit,
-    isReadyToSubmit,
-    isValidating,
-  ]);
-
   // The submit callback that is used in the form
-  const submit = useCallback((event?: SyntheticEvent) => {
-    if (event) {
-      event.preventDefault?.();
-      event.persist?.();
-      submitEvent.current = event;
-    }
-    setIsReadyToSubmit(true);
-    if (validator) {
-      validate();
-    }
-  }, [validator, validate, setIsReadyToSubmit]);
+  const submit = useSubmit({
+    setSubmitEvent,
+    submitEvent,
+    handleSubmit,
+    disabled,
+    validator,
+  });
   return {
     isSubmitting, submitCount, submit, submitFeedback,
   };
