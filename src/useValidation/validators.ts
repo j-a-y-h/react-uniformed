@@ -5,8 +5,8 @@ import {
   validValidatorReturnTypes,
   ValidateHandler,
   ValidateAllHandler,
-  UseValidateByName,
-  UseValidate,
+  UseValidateByNameProps,
+  UseValidateProps,
 } from './types';
 import { Fields, FieldValue } from '../useFields';
 import { Errors, validErrorValues } from '../useErrors';
@@ -51,7 +51,7 @@ export async function validateValidators(
 
 export function useValidateByName({
   setError, validator,
-}: UseValidateByName): ValidateHandler<FieldValue> {
+}: UseValidateByNameProps): ValidateHandler<FieldValue> {
   return useCallback(async (
     name: string, value: FieldValue,
   ): Promise<void> => {
@@ -69,7 +69,7 @@ export function useValidateByName({
   }, [setError, validator]);
 }
 
-export function useValidate({ setErrors, validator }: UseValidate): ValidateAllHandler<FieldValue> {
+export function useValidate({ setErrors, validator }: UseValidateProps): ValidateAllHandler<FieldValue> {
   const fieldsToUseInValidateAll = useMemo((): string[] => (
     (!validator || typeof validator === 'function') ? [] : Object.keys(validator)
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -39,12 +39,12 @@ export interface UseValidatorHookPartial<T, K> {
   readonly resetErrors: () => void;
 }
 
-export interface UseValidateByName {
+export interface UseValidateByNameProps {
   setError: ErrorHandler;
   validator: Validators | SingleValidator<FieldValue>;
 }
 
-export interface UseValidate {
+export interface UseValidateProps {
   setErrors: SetErrorsHandler;
   validator: Validators | SingleValidator<FieldValue>;
 }
