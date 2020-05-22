@@ -1,12 +1,9 @@
-import { useCallback, useMemo } from 'react';
-import {
-  validErrorValues, Errors, useErrors,
-} from '../useErrors';
-import { FieldValue, Fields } from '../useFields';
+import { useErrors } from '../useErrors';
+import { FieldValue } from '../useFields';
 import {
   SingleValidator, UseValidatorHook, Validators, UseValidatorHookPartial,
 } from './types';
-import { validateValidators } from './validators';
+import { useValidateByName, useValidate } from './validators';
 
 export function useValidation(
   validator: SingleValidator<FieldValue>
@@ -66,39 +63,11 @@ export function useValidation(
   const {
     setError, errors, hasErrors, resetErrors, setErrors,
   } = useErrors();
-  const fieldsToUseInValidateAll = useMemo((): string[] => (
-    (!validator || typeof validator === 'function') ? [] : Object.keys(validator)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), []);
-    // create a validate by input name function
-  const validateByName = useCallback(async (
-    name: string, value: FieldValue,
-  ): Promise<void> => {
-    let error: validErrorValues;
-    if (typeof validator === 'function') {
-      const localErrors = await validator({ [name]: value });
-      error = localErrors[name] || '';
-    } else {
-      const handler = validator[name] || defaultValidator;
-      assertValidator(useValidation.name, name, handler);
-      error = await handler(value) || '';
-    }
-    setError(name, error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setError, validator]);
-
+  // create a validate by input name function
+  const validateByName = useValidateByName({ setError, validator });
   // create validate all function
-  const validate = useCallback(async (values: Fields): Promise<void> => {
-    const names = Array.from(new Set([...Object.keys(values), ...fieldsToUseInValidateAll]));
-    let localErrors: Errors;
-    if (typeof validator === 'function') {
-      localErrors = await validator(values);
-    } else {
-      localErrors = await validateValidators(names, validator, values);
-    }
-    setErrors(localErrors);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setErrors, fieldsToUseInValidateAll, validator]);
+  const validate = useValidate({ setErrors, validator });
+
   return {
     validate, validateByName, errors, hasErrors, resetErrors, setError,
   };

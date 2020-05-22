@@ -1,8 +1,10 @@
+import { useCallback, useMemo } from 'react';
 import { assert, LoggingTypes } from '../utils';
 import { Validators, validValidatorReturnTypes } from './types';
-import { Fields } from '../useFields';
+import { Fields, FieldValue } from '../useFields';
 import { Errors, validErrorValues } from '../useErrors';
 import { MutableValues } from '../useGenericValues';
+import { useValidation } from '..';
 
 function defaultValidator(): validValidatorReturnTypes {
   return '';
@@ -38,4 +40,41 @@ export async function validateValidators(
     objectMap[name] = error;
     return objectMap as Errors;
   }, {});
+}
+
+export function useValidateByName({ setError, validator }) {
+  return useCallback(async (
+    name: string, value: FieldValue,
+  ): Promise<void> => {
+    let error: validErrorValues;
+    if (typeof validator === 'function') {
+      const localErrors = await validator({ [name]: value });
+      error = localErrors[name] || '';
+    } else {
+      const handler = validator[name] || defaultValidator;
+      assertValidator(useValidation.name, name, handler);
+      error = await handler(value) || '';
+    }
+    setError(name, error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setError, validator]);
+}
+
+export function useValidate({ setErrors, validator }) {
+  const fieldsToUseInValidateAll = useMemo((): string[] => (
+    (!validator || typeof validator === 'function') ? [] : Object.keys(validator)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), []);
+
+  return useCallback(async (values: Fields): Promise<void> => {
+    const names = Array.from(new Set([...Object.keys(values), ...fieldsToUseInValidateAll]));
+    let localErrors: Errors;
+    if (typeof validator === 'function') {
+      localErrors = await validator(values);
+    } else {
+      localErrors = await validateValidators(names, validator, values);
+    }
+    setErrors(localErrors);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setErrors, fieldsToUseInValidateAll, validator]);
 }
