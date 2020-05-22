@@ -99,7 +99,7 @@
   "bundlesize": [
     {
       "path": "./dist/react-uniformed.min.js",
-      "maxSize": "4.85 kB"
+      "maxSize": "5.00 kB"
     }
   ],
   "husky": {
