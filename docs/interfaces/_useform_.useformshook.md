@@ -89,7 +89,7 @@ ___
 
 ### `Readonly` submit
 
-• **submit**: *SubmitHandler*
+• **submit**: *[SubmitHandler](_usesubmission_types_.submithandler.md)*
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 ### `Readonly` submitFeedback
 
-• **submitFeedback**: *SubmitFeedback*
+• **submitFeedback**: *[SubmitFeedback](../modules/_usesubmission_types_.md#submitfeedback)*
 
 ___
 

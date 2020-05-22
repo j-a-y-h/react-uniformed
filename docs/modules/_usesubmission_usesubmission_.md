@@ -12,7 +12,7 @@
 
 ###  useSubmission
 
-▸ **useSubmission**(`__namedParameters`: object): *UseSubmissionHook*
+▸ **useSubmission**(`__namedParameters`: object): *[UseSubmissionHook](../interfaces/_usesubmission_types_.usesubmissionhook.md)*
 
 Handles the form submission. Runs validation before calling the `onSubmit` function
 if a `validator` is passed in.  If no validator was passed in, then the `onSubmit` function
@@ -101,13 +101,13 @@ const { submitFeedback } = useSubmission({
 Name | Type | Default | Description |
 ------ | ------ | ------ | ------ |
 `disabled` | boolean | false | - |
-`onSubmit` | SubmissionHandler | - | the specified onSubmit handler. If your onSubmit handler is async, then you should return a promise in your function otherwise this won't work as expected. |
-`reset` | undefined &#124; reset | - | An optional method used to reset the state of the form after submission. |
-`setError` | undefined &#124; setError | - | An optional function that is passed to the specified onSubmit handler.  When setError is called while submitting, the form will not call the specified reset function. |
-`validator` | undefined &#124; validator | - | the specified validator. If your validation logic is async, then you should return a promise in your function otherwise this won't work as expected. |
+`onSubmit` | [SubmissionHandler](../interfaces/_usesubmission_types_.submissionhandler.md) | - | the specified onSubmit handler. If your onSubmit handler is async, then you should return a promise in your function otherwise this won't work as expected. |
+`reset` | undefined &#124; [reset](../interfaces/_usesubmission_types_.usesubmissionprops.md#optional-reset) | - | An optional method used to reset the state of the form after submission. |
+`setError` | undefined &#124; [setError](../interfaces/_usesubmission_types_.usesubmissionprops.md#optional-seterror) | - | An optional function that is passed to the specified onSubmit handler.  When setError is called while submitting, the form will not call the specified reset function. |
+`validator` | undefined &#124; [validator](../interfaces/_usesubmission_types_.usesubmissionprops.md#optional-validator) | - | the specified validator. If your validation logic is async, then you should return a promise in your function otherwise this won't work as expected. |
 `values` | object | - | the specified values to use when submitting the form |
 
-**Returns:** *UseSubmissionHook*
+**Returns:** *[UseSubmissionHook](../interfaces/_usesubmission_types_.usesubmissionhook.md)*
 
 returns a handler for onSubmit events,
  a count of how many times submit was called, and the state of the submission progress.
