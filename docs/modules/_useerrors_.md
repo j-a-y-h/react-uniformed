@@ -7,6 +7,7 @@
 ### Interfaces
 
 * [ErrorHandler](../interfaces/_useerrors_.errorhandler.md)
+* [SetErrorsHandler](../interfaces/_useerrors_.seterrorshandler.md)
 * [UseErrorsHook](../interfaces/_useerrors_.useerrorshook.md)
 
 ### Type aliases
@@ -38,7 +39,7 @@ ___
 
 A hook for managing form errors.
 
-This hook is used by [useValidation](_usevalidation_.md#usevalidation).
+This hook is used by [useValidation](_usevalidation_usevalidation_.md#usevalidation).
 
 **Returns:** *[UseErrorsHook](../interfaces/_useerrors_.useerrorshook.md)*
 

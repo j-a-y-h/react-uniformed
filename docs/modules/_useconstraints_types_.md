@@ -30,7 +30,7 @@
 
 ###  ConstraintValidators
 
-Ƭ **ConstraintValidators**: *Values‹[Constraints](../interfaces/_useconstraints_types_.constraints.md) | [Validator](../interfaces/_usevalidation_.validator.md)›*
+Ƭ **ConstraintValidators**: *Values‹[Constraints](../interfaces/_useconstraints_types_.constraints.md) | [Validator](../interfaces/_usevalidation_types_.validator.md)›*
 
 ___
 

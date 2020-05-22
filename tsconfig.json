@@ -78,7 +78,8 @@
       "./src/useSettersAsRefEventHandler.ts",
       "./src/useSubmission.ts",
       "./src/useTouch.ts",
-      "./src/useValidation.ts"
+      "./src/useValidation/useValidation.ts",
+      "./src/useValidation/types.ts"
     ],
     "theme": "default",
     "readme": "none",

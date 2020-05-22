@@ -22,7 +22,7 @@ A hook that allows you to declaratively manage a form.<br>
 
 See [useTouch](_usetouch_.md#usetouch)<br/>
 See [useFields](_usefields_.md#usefields)<br/>
-See [useValidation](_usevalidation_.md#usevalidation)<br/>
+See [useValidation](_usevalidation_usevalidation_.md#usevalidation)<br/>
 See [useSubmission](_usesubmission_.md#usesubmission)<br/>
 See [useConstraints](_useconstraints_useconstraints_.md#useconstraints) <br/>
 See [useValidateAsSetter](_usevalidateassetter_.md#usevalidateassetter)<br/>
@@ -77,11 +77,11 @@ const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`constraints` | Values‹[Validator](../interfaces/_usevalidation_.validator.md) &#124; [Constraints](../interfaces/_useconstraints_types_.constraints.md)› &#124; [SyncedConstraint](../interfaces/_useconstraints_types_.syncedconstraint.md) | Passed directly to [useConstraints](_useconstraints_useconstraints_.md#useconstraints). Note that you can only use one validator at a time. For instance, if you pass in a value to `validators`, then the `constraints` prop will be ignored in favor of `validators`. |
+`constraints` | Values‹[Validator](../interfaces/_usevalidation_types_.validator.md) &#124; [Constraints](../interfaces/_useconstraints_types_.constraints.md)› &#124; [SyncedConstraint](../interfaces/_useconstraints_types_.syncedconstraint.md) | Passed directly to [useConstraints](_useconstraints_useconstraints_.md#useconstraints). Note that you can only use one validator at a time. For instance, if you pass in a value to `validators`, then the `constraints` prop will be ignored in favor of `validators`. |
 `initialValues` | undefined &#124; object | passed as the first argument to [useFields](_usefields_.md#usefields). |
 `normalizer` | undefined &#124; [NormalizerHandler](../interfaces/_usefields_.normalizerhandler.md) | passed as the second argument to [useFields](_usefields_.md#usefields). See [useNormalizers](_usenormalizers_.md#usenormalizers) for more details. |
 `onSubmit` | [SubmissionHandler](../interfaces/_usesubmission_.submissionhandler.md) | passed directly to [useSubmission](_usesubmission_.md#usesubmission). |
-`validators` | Values‹[Validator](../interfaces/_usevalidation_.validator.md)› &#124; [SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹undefined &#124; null &#124; string &#124; number &#124; false &#124; true &#124; any[] &#124; object› | passed directly to [useValidation](_usevalidation_.md#usevalidation). |
+`validators` | Values‹[Validator](../interfaces/_usevalidation_types_.validator.md)› &#124; [SingleValidator](../interfaces/_usevalidation_types_.singlevalidator.md)‹undefined &#124; null &#124; string &#124; number &#124; false &#124; true &#124; any[] &#124; object› | passed directly to [useValidation](_usevalidation_usevalidation_.md#usevalidation). |
 
 **Returns:** *[UseFormsHook](../interfaces/_useform_.useformshook.md)*
 

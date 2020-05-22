@@ -1,4 +1,4 @@
-[react-uniformed](../README.md) › ["useValidation"](../modules/_usevalidation_.md) › [SingleValidator](_usevalidation_.singlevalidator.md)
+[react-uniformed](../README.md) › ["useValidation/types"](../modules/_usevalidation_types_.md) › [SingleValidator](_usevalidation_types_.singlevalidator.md)
 
 # Interface: SingleValidator <**T**>
 

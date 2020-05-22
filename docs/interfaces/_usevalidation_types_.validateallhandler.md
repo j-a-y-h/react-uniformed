@@ -1,4 +1,4 @@
-[react-uniformed](../README.md) › ["useValidation"](../modules/_usevalidation_.md) › [ValidateAllHandler](_usevalidation_.validateallhandler.md)
+[react-uniformed](../README.md) › ["useValidation/types"](../modules/_usevalidation_types_.md) › [ValidateAllHandler](_usevalidation_types_.validateallhandler.md)
 
 # Interface: ValidateAllHandler <**T, K**>
 

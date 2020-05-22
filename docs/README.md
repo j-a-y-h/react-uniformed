@@ -18,4 +18,4 @@
 * ["useSubmission"](modules/_usesubmission_.md) - Handles form submission.
 * ["useTouch"](modules/_usetouch_.md) - Tracks form touches.
 * ["useValidateAsSetter"](modules/_usevalidateassetter_.md) - Adds support for using `useForm.validate` with `useSettersAsEventHandler` or `useSettersAsRefEventHandler`.
-* ["useValidation"](modules/_usevalidation_.md) - Handles validation logic for a form.
+* ["useValidation"](modules/_usevalidation_usevalidation_.md) - Handles validation logic for a form.

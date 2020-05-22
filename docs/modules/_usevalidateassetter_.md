@@ -12,7 +12,7 @@
 
 ###  useValidateAsSetter
 
-▸ **useValidateAsSetter**(`validate`: [ValidateAllHandler](../interfaces/_usevalidation_.validateallhandler.md)‹[FieldValue](_usefields_.md#fieldvalue)›, `values`: [Fields](_usefields_.md#fields)): *[eventLikeHandlers](_usehandlers_.md#eventlikehandlers)*
+▸ **useValidateAsSetter**(`validate`: [ValidateAllHandler](../interfaces/_usevalidation_types_.validateallhandler.md)‹[FieldValue](_usefields_.md#fieldvalue)›, `values`: [Fields](_usefields_.md#fields)): *[eventLikeHandlers](_usehandlers_.md#eventlikehandlers)*
 
 Creates a function that accepts a name and value as parameters.
 When the returned function is invoked, it will call the specified
@@ -36,7 +36,7 @@ const onChange = useSettersAsEventHandler(setValue, validateAll);
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`validate` | [ValidateAllHandler](../interfaces/_usevalidation_.validateallhandler.md)‹[FieldValue](_usefields_.md#fieldvalue)› | a validation function that accepts an object of values. |
+`validate` | [ValidateAllHandler](../interfaces/_usevalidation_types_.validateallhandler.md)‹[FieldValue](_usefields_.md#fieldvalue)› | a validation function that accepts an object of values. |
 `values` | [Fields](_usefields_.md#fields) | a values object. |
 
 **Returns:** *[eventLikeHandlers](_usehandlers_.md#eventlikehandlers)*
