@@ -2,11 +2,15 @@ import {
   useState, useMemo, useEffect, useCallback, SyntheticEvent,
 } from 'react';
 import { useFunctionStats } from '../useFunctionStats';
+import { UseSubmit, UseSubmitProps } from './types';
 
 export function useSubmit({
-  validator, handleSubmit, submitEvent, disabled,
-  validator, setSubmitEvent,
-}) {
+  submitEvent,
+  disabled,
+  validator,
+  handleSubmit,
+  setSubmitEvent,
+}: UseSubmitProps): UseSubmit {
   // track when we need to starting submitting
   // note that validator doesn't return a value stating if the validation fails, instead the
   // state of the form is updated with the new errors. Because of these mechanics, we need
