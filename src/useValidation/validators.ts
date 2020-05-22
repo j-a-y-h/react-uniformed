@@ -69,7 +69,9 @@ export function useValidateByName({
   }, [setError, validator]);
 }
 
-export function useValidate({ setErrors, validator }: UseValidateProps): ValidateAllHandler<FieldValue> {
+export function useValidate({
+  setErrors, validator,
+}: UseValidateProps): ValidateAllHandler<FieldValue> {
   const fieldsToUseInValidateAll = useMemo((): string[] => (
     (!validator || typeof validator === 'function') ? [] : Object.keys(validator)
     // eslint-disable-next-line react-hooks/exhaustive-deps

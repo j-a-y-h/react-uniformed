@@ -7,9 +7,8 @@ import {
 import {
   useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from './useTouch';
-import {
-  useSubmission, SubmitHandler, SubmitFeedback, SubmissionHandler,
-} from './useSubmission';
+import { useSubmission } from './useSubmission';
+import { SubmitHandler, SubmitFeedback, SubmissionHandler } from './useSubmission/types';
 import { useValidation } from './useValidation';
 import {
   Validators,
