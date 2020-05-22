@@ -10,7 +10,7 @@ import {
 import { assert, LoggingTypes } from '../utils';
 import { FieldValue } from '../useFields';
 import { propertyValidators } from './propertyValidators';
-import { Validators, Validator } from '../useValidation';
+import { Validators, Validator } from '../useValidation/types';
 import { MutableValues } from '../useGenericValues';
 import { hasRule, getRuleValue, getRuleMessage } from './utils';
 

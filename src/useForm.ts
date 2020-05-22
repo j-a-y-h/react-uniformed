@@ -10,13 +10,13 @@ import {
 import {
   useSubmission, SubmitHandler, SubmitFeedback, SubmissionHandler,
 } from './useSubmission';
+import { useValidation } from './useValidation';
 import {
-  useValidation,
   Validators,
   ValidateHandler,
   ValidateAllHandler,
   SingleValidator,
-} from './useValidation';
+} from './useValidation/types';
 import {
   SetValueCallback, MutableValues, PartialValues, isMapWithValues,
 } from './useGenericValues';

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ValidateAllHandler } from './useValidation';
+import { ValidateAllHandler } from './useValidation/types';
 import { FieldValue, Fields } from './useFields';
 import { eventLikeHandlers } from './useHandlers';
 
