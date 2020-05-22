@@ -1,6 +1,7 @@
 import { useCallback, SyntheticEvent, useRef } from 'react';
 import { UseSubmissionProps, UseSubmissionHook } from './types';
-import { useHandleSubmit, useSubmit } from './submit';
+import { useHandleSubmit } from './useHandleSubmit';
+import { useSubmit } from './useSubmit';
 
 /* eslint-disable max-len */
 /**
