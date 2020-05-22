@@ -34,6 +34,21 @@ export interface UseSubmissionHook {
   readonly submitFeedback: SubmitFeedback;
 }
 
+export interface UseHandleSubmitProps {
+  readonly values: Fields;
+  readonly onSubmit: SubmissionHandler;
+  reset?(event?: SyntheticEvent): void;
+  setError?(name: string, error: string): void;
+  setSubmitEvent(event?: SyntheticEvent): void;
+}
+
+export interface UseHandleSubmit {
+  readonly isSubmitting: boolean;
+  readonly submitCount: number;
+  readonly handleSubmit: SubmitHandler;
+  readonly submitFeedback: SubmitFeedback;
+}
+
 export enum ActionTypes { error, feedback, reset }
 export interface Action {
   readonly type: ActionTypes;

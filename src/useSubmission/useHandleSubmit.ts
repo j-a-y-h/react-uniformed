@@ -1,7 +1,9 @@
 import {
   useCallback, SyntheticEvent, useReducer, Reducer,
 } from 'react';
-import { ActionTypes, SubmitFeedback, Action } from './types';
+import {
+  ActionTypes, SubmitFeedback, Action, UseHandleSubmit, UseHandleSubmitProps,
+} from './types';
 import { useFunctionStats } from '../useFunctionStats';
 
 function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
@@ -21,8 +23,12 @@ function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
 }
 
 export function useHandleSubmit({
-  onSubmit, values, reset, setError, setSubmitEvent,
-}) {
+  onSubmit,
+  values,
+  reset,
+  setError,
+  setSubmitEvent,
+}: UseHandleSubmitProps): UseHandleSubmit {
   // track the feedback value
   const [submitFeedback, dispatch] = useReducer<Reducer<SubmitFeedback, Action>>(reducer, {});
 
