@@ -1,4 +1,6 @@
-import { validErrorValues, Errors, ErrorHandler } from '../useErrors';
+import {
+  validErrorValues, Errors, ErrorHandler, SetErrorsHandler,
+} from '../useErrors';
 import { Values, PartialValues } from '../useGenericValues';
 import { FieldValue } from '../useFields';
 
@@ -35,4 +37,14 @@ export interface UseValidatorHookPartial<T, K> {
   readonly validateByName: ValidateHandler<T, keyof K>;
   readonly validate: ValidateAllHandler<T, PartialValues<K, T>>;
   readonly resetErrors: () => void;
+}
+
+export interface UseValidateByName {
+  setError: ErrorHandler;
+  validator: Validators | SingleValidator<FieldValue>;
+}
+
+export interface UseValidate {
+  setErrors: SetErrorsHandler;
+  validator: Validators | SingleValidator<FieldValue>;
 }

@@ -1,6 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { assert, LoggingTypes } from '../utils';
-import { Validators, validValidatorReturnTypes } from './types';
+import {
+  Validators,
+  validValidatorReturnTypes,
+  ValidateHandler,
+  ValidateAllHandler,
+  UseValidateByName,
+  UseValidate,
+} from './types';
 import { Fields, FieldValue } from '../useFields';
 import { Errors, validErrorValues } from '../useErrors';
 import { MutableValues } from '../useGenericValues';
@@ -10,7 +17,7 @@ function defaultValidator(): validValidatorReturnTypes {
   return '';
 }
 
-export function assertValidator(functionName: string, name: string, validator: Function): void {
+function assertValidator(functionName: string, name: string, validator: Function): void {
   assert.error(
     typeof validator === 'function',
     LoggingTypes.typeError,
@@ -42,7 +49,9 @@ export async function validateValidators(
   }, {});
 }
 
-export function useValidateByName({ setError, validator }) {
+export function useValidateByName({
+  setError, validator,
+}: UseValidateByName): ValidateHandler<FieldValue> {
   return useCallback(async (
     name: string, value: FieldValue,
   ): Promise<void> => {
@@ -60,7 +69,7 @@ export function useValidateByName({ setError, validator }) {
   }, [setError, validator]);
 }
 
-export function useValidate({ setErrors, validator }) {
+export function useValidate({ setErrors, validator }: UseValidate): ValidateAllHandler<FieldValue> {
   const fieldsToUseInValidateAll = useMemo((): string[] => (
     (!validator || typeof validator === 'function') ? [] : Object.keys(validator)
     // eslint-disable-next-line react-hooks/exhaustive-deps

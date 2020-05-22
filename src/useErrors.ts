@@ -7,11 +7,15 @@ export type Errors = Values<validErrorValues>;
 export interface ErrorHandler<T = string> {
   (name: T, error: validErrorValues): void;
 }
+
+export interface SetErrorsHandler {
+  (errors: Errors): void;
+}
 export interface UseErrorsHook {
   readonly errors: Errors;
   readonly hasErrors: boolean;
   readonly setError: ErrorHandler;
-  readonly setErrors: (errors: Errors) => void;
+  readonly setErrors: SetErrorsHandler;
   readonly resetErrors: () => void;
 }
 
