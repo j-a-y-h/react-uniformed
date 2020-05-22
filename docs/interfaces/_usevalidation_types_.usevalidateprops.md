@@ -1,17 +1,17 @@
-[react-uniformed](../README.md) › ["useValidation/types"](../modules/_usevalidation_types_.md) › [UseValidate](_usevalidation_types_.usevalidate.md)
+[react-uniformed](../README.md) › ["useValidation/types"](../modules/_usevalidation_types_.md) › [UseValidateProps](_usevalidation_types_.usevalidateprops.md)
 
-# Interface: UseValidate
+# Interface: UseValidateProps
 
 ## Hierarchy
 
-* **UseValidate**
+* **UseValidateProps**
 
 ## Index
 
 ### Properties
 
-* [setErrors](_usevalidation_types_.usevalidate.md#seterrors)
-* [validator](_usevalidation_types_.usevalidate.md#validator)
+* [setErrors](_usevalidation_types_.usevalidateprops.md#seterrors)
+* [validator](_usevalidation_types_.usevalidateprops.md#validator)
 
 ## Properties
 

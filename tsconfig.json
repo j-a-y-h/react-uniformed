@@ -76,7 +76,8 @@
       "./src/normalizeNestedObjects.ts",
       "./src/useNormalizers.ts",
       "./src/useSettersAsRefEventHandler.ts",
-      "./src/useSubmission.ts",
+      "./src/useSubmission/useSubmission.ts",
+      "./src/useSubmission/types.ts",
       "./src/useTouch.ts",
       "./src/useValidation/useValidation.ts",
       "./src/useValidation/types.ts"

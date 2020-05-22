@@ -15,7 +15,7 @@
 * ["useNormalizers"](modules/_usenormalizers_.md) - Creates a single normalizer function from a list of normalizers.
 * ["useSettersAsEventHandler"](modules/_usesettersaseventhandler_.md) - Converts a list of setters to a single event handler.
 * ["useSettersAsRefEventHandler"](modules/_usesettersasrefeventhandler_.md) - Converts a list of setters to a single event handler using a ref to register the event.
-* ["useSubmission"](modules/_usesubmission_.md) - Handles form submission.
+* ["useSubmission"](modules/_usesubmission_usesubmission_.md) - Handles form submission.
 * ["useTouch"](modules/_usetouch_.md) - Tracks form touches.
 * ["useValidateAsSetter"](modules/_usevalidateassetter_.md) - Adds support for using `useForm.validate` with `useSettersAsEventHandler` or `useSettersAsRefEventHandler`.
 * ["useValidation"](modules/_usevalidation_usevalidation_.md) - Handles validation logic for a form.

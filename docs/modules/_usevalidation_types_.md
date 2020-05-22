@@ -7,8 +7,8 @@
 ### Interfaces
 
 * [SingleValidator](../interfaces/_usevalidation_types_.singlevalidator.md)
-* [UseValidate](../interfaces/_usevalidation_types_.usevalidate.md)
-* [UseValidateByName](../interfaces/_usevalidation_types_.usevalidatebyname.md)
+* [UseValidateByNameProps](../interfaces/_usevalidation_types_.usevalidatebynameprops.md)
+* [UseValidateProps](../interfaces/_usevalidation_types_.usevalidateprops.md)
 * [UseValidatorHook](../interfaces/_usevalidation_types_.usevalidatorhook.md)
 * [UseValidatorHookPartial](../interfaces/_usevalidation_types_.usevalidatorhookpartial.md)
 * [ValidateAllHandler](../interfaces/_usevalidation_types_.validateallhandler.md)
