@@ -2,51 +2,9 @@ import {
   useCallback, SyntheticEvent, useState, useEffect, useMemo, useReducer, Reducer, useRef,
 } from 'react';
 import { useFunctionStats } from './useFunctionStats';
-import { ErrorHandler } from './useErrors';
-import { Fields } from './useFields';
-
-type onSubmitModifiers = Readonly<{
-  setError: ErrorHandler<string>;
-  setFeedback: (feedback: string) => void;
-  event?: SyntheticEvent;
-}>;
-
-export interface SubmissionHandler {
-  (values: Fields, api: onSubmitModifiers): void | never | Promise<void | never>;
-}
-export interface SubmitHandler {
-  (event?: SyntheticEvent): void;
-}
-export interface UseSubmissionProps {
-  readonly onSubmit: SubmissionHandler;
-  validator?(): Promise<void> | void;
-  /**
-   * Determines if submission should be disabled. Generally,
-   * you want to disable if there are errors.
-   */
-  readonly disabled?: boolean;
-  reset?(event?: SyntheticEvent): void;
-  setError?(name: string, error: string): void;
-  readonly values?: Fields;
-}
-
-export interface UseSubmissionHook {
-  readonly isSubmitting: boolean;
-  readonly submitCount: number;
-  readonly submit: SubmitHandler;
-  readonly submitFeedback: SubmitFeedback;
-}
-
-enum ActionTypes { error, feedback, reset }
-interface Action {
-  readonly type: ActionTypes;
-  readonly payload?: string;
-}
-export type SubmitFeedback = Readonly<{
-  error?: string;
-  message?: string;
-}>;
-
+import {
+  SubmitFeedback, Action, ActionTypes, UseSubmissionProps, UseSubmissionHook,
+} from './types';
 
 function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
   switch (action.type) {
