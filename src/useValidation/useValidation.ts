@@ -1,80 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import {
-  validErrorValues, Errors, useErrors, ErrorHandler,
-} from './useErrors';
+  validErrorValues, Errors, useErrors,
+} from '../useErrors';
+import { FieldValue, Fields } from '../useFields';
 import {
-  Values, MutableValues, PartialValues,
-} from './useGenericValues';
-import { assert, LoggingTypes } from './utils';
-import { FieldValue, Fields } from './useFields';
-
-type validValidatorReturnTypes = validErrorValues | Promise<validErrorValues>;
-type validSingleValidatorReturnTypes = Errors | Promise<Errors>;
-export interface SingleValidator<T> {
-  (values: Values<T>): validSingleValidatorReturnTypes;
-}
-export interface Validator {
-  (value?: FieldValue): validValidatorReturnTypes;
-}
-export type Validators = Values<Validator>;
-export interface ValidateHandler<T, K = string> {
-  (name: K, value: T): void;
-}
-export interface ValidateAllHandler<T, K = Values<T>> {
-  (valuesMap: K): Promise<void>;
-}
-interface UseValidatorHook<T> {
-  readonly errors: Errors;
-  readonly hasErrors: boolean;
-  readonly setError: ErrorHandler;
-  readonly validateByName: ValidateHandler<T>;
-  readonly validate: ValidateAllHandler<T>;
-  readonly resetErrors: () => void;
-}
-interface UseValidatorHookPartial<T, K> {
-  readonly errors: PartialValues<K, validErrorValues>;
-  readonly hasErrors: boolean;
-  readonly setError: ErrorHandler<keyof K>;
-  readonly validateByName: ValidateHandler<T, keyof K>;
-  readonly validate: ValidateAllHandler<T, PartialValues<K, T>>;
-  readonly resetErrors: () => void;
-}
-
-function defaultValidator(): validValidatorReturnTypes {
-  return '';
-}
-
-function assertValidator(functionName: string, name: string, validator: Function): void {
-  assert.error(
-    typeof validator === 'function',
-    LoggingTypes.typeError,
-    // note: received is any bc we don't know what the validator is
-    // as the input could have defaulted to the defaultValidator
-    `(expect: function, received: any) ${functionName} expects the validator with the name (${name}) to be a function.`,
-  );
-}
-
-export async function validateValidators(
-  names: string[], validators: Validators, values: Fields,
-): Promise<Errors> {
-  // validate all fields by name
-  const errorsPromiseMap = names
-    .map(async (name): Promise<[string, validErrorValues]> => {
-      const handler = validators[name] || defaultValidator;
-      assertValidator(validateValidators.name, name, handler);
-      const currentErrors = await handler(values[name]);
-      return [name, currentErrors];
-    });
-  const errorsMap = await Promise.all(errorsPromiseMap);
-  // create an Errors object from the errorsMap
-  return errorsMap.reduce((
-    objectMap: MutableValues<validErrorValues>, [name, error],
-  ): Errors => {
-    // eslint-disable-next-line no-param-reassign
-    objectMap[name] = error;
-    return objectMap as Errors;
-  }, {});
-}
+  SingleValidator, UseValidatorHook, Validators, UseValidatorHookPartial,
+} from './types';
+import { validateValidators } from './validators';
 
 export function useValidation(
   validator: SingleValidator<FieldValue>
