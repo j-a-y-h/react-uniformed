@@ -89,7 +89,7 @@ ___
 
 ### `Readonly` submit
 
-• **submit**: *[SubmitHandler](_usesubmission_.submithandler.md)*
+• **submit**: *[SubmitHandler](_usesubmission_types_.submithandler.md)*
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 ### `Readonly` submitFeedback
 
-• **submitFeedback**: *[SubmitFeedback](../modules/_usesubmission_.md#submitfeedback)*
+• **submitFeedback**: *[SubmitFeedback](../modules/_usesubmission_types_.md#submitfeedback)*
 
 ___
 
@@ -119,13 +119,13 @@ ___
 
 ### `Readonly` validate
 
-• **validate**: *[ValidateAllHandler](_usevalidation_.validateallhandler.md)‹[FieldValue](../modules/_usefields_.md#fieldvalue)›*
+• **validate**: *[ValidateAllHandler](_usevalidation_types_.validateallhandler.md)‹[FieldValue](../modules/_usefields_.md#fieldvalue)›*
 
 ___
 
 ### `Readonly` validateByName
 
-• **validateByName**: *[ValidateHandler](_usevalidation_.validatehandler.md)‹[FieldValue](../modules/_usefields_.md#fieldvalue)›*
+• **validateByName**: *[ValidateHandler](_usevalidation_types_.validatehandler.md)‹[FieldValue](../modules/_usefields_.md#fieldvalue)›*
 
 ___
 

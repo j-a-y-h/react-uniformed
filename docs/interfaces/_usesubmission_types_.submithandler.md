@@ -1,4 +1,4 @@
-[react-uniformed](../README.md) › ["useSubmission"](../modules/_usesubmission_.md) › [SubmitHandler](_usesubmission_.submithandler.md)
+[react-uniformed](../README.md) › ["useSubmission/types"](../modules/_usesubmission_types_.md) › [SubmitHandler](_usesubmission_types_.submithandler.md)
 
 # Interface: SubmitHandler
 

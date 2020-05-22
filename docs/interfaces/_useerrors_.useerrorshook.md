@@ -48,14 +48,4 @@ ___
 
 ### `Readonly` setErrors
 
-• **setErrors**: *function*
-
-#### Type declaration:
-
-▸ (`errors`: [Errors](../modules/_useerrors_.md#errors)): *void*
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`errors` | [Errors](../modules/_useerrors_.md#errors) |
+• **setErrors**: *[SetErrorsHandler](_useerrors_.seterrorshandler.md)*

@@ -1,4 +1,4 @@
-[react-uniformed](../README.md) › ["useSubmission"](../modules/_usesubmission_.md) › [UseSubmissionProps](_usesubmission_.usesubmissionprops.md)
+[react-uniformed](../README.md) › ["useSubmission/types"](../modules/_usesubmission_types_.md) › [UseSubmissionProps](_usesubmission_types_.usesubmissionprops.md)
 
 # Interface: UseSubmissionProps
 
@@ -10,15 +10,15 @@
 
 ### Properties
 
-* [disabled](_usesubmission_.usesubmissionprops.md#optional-readonly-disabled)
-* [onSubmit](_usesubmission_.usesubmissionprops.md#readonly-onsubmit)
-* [values](_usesubmission_.usesubmissionprops.md#optional-readonly-values)
+* [disabled](_usesubmission_types_.usesubmissionprops.md#optional-readonly-disabled)
+* [onSubmit](_usesubmission_types_.usesubmissionprops.md#readonly-onsubmit)
+* [values](_usesubmission_types_.usesubmissionprops.md#optional-readonly-values)
 
 ### Methods
 
-* [reset](_usesubmission_.usesubmissionprops.md#optional-reset)
-* [setError](_usesubmission_.usesubmissionprops.md#optional-seterror)
-* [validator](_usesubmission_.usesubmissionprops.md#optional-validator)
+* [reset](_usesubmission_types_.usesubmissionprops.md#optional-reset)
+* [setError](_usesubmission_types_.usesubmissionprops.md#optional-seterror)
+* [validator](_usesubmission_types_.usesubmissionprops.md#optional-validator)
 
 ## Properties
 
@@ -33,7 +33,7 @@ ___
 
 ### `Readonly` onSubmit
 
-• **onSubmit**: *[SubmissionHandler](_usesubmission_.submissionhandler.md)*
+• **onSubmit**: *[SubmissionHandler](_usesubmission_types_.submissionhandler.md)*
 
 ___
 

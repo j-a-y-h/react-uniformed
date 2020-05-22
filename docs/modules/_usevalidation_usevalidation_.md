@@ -1,42 +1,24 @@
-[react-uniformed](../README.md) › ["useValidation"](_usevalidation_.md)
+[react-uniformed](../README.md) › ["useValidation"](_usevalidation_usevalidation_.md)
 
 # Module: "useValidation"
 
 ## Index
 
-### Interfaces
-
-* [SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)
-* [ValidateAllHandler](../interfaces/_usevalidation_.validateallhandler.md)
-* [ValidateHandler](../interfaces/_usevalidation_.validatehandler.md)
-* [Validator](../interfaces/_usevalidation_.validator.md)
-
-### Type aliases
-
-* [Validators](_usevalidation_.md#validators)
-
 ### Functions
 
-* [useValidation](_usevalidation_.md#usevalidation)
-* [validateValidators](_usevalidation_.md#validatevalidators)
-
-## Type aliases
-
-###  Validators
-
-Ƭ **Validators**: *Values‹[Validator](../interfaces/_usevalidation_.validator.md)›*
+* [useValidation](_usevalidation_usevalidation_.md#usevalidation)
 
 ## Functions
 
 ###  useValidation
 
-▸ **useValidation**(`validator`: [SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›): *UseValidatorHook‹[FieldValue](_usefields_.md#fieldvalue)›*
+▸ **useValidation**(`validator`: [SingleValidator](../interfaces/_usevalidation_types_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›): *[UseValidatorHook](../interfaces/_usevalidation_types_.usevalidatorhook.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
 
 A hook for performing validation.
 
 See [useErrors](_useerrors_.md#useerrors).
 
-**`example`** 
+**`example`**
 
 ```javascript
 // validate using validation maps
@@ -72,19 +54,19 @@ console.log(errors);
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`validator` | [SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)› | A validation map or a validation function. |
+`validator` | [SingleValidator](../interfaces/_usevalidation_types_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)› | A validation map or a validation function. |
 
-**Returns:** *UseValidatorHook‹[FieldValue](_usefields_.md#fieldvalue)›*
+**Returns:** *[UseValidatorHook](../interfaces/_usevalidation_types_.usevalidatorhook.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
 
-returns an {@link UseValidatorHook} or {@link UseValidatorHookPartial} object.
+returns an [UseValidatorHook](../interfaces/_usevalidation_types_.usevalidatorhook.md) or [UseValidatorHookPartial](../interfaces/_usevalidation_types_.usevalidatorhookpartial.md) object.
 
-▸ **useValidation**<**T**>(`validator`: T): *UseValidatorHookPartial‹[FieldValue](_usefields_.md#fieldvalue), T›*
+▸ **useValidation**<**T**>(`validator`: T): *[UseValidatorHookPartial](../interfaces/_usevalidation_types_.usevalidatorhookpartial.md)‹[FieldValue](_usefields_.md#fieldvalue), T›*
 
 A hook for performing validation.
 
 See [useErrors](_useerrors_.md#useerrors).
 
-**`example`** 
+**`example`**
 
 ```javascript
 // validate using validation maps
@@ -118,7 +100,7 @@ console.log(errors);
 
 **Type parameters:**
 
-▪ **T**: *[Validators](_usevalidation_.md#validators)*
+▪ **T**: *[Validators](_usevalidation_types_.md#validators)*
 
 **Parameters:**
 
@@ -126,17 +108,17 @@ Name | Type |
 ------ | ------ |
 `validator` | T |
 
-**Returns:** *UseValidatorHookPartial‹[FieldValue](_usefields_.md#fieldvalue), T›*
+**Returns:** *[UseValidatorHookPartial](../interfaces/_usevalidation_types_.usevalidatorhookpartial.md)‹[FieldValue](_usefields_.md#fieldvalue), T›*
 
-returns an {@link UseValidatorHook} or {@link UseValidatorHookPartial} object.
+returns an [UseValidatorHook](../interfaces/_usevalidation_types_.usevalidatorhook.md) or [UseValidatorHookPartial](../interfaces/_usevalidation_types_.usevalidatorhookpartial.md) object.
 
-▸ **useValidation**<**T**>(`validator`: T | [SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›): *UseValidatorHookPartial‹[FieldValue](_usefields_.md#fieldvalue), T› | UseValidatorHook‹[FieldValue](_usefields_.md#fieldvalue)›*
+▸ **useValidation**<**T**>(`validator`: T | [SingleValidator](../interfaces/_usevalidation_types_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)›): *[UseValidatorHookPartial](../interfaces/_usevalidation_types_.usevalidatorhookpartial.md)‹[FieldValue](_usefields_.md#fieldvalue), T› | [UseValidatorHook](../interfaces/_usevalidation_types_.usevalidatorhook.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
 
 A hook for performing validation.
 
 See [useErrors](_useerrors_.md#useerrors).
 
-**`example`** 
+**`example`**
 
 ```javascript
 // validate using validation maps
@@ -170,30 +152,14 @@ console.log(errors);
 
 **Type parameters:**
 
-▪ **T**: *[Validators](_usevalidation_.md#validators)*
+▪ **T**: *[Validators](_usevalidation_types_.md#validators)*
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`validator` | T &#124; [SingleValidator](../interfaces/_usevalidation_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)› |
+`validator` | T &#124; [SingleValidator](../interfaces/_usevalidation_types_.singlevalidator.md)‹[FieldValue](_usefields_.md#fieldvalue)› |
 
-**Returns:** *UseValidatorHookPartial‹[FieldValue](_usefields_.md#fieldvalue), T› | UseValidatorHook‹[FieldValue](_usefields_.md#fieldvalue)›*
+**Returns:** *[UseValidatorHookPartial](../interfaces/_usevalidation_types_.usevalidatorhookpartial.md)‹[FieldValue](_usefields_.md#fieldvalue), T› | [UseValidatorHook](../interfaces/_usevalidation_types_.usevalidatorhook.md)‹[FieldValue](_usefields_.md#fieldvalue)›*
 
-returns an {@link UseValidatorHook} or {@link UseValidatorHookPartial} object.
-
-___
-
-###  validateValidators
-
-▸ **validateValidators**(`names`: string[], `validators`: [Validators](_usevalidation_.md#validators), `values`: [Fields](_usefields_.md#fields)): *Promise‹[Errors](_useerrors_.md#errors)›*
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`names` | string[] |
-`validators` | [Validators](_usevalidation_.md#validators) |
-`values` | [Fields](_usefields_.md#fields) |
-
-**Returns:** *Promise‹[Errors](_useerrors_.md#errors)›*
+returns an [UseValidatorHook](../interfaces/_usevalidation_types_.usevalidatorhook.md) or [UseValidatorHookPartial](../interfaces/_usevalidation_types_.usevalidatorhookpartial.md) object.

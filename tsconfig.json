@@ -39,7 +39,7 @@
     "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
 
     /* Module Resolution Options */
-    // "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+    "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
     // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
     // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
@@ -64,16 +64,23 @@
     "mode": "module",
     "out": "./docs",
     "inputFiles": [
-      "./src/useConstraints.ts",
+      "./src/useConstraints/useConstraints.ts",
+      "./src/useConstraints/types.ts",
       "./src/useErrors.ts",
       "./src/useFields.ts",
       "./src/useForm.ts",
       "./src/useHandlers.ts",
+      "./src/useSettersAsEventHandler.ts",
+      "./src/useSettersAsRefEventHandler.ts",
+      "./src/useValidateAsSetter.ts",
+      "./src/normalizeNestedObjects.ts",
       "./src/useNormalizers.ts",
       "./src/useSettersAsRefEventHandler.ts",
-      "./src/useSubmission.ts",
+      "./src/useSubmission/useSubmission.ts",
+      "./src/useSubmission/types.ts",
       "./src/useTouch.ts",
-      "./src/useValidation.ts"
+      "./src/useValidation/useValidation.ts",
+      "./src/useValidation/types.ts"
     ],
     "theme": "default",
     "readme": "none",

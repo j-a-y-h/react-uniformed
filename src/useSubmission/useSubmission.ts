@@ -1,68 +1,8 @@
-import {
-  useCallback, SyntheticEvent, useState, useEffect, useMemo, useReducer, Reducer, useRef,
-} from 'react';
-import { useFunctionStats } from './useFunctionStats';
-import { ErrorHandler } from './useErrors';
-import { Fields } from './useFields';
+import { useCallback, SyntheticEvent, useRef } from 'react';
+import { UseSubmissionProps, UseSubmissionHook } from './types';
+import { useHandleSubmit } from './useHandleSubmit';
+import { useSubmit } from './useSubmit';
 
-type onSubmitModifiers = Readonly<{
-  setError: ErrorHandler<string>;
-  setFeedback: (feedback: string) => void;
-  event?: SyntheticEvent;
-}>;
-
-export interface SubmissionHandler {
-  (values: Fields, api: onSubmitModifiers): void | never | Promise<void | never>;
-}
-export interface SubmitHandler {
-  (event?: SyntheticEvent): void;
-}
-export interface UseSubmissionProps {
-  readonly onSubmit: SubmissionHandler;
-  validator?(): Promise<void> | void;
-  /**
-   * Determines if submission should be disabled. Generally,
-   * you want to disable if there are errors.
-   */
-  readonly disabled?: boolean;
-  reset?(event?: SyntheticEvent): void;
-  setError?(name: string, error: string): void;
-  readonly values?: Fields;
-}
-
-export interface UseSubmissionHook {
-  readonly isSubmitting: boolean;
-  readonly submitCount: number;
-  readonly submit: SubmitHandler;
-  readonly submitFeedback: SubmitFeedback;
-}
-
-enum ActionTypes { error, feedback, reset }
-interface Action {
-  readonly type: ActionTypes;
-  readonly payload?: string;
-}
-export type SubmitFeedback = Readonly<{
-  error?: string;
-  message?: string;
-}>;
-
-
-function reducer(_: SubmitFeedback, action: Action): SubmitFeedback {
-  switch (action.type) {
-  case ActionTypes.error:
-    return {
-      error: action.payload,
-    };
-  case ActionTypes.feedback:
-    return {
-      message: action.payload,
-    };
-  case ActionTypes.reset:
-  default:
-    return {};
-  }
-}
 /* eslint-disable max-len */
 /**
  * Handles the form submission. Runs validation before calling the `onSubmit` function
@@ -163,93 +103,24 @@ export function useSubmission({
   setError,
   values = {},
 }: UseSubmissionProps): UseSubmissionHook {
-  // track the feedback value
-  const [submitFeedback, dispatch] = useReducer<Reducer<SubmitFeedback, Action>>(reducer, {});
-  // track when we need to starting submitting
-  // note that validator doesn't return a value stating if the validation fails, instead the
-  // state of the form is updated with the new errors. Because of these mechanics, we need
-  // to track the state of errors using disabled prop and this isReadyToSubmit value
-  const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   // track the submitEvent in a ref
   const submitEvent = useRef<SyntheticEvent | undefined>();
-  // memoize the validator function
-  const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
+
+  const setSubmitEvent = useCallback((event) => { submitEvent.current = event; }, [submitEvent]);
   const {
-    fnc: validate,
-    isRunning: isValidating,
-  } = useFunctionStats(validationFnc);
-
-  // create a submit handler
-  const handleSubmit = useCallback(async (event?: SyntheticEvent): Promise<void> => {
-    submitEvent.current = undefined;
-    // note: give the handler every value so that we don't have to worry about
-    // it later
-    let shouldReset = true;
-    // create a setError callback function
-    const wrappedSetError = (name: string, error: string): void => {
-      shouldReset = false;
-      if (setError) {
-        setError(name, error);
-      }
-      dispatch({ type: ActionTypes.reset });
-    };
-    try {
-      // create a setFeedback handler
-      const setFeedback = (feedback: string): void => {
-        dispatch({
-          payload: feedback,
-          type: ActionTypes.feedback,
-        });
-      };
-      // wait for the submit handler to return
-      await onSubmit(values, { setError: wrappedSetError, setFeedback, event });
-      if (shouldReset && reset) {
-        // reset the form
-        reset(event);
-      }
-    } catch (e) {
-      // error occured, set the submitFeedback.error value
-      dispatch({
-        payload: String(e || 'Error occurred'),
-        type: ActionTypes.error,
-      });
-    }
-  }, [onSubmit, values, reset, setError]);
-
-  // track submission count
-  const {
-    fnc: wrappedOnSubmit,
-    invokeCount: submitCount,
-    isRunning: isSubmitting,
-  } = useFunctionStats<SyntheticEvent | undefined, void>(handleSubmit);
-
-  // track when to kick off submission
-  useEffect(() => {
-    if (isReadyToSubmit && !isValidating) {
-      setIsReadyToSubmit(false);
-      if (!disabled) {
-        wrappedOnSubmit(submitEvent.current);
-      }
-    }
-  }, [
-    disabled,
-    wrappedOnSubmit,
-    isReadyToSubmit,
-    isValidating,
-  ]);
+    handleSubmit, submitCount, isSubmitting, submitFeedback,
+  } = useHandleSubmit({
+    onSubmit, values, reset, setError, setSubmitEvent,
+  });
 
   // The submit callback that is used in the form
-  const submit = useCallback((event?: SyntheticEvent) => {
-    if (event) {
-      event.preventDefault?.();
-      event.persist?.();
-      submitEvent.current = event;
-    }
-    setIsReadyToSubmit(true);
-    if (validator) {
-      validate();
-    }
-  }, [validator, validate, setIsReadyToSubmit]);
+  const submit = useSubmit({
+    setSubmitEvent,
+    submitEvent,
+    handleSubmit,
+    disabled,
+    validator,
+  });
   return {
     isSubmitting, submitCount, submit, submitFeedback,
   };

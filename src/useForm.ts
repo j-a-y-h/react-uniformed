@@ -7,20 +7,20 @@ import {
 import {
   useTouch, Touches, TouchHandler, TouchFieldHandler,
 } from './useTouch';
+import { useSubmission } from './useSubmission';
+import { SubmitHandler, SubmitFeedback, SubmissionHandler } from './useSubmission/types';
+import { useValidation } from './useValidation';
 import {
-  useSubmission, SubmitHandler, SubmitFeedback, SubmissionHandler,
-} from './useSubmission';
-import {
-  useValidation,
   Validators,
   ValidateHandler,
   ValidateAllHandler,
   SingleValidator,
-} from './useValidation';
+} from './useValidation/types';
 import {
   SetValueCallback, MutableValues, PartialValues, isMapWithValues,
 } from './useGenericValues';
-import { ConstraintValidators, SyncedConstraint, useConstraints } from './useConstraints';
+import { ConstraintValidators, SyncedConstraint } from './useConstraints/types';
+import { useConstraints } from './useConstraints';
 import { resetForm } from './utils';
 
 // TODO: document the UseFormsHook
