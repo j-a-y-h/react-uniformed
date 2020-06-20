@@ -3,6 +3,7 @@
 This folder contains all the tests in this project. The testing framework is Jest.
 
 ### Getting started
+
 ```shell
 # Clone repo
 git clone https://github.com/j-a-y-h/react-uniformed.git
@@ -12,6 +13,7 @@ yarn
 ```
 
 ### Scripts
+
 ```shell
 # Run all test in silent mode
 yarn test

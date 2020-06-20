@@ -1,19 +1,19 @@
-import { renderHook, act } from '@testing-library/react-hooks'
-import { useErrors } from "../src"
+import { renderHook, act } from '@testing-library/react-hooks';
+import { useErrors } from '../src';
 
-describe("useErrors", () => {
+describe('useErrors', () => {
   it('can set errors', () => {
     const { result } = renderHook(() => useErrors());
 
-    act(() => result.current.setError("email", "required"));
-    expect(result.current.errors.email).toEqual("required");
+    act(() => result.current.setError('email', 'required'));
+    expect(result.current.errors.email).toEqual('required');
   });
   it('can reset errors', () => {
     const { result } = renderHook(() => useErrors());
 
     act(() => {
-      result.current.setError("cream", "cream is required");
-      result.current.setError("soda", "please pick a soda");
+      result.current.setError('cream', 'cream is required');
+      result.current.setError('soda', 'please pick a soda');
       result.current.resetErrors();
     });
 
@@ -22,7 +22,7 @@ describe("useErrors", () => {
   it('determines if there are errors', () => {
     const { result } = renderHook(() => useErrors());
 
-    act(() => result.current.setError("email", "required"));
+    act(() => result.current.setError('email', 'required'));
     expect(result.current.hasErrors).toEqual(true);
     act(() => result.current.resetErrors());
     expect(result.current.hasErrors).toEqual(false);
