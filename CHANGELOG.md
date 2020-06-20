@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- [`useForm`, `useFields`](Typescript) Change to values object type to any.
+
 ## [0.0.18] - 2020-05-17
 
 ### Fixed
