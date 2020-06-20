@@ -1,6 +1,4 @@
-import {
-  useState, useMemo, useEffect, useCallback, SyntheticEvent,
-} from 'react';
+import { useState, useMemo, useEffect, useCallback, SyntheticEvent } from 'react';
 import { useFunctionStats } from '../useFunctionStats';
 import { UseSubmit, UseSubmitProps } from './types';
 
@@ -20,10 +18,7 @@ export function useSubmit({
   // memoize the validator function
   const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
 
-  const {
-    fnc: validate,
-    isRunning: isValidating,
-  } = useFunctionStats(validationFnc);
+  const { fnc: validate, isRunning: isValidating } = useFunctionStats(validationFnc);
 
   // track when to kick off submission
   useEffect(() => {
@@ -36,15 +31,18 @@ export function useSubmit({
   }, [disabled, handleSubmit, isReadyToSubmit, isValidating, submitEvent]);
 
   // The submit callback that is used in the form
-  return useCallback((event?: SyntheticEvent) => {
-    if (event) {
-      event.preventDefault?.();
-      event.persist?.();
-      setSubmitEvent(event);
-    }
-    setIsReadyToSubmit(true);
-    if (validator) {
-      validate();
-    }
-  }, [validator, validate, setIsReadyToSubmit, setSubmitEvent]);
+  return useCallback(
+    (event?: SyntheticEvent) => {
+      if (event) {
+        event.preventDefault?.();
+        event.persist?.();
+        setSubmitEvent(event);
+      }
+      setIsReadyToSubmit(true);
+      if (validator) {
+        validate();
+      }
+    },
+    [validator, validate, setIsReadyToSubmit, setSubmitEvent],
+  );
 }

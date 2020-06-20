@@ -1,12 +1,8 @@
 import { useCallback, useMemo, SyntheticEvent } from 'react';
 import { Errors, ErrorHandler, validErrorValues } from './useErrors';
 import { useHandlers } from './useHandlers';
-import {
-  useFields, FieldValue, Fields, NormalizerHandler,
-} from './useFields';
-import {
-  useTouch, Touches, TouchHandler, TouchFieldHandler,
-} from './useTouch';
+import { useFields, FieldValue, Fields, NormalizerHandler } from './useFields';
+import { useTouch, Touches, TouchHandler, TouchFieldHandler } from './useTouch';
 import { useSubmission } from './useSubmission';
 import { SubmitHandler, SubmitFeedback, SubmissionHandler } from './useSubmission/types';
 import { useValidation } from './useValidation';
@@ -17,7 +13,10 @@ import {
   SingleValidator,
 } from './useValidation/types';
 import {
-  SetValueCallback, MutableValues, PartialValues, isMapWithValues,
+  SetValueCallback,
+  MutableValues,
+  PartialValues,
+  isMapWithValues,
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint } from './useConstraints/types';
 import { useConstraints } from './useConstraints';
@@ -121,52 +120,53 @@ export function useForm({
 }: UseFormParameters): UseFormsHook {
   const { values, setValue, resetValues } = useFields(initialValues, normalizer);
   const constraintsHook = useConstraints(constraints);
-  const {
-    touches, resetTouches, setTouch, touchField, setTouches, isDirty,
-  } = useTouch();
-    // picks between constraints or validators
-  const validatorsInput = useMemo(() => (typeof validators === 'function' || isMapWithValues(validators)
-    ? validators
-    : constraintsHook
+  const { touches, resetTouches, setTouch, touchField, setTouches, isDirty } = useTouch();
+  // picks between constraints or validators
+  const validatorsInput = useMemo(
+    () =>
+      typeof validators === 'function' || isMapWithValues(validators)
+        ? validators
+        : constraintsHook,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), []);
-    // I want to decouple validator from use form
-  const {
-    validate, validateByName, errors, resetErrors, setError, hasErrors,
-  } = useValidation(validatorsInput);
+    [],
+  );
+  // I want to decouple validator from use form
+  const { validate, validateByName, errors, resetErrors, setError, hasErrors } = useValidation(
+    validatorsInput,
+  );
   // create a submission validator handler
   const submissionValidator = useCallback((): void => {
-    const newTouches = Object.keys(values).reduce((
-      _touches: MutableValues<boolean>, name,
-    ): Touches => {
-      // eslint-disable-next-line no-param-reassign
-      _touches[name] = true;
-      return _touches;
-    }, {});
+    const newTouches = Object.keys(values).reduce(
+      (_touches: MutableValues<boolean>, name): Touches => {
+        // eslint-disable-next-line no-param-reassign
+        _touches[name] = true;
+        return _touches;
+      },
+      {},
+    );
     validate(values);
     setTouches(newTouches);
   }, [validate, values, setTouches]);
   // note: useSubmission will skip validation if no function was passed.
   //  In order to take advantage of this, we must pass undefined if useForm
   //  was invoked with a validation function
-  const validator = useMemo((): undefined | (() => void) => ((
-    typeof validators === 'function'
-    || typeof constraints === 'function'
-    || isMapWithValues(validators)
-    || isMapWithValues(constraints)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  ) ? submissionValidator : undefined), [submissionValidator]);
+  const validator = useMemo(
+    (): undefined | (() => void) =>
+      typeof validators === 'function' ||
+      typeof constraints === 'function' ||
+      isMapWithValues(validators) ||
+      isMapWithValues(constraints)
+        ? // eslint-disable-next-line react-hooks/exhaustive-deps
+          submissionValidator
+        : undefined,
+    [submissionValidator],
+  );
 
   // create reset handlers
   const reset = useHandlers(resetValues, resetErrors, resetTouches, resetForm);
 
   // use submission hook
-  const {
-    isSubmitting,
-    submit,
-    submitCount,
-    submitFeedback,
-  } = useSubmission({
+  const { isSubmitting, submit, submitCount, submitFeedback } = useSubmission({
     onSubmit,
     validator,
     disabled: hasErrors,

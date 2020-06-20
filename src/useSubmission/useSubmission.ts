@@ -1,7 +1,7 @@
 import { useCallback, SyntheticEvent, useRef } from 'react';
 import { UseSubmissionProps, UseSubmissionHook } from './types';
 import { useHandleSubmit } from './useHandleSubmit';
-import { useSubmit } from './useSubmit';
+import { useSubmit } from './useSubmit'; /* eslint-enable max-len */
 
 /* eslint-disable max-len */
 /**
@@ -94,8 +94,7 @@ import { useSubmit } from './useSubmit';
  *   }
  * });
  * ```
- *//* eslint-enable max-len */
-export function useSubmission({
+ */ export function useSubmission({
   onSubmit,
   validator,
   disabled = false,
@@ -106,11 +105,18 @@ export function useSubmission({
   // track the submitEvent in a ref
   const submitEvent = useRef<SyntheticEvent | undefined>();
 
-  const setSubmitEvent = useCallback((event) => { submitEvent.current = event; }, [submitEvent]);
-  const {
-    handleSubmit, submitCount, isSubmitting, submitFeedback,
-  } = useHandleSubmit({
-    onSubmit, values, reset, setError, setSubmitEvent,
+  const setSubmitEvent = useCallback(
+    (event) => {
+      submitEvent.current = event;
+    },
+    [submitEvent],
+  );
+  const { handleSubmit, submitCount, isSubmitting, submitFeedback } = useHandleSubmit({
+    onSubmit,
+    values,
+    reset,
+    setError,
+    setSubmitEvent,
   });
 
   // The submit callback that is used in the form
@@ -122,6 +128,9 @@ export function useSubmission({
     validator,
   });
   return {
-    isSubmitting, submitCount, submit, submitFeedback,
+    isSubmitting,
+    submitCount,
+    submit,
+    submitFeedback,
   };
 }

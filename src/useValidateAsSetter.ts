@@ -31,10 +31,17 @@ export function useValidateAsSetter(
   validate: ValidateAllHandler<FieldValue>,
   values: Fields,
 ): eventLikeHandlers {
-  return useCallback((name, value) => {
-    validate(!name ? values : {
-      ...values,
-      [name]: value,
-    });
-  }, [values, validate]);
+  return useCallback(
+    (name, value) => {
+      validate(
+        !name
+          ? values
+          : {
+              ...values,
+              [name]: value,
+            },
+      );
+    },
+    [values, validate],
+  );
 }

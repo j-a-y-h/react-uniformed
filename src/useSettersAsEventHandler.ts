@@ -1,7 +1,5 @@
 import { useCallback, SyntheticEvent } from 'react';
-import {
-  eventLikeHandlers, reactOrNativeEvent, keyValueEvent, useHandlers,
-} from './useHandlers';
+import { eventLikeHandlers, reactOrNativeEvent, keyValueEvent, useHandlers } from './useHandlers';
 import { assert, LoggingTypes } from './utils';
 
 interface ReactOrNativeEventListener {
@@ -28,9 +26,9 @@ function getInputValue({ checked, type, value }: HTMLInputElement): string {
   let ret: string = value;
   if (type === 'checkbox') {
     ret = checked
-      // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#Value
-      // If the value attribute was omitted, the default value for the checkbox is 'on'.
-      ? value || 'on'
+      ? // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#Value
+        // If the value attribute was omitted, the default value for the checkbox is 'on'.
+        value || 'on'
       : '';
   }
   return ret;
@@ -78,17 +76,16 @@ export function useSettersAsEventHandler(
   ...handlers: eventLikeHandlers[]
 ): ReactOrNativeEventListener {
   const handler = useHandlers<string | EventTarget | null, keyValueEvent<string>>(...handlers);
-  return useCallback((evt: reactOrNativeEvent): void => {
-    assert.error(
-      Boolean(evt?.target),
-      LoggingTypes.invalidArgument,
-      `${useSettersAsEventHandler.name} expects to be used in an event listener.`,
-    );
-    const { target } = evt;
-    handler(
-      (target as HTMLInputElement).name,
-      getInputValue(target as HTMLInputElement),
-      target,
-    );
-  }, [handler]);
+  return useCallback(
+    (evt: reactOrNativeEvent): void => {
+      assert.error(
+        Boolean(evt?.target),
+        LoggingTypes.invalidArgument,
+        `${useSettersAsEventHandler.name} expects to be used in an event listener.`,
+      );
+      const { target } = evt;
+      handler((target as HTMLInputElement).name, getInputValue(target as HTMLInputElement), target);
+    },
+    [handler],
+  );
 }

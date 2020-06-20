@@ -1,6 +1,4 @@
-import {
-  Reducer, useReducer, useCallback, useMemo,
-} from 'react';
+import { Reducer, useReducer, useCallback, useMemo } from 'react';
 import { LoggingTypes, assert } from './utils';
 
 type allowableKeys = string;
@@ -8,12 +6,18 @@ type allowableKeys = string;
 export interface Values<T> {
   readonly [name: string]: T;
 }
-export type ConstantValues<T, V> = Readonly<{
-  [P in keyof T]: V
-}>;
-export type PartialValues<T, V> = Readonly<Partial<{
-  [P in keyof T]: V
-}>>;
+export type ConstantValues<T, V> = Readonly<
+  {
+    [P in keyof T]: V;
+  }
+>;
+export type PartialValues<T, V> = Readonly<
+  Partial<
+    {
+      [P in keyof T]: V;
+    }
+  >
+>;
 export interface MutableValues<T> {
   [name: string]: T;
 }
@@ -25,7 +29,10 @@ interface UpdatePayload<T> {
 type SetValuesCallback<T> = (currentState: Values<T>) => Values<T>;
 type ActionPayload<T> = Values<T> | UpdatePayload<T> | SetValuesCallback<T>;
 
-enum ActionTypes { update, reset }
+enum ActionTypes {
+  update,
+  reset,
+}
 interface Action<T> {
   readonly type: ActionTypes;
   readonly payload: ActionPayload<T>;
@@ -50,19 +57,20 @@ export interface UseResetableValuesHook<T> {
 }
 export function isMapWithValues<T>(values: Values<T>): boolean {
   return Boolean(
-    values && typeof values === 'object'
-    && Object.keys(values).some((key): boolean => Boolean(values[key])),
+    values &&
+      typeof values === 'object' &&
+      Object.keys(values).some((key): boolean => Boolean(values[key])),
   );
 }
 
 function resetCompare<T>(oldState: Values<T>, newState: Values<T>): boolean {
   return (
-    (oldState !== newState)
-    && (
-      // verify that the objects are not empty
-      (typeof oldState === typeof newState && oldState && newState)
-      && (isMapWithValues(oldState) || isMapWithValues(newState))
-    )
+    oldState !== newState &&
+    // verify that the objects are not empty
+    typeof oldState === typeof newState &&
+    oldState &&
+    newState &&
+    (isMapWithValues(oldState) || isMapWithValues(newState))
   );
 }
 
@@ -71,20 +79,17 @@ function reducer<T>(state: Values<T>, action: Action<T>): Values<T> {
   let name;
   let newState: Values<T>;
   switch (action.type) {
-  case ActionTypes.update:
-    ({ value, name } = action.payload as UpdatePayload<T>);
-    // don't do unnecessary updates
-    return (state[name] !== value)
-      ? { ...state, [name]: value }
-      : state;
-  case ActionTypes.reset:
-  default:
-    newState = typeof action.payload === 'function'
-      ? action.payload(state)
-      : action.payload as Values<T>;
-    return resetCompare(state, newState)
-      ? { ...newState }
-      : state;
+    case ActionTypes.update:
+      ({ value, name } = action.payload as UpdatePayload<T>);
+      // don't do unnecessary updates
+      return state[name] !== value ? { ...state, [name]: value } : state;
+    case ActionTypes.reset:
+    default:
+      newState =
+        typeof action.payload === 'function'
+          ? action.payload(state)
+          : (action.payload as Values<T>);
+      return resetCompare(state, newState) ? { ...newState } : state;
   }
 }
 
@@ -107,11 +112,15 @@ export function useGenericValues<T>(initialValues: Values<T> = {}): UseResetable
     );
     dispatch({ type: ActionTypes.reset, payload: newValues });
   }, []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const resetValues = useCallback((): void => setValues(initialValues), []);
   // note: this counts 0 and empty string as no value.
   const hasValueCallback = useMemo((): boolean => isMapWithValues(values), [values]);
   return {
-    values, setValue, resetValues, setValues, hasValue: hasValueCallback,
+    values,
+    setValue,
+    resetValues,
+    setValues,
+    hasValue: hasValueCallback,
   };
 }

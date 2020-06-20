@@ -1,4 +1,3 @@
-
 import {
   Constraints,
   supportedTypes,
@@ -77,22 +76,23 @@ export function mapConstraintsToValidators(rules: ConstraintValidators): Validat
   assert.error(
     rules && typeof rules === 'object',
     LoggingTypes.invalidArgument,
-    `(expected: Object<string, Constraint> received: ${typeof rules}) ${mapConstraintsToValidators.name} requires a constraint object.`,
+    `(expected: Object<string, Constraint> received: ${typeof rules}) ${
+      mapConstraintsToValidators.name
+    } requires a constraint object.`,
   );
-  return Object.keys(rules).reduce((
-    validationMap: MutableValues<Validator>,
-    name: string,
-  ): MutableValues<Validator> => {
-    const currentValidator = rules[name];
-    if (typeof currentValidator !== 'function') {
-      validateRule(name, currentValidator);
-    }
-    // eslint-disable-next-line no-param-reassign
-    validationMap[name] = (typeof currentValidator !== 'function')
-      ? (value?: FieldValue): string => (
-        validateUsingContraints(currentValidator, value)
-      )
-      : currentValidator;
-    return validationMap;
-  }, {});
+  return Object.keys(rules).reduce(
+    (validationMap: MutableValues<Validator>, name: string): MutableValues<Validator> => {
+      const currentValidator = rules[name];
+      if (typeof currentValidator !== 'function') {
+        validateRule(name, currentValidator);
+      }
+      // eslint-disable-next-line no-param-reassign
+      validationMap[name] =
+        typeof currentValidator !== 'function'
+          ? (value?: FieldValue): string => validateUsingContraints(currentValidator, value)
+          : currentValidator;
+      return validationMap;
+    },
+    {},
+  );
 }
