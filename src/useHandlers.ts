@@ -1,6 +1,4 @@
-import {
-  SyntheticEvent, useCallback,
-} from 'react';
+import { SyntheticEvent, useCallback } from 'react';
 import { assert, LoggingTypes } from './utils';
 
 interface Handler<T, K extends T[], Z> {
@@ -8,7 +6,7 @@ interface Handler<T, K extends T[], Z> {
 }
 export type reactOrNativeEvent = SyntheticEvent | Event;
 export type keyValueEvent<T> = [string, T, EventTarget | null];
-export type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEvent<string>, void>
+export type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEvent<string>, void>;
 
 /**
  * Consolidates the specified list of functions into one function. This is useful

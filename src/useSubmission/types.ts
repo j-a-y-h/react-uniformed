@@ -49,7 +49,6 @@ export interface UseHandleSubmit {
   readonly submitFeedback: SubmitFeedback;
 }
 
-
 export interface UseSubmitProps {
   readonly submitEvent: React.MutableRefObject<SyntheticEvent<Element, Event> | undefined>;
   readonly disabled: boolean;
@@ -60,7 +59,11 @@ export interface UseSubmitProps {
 
 export type UseSubmit = SubmitHandler;
 
-export enum ActionTypes { error, feedback, reset }
+export enum ActionTypes {
+  error,
+  feedback,
+  reset,
+}
 export interface Action {
   readonly type: ActionTypes;
   readonly payload?: string;

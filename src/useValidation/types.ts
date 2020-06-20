@@ -1,6 +1,4 @@
-import {
-  validErrorValues, Errors, ErrorHandler, SetErrorsHandler,
-} from '../useErrors';
+import { validErrorValues, Errors, ErrorHandler, SetErrorsHandler } from '../useErrors';
 import { Values, PartialValues } from '../useGenericValues';
 import { FieldValue } from '../useFields';
 

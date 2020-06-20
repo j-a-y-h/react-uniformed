@@ -1,7 +1,5 @@
 import { useCallback } from 'react';
-import {
-  FieldValue, NormalizerHandler, NormalizeSetValue,
-} from './useFields';
+import { FieldValue, NormalizerHandler, NormalizeSetValue } from './useFields';
 
 export type UseNormalizersOption = Readonly<{
   name: string | RegExp | (string | RegExp)[];
@@ -58,10 +56,8 @@ export function useNormalizers(
   ...normalizers: (NormalizerHandler | UseNormalizersOption)[]
 ): NormalizerHandler {
   return useCallback(({ name, value, ...opts }: NormalizeSetValue) => {
-    const nameMatches = (matcher: string | RegExp): boolean => (matcher instanceof RegExp
-      ? matcher.test(name)
-      : matcher === name
-    );
+    const nameMatches = (matcher: string | RegExp): boolean =>
+      matcher instanceof RegExp ? matcher.test(name) : matcher === name;
     // pipe the value through the normalizers
     return normalizers.reduce((currentValue: FieldValue, normalizerObj): FieldValue => {
       let normalizer: NormalizerHandler | undefined;
@@ -71,17 +67,13 @@ export function useNormalizers(
       } else {
         // apply to only matching names
         const { name: names, normalizer: handler } = normalizerObj;
-        const matches = Array.isArray(names)
-          ? names.some(nameMatches)
-          : nameMatches(names);
+        const matches = Array.isArray(names) ? names.some(nameMatches) : nameMatches(names);
         if (matches) {
           // name matches so apply
           normalizer = handler;
         }
       }
-      return normalizer
-        ? normalizer({ name, value: currentValue, ...opts })
-        : currentValue;
+      return normalizer ? normalizer({ name, value: currentValue, ...opts }) : currentValue;
     }, value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

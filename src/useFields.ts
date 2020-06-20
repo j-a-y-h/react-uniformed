@@ -1,7 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import {
-  useGenericValues, UseResetableValuesHook,
-} from './useGenericValues';
+import { useGenericValues, UseResetableValuesHook } from './useGenericValues';
 
 // TODO: switch to generic so that we don't get annoyed by ts when using this in an input.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,15 +30,15 @@ export interface NormalizerHandler {
 
 function getResetValue(currentValue: FieldValue): FieldValue {
   switch (typeof currentValue) {
-  case 'number':
-    return 0;
-  case 'boolean':
-    return false;
-  case 'object':
-    return Array.isArray(currentValue) ? [] : undefined;
-  case 'string':
-  default:
-    return '';
+    case 'number':
+      return 0;
+    case 'boolean':
+      return false;
+    case 'object':
+      return Array.isArray(currentValue) ? [] : undefined;
+    case 'string':
+    default:
+      return '';
   }
 }
 
@@ -55,54 +53,56 @@ function getResetValue(currentValue: FieldValue): FieldValue {
  * See {@link useNormalizers}.
  * @returns An api for setting, reading, resetting form values.
  */
-export function useFields(
-  initialValues?: Fields,
-  normalizer?: NormalizerHandler,
-): UseFieldsHook {
-  const {
-    setValues,
-    setValue: setGenericValue,
-    ...resetableValues
-  } = useGenericValues(initialValues);
+export function useFields(initialValues?: Fields, normalizer?: NormalizerHandler): UseFieldsHook {
+  const { setValues, setValue: setGenericValue, ...resetableValues } = useGenericValues(
+    initialValues,
+  );
   const setValue = useMemo(() => {
     if (typeof normalizer === 'function') {
       return (name: string, value: FieldValue, eventTarget?: EventTarget | null): void => {
-        setValues((currentValues: Fields): Fields => {
-          let normalizedName = name;
-          const normalizedValue = normalizer({
-            name,
-            value,
-            currentValues,
-            eventTarget,
-            normalizeName(newName: string) {
-              normalizedName = newName;
-            },
-          });
-          return {
-            ...currentValues,
-            [normalizedName]: normalizedValue,
-          };
-        });
+        setValues(
+          (currentValues: Fields): Fields => {
+            let normalizedName = name;
+            const normalizedValue = normalizer({
+              name,
+              value,
+              currentValues,
+              eventTarget,
+              normalizeName(newName: string) {
+                normalizedName = newName;
+              },
+            });
+            return {
+              ...currentValues,
+              [normalizedName]: normalizedValue,
+            };
+          },
+        );
       };
     }
     return setGenericValue;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const resetValues = useCallback((): void => {
-    setValues((currentState): Fields => {
-      const nonNullInitialValues: MutableFields = { ...initialValues };
-      return Object.keys(currentState).reduce((newState, key) => {
-        // if no initial value then set it to the default reset value
-        if (!({}).hasOwnProperty.call(newState, key)) {
-          // eslint-disable-next-line no-param-reassign
-          newState[key] = getResetValue(currentState[key]);
-        }
-        return newState;
-      }, nonNullInitialValues);
-    });
+    setValues(
+      (currentState): Fields => {
+        const nonNullInitialValues: MutableFields = { ...initialValues };
+        return Object.keys(currentState).reduce((newState, key) => {
+          // if no initial value then set it to the default reset value
+          if (!{}.hasOwnProperty.call(newState, key)) {
+            // eslint-disable-next-line no-param-reassign
+            newState[key] = getResetValue(currentState[key]);
+          }
+          return newState;
+        }, nonNullInitialValues);
+      },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return {
-    ...resetableValues, setValues, resetValues, setValue,
+    ...resetableValues,
+    setValues,
+    resetValues,
+    setValue,
   };
 }

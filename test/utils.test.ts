@@ -1,3 +1,3 @@
-describe("utils", () => {
-    it("", () => { });
+describe('utils', () => {
+  it('', () => {});
 });

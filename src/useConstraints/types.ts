@@ -6,7 +6,13 @@ export type supportedTypes = 'email' | 'text' | 'url' | 'number' | 'date';
 // possible values:
 // "text" | "number" | "date" | "email" | "checkbox" |
 // "tel" | "time" | "url" | "week" | "month" | "year" | "range";
-export const supportedTypesSet = new Set<supportedTypes>(['text', 'email', 'url', 'number', 'date']);
+export const supportedTypesSet = new Set<supportedTypes>([
+  'text',
+  'email',
+  'url',
+  'number',
+  'date',
+]);
 
 export interface Constraints {
   /**

@@ -1,20 +1,16 @@
 import { useErrors } from '../useErrors';
 import { FieldValue } from '../useFields';
-import {
-  SingleValidator, UseValidatorHook, Validators, UseValidatorHookPartial,
-} from './types';
+import { SingleValidator, UseValidatorHook, Validators, UseValidatorHookPartial } from './types';
 import { useValidateByName, useValidate } from './validators';
 
-export function useValidation(
-  validator: SingleValidator<FieldValue>
-): UseValidatorHook<FieldValue>;
+export function useValidation(validator: SingleValidator<FieldValue>): UseValidatorHook<FieldValue>;
 
 export function useValidation<T extends Validators>(
-  validator: T
+  validator: T,
 ): UseValidatorHookPartial<FieldValue, T>;
 
 export function useValidation<T extends Validators>(
-  validator: T | SingleValidator<FieldValue>
+  validator: T | SingleValidator<FieldValue>,
 ): UseValidatorHookPartial<FieldValue, T> | UseValidatorHook<FieldValue>;
 
 // TODO: breakout the jsdoc for each overload function
@@ -60,15 +56,18 @@ export function useValidation<T extends Validators>(
 export function useValidation(
   validator: Validators | SingleValidator<FieldValue>,
 ): UseValidatorHookPartial<FieldValue, Validators> | UseValidatorHook<FieldValue> {
-  const {
-    setError, errors, hasErrors, resetErrors, setErrors,
-  } = useErrors();
+  const { setError, errors, hasErrors, resetErrors, setErrors } = useErrors();
   // create a validate by input name function
   const validateByName = useValidateByName({ setError, validator });
   // create validate all function
   const validate = useValidate({ setErrors, validator });
 
   return {
-    validate, validateByName, errors, hasErrors, resetErrors, setError,
+    validate,
+    validateByName,
+    errors,
+    hasErrors,
+    resetErrors,
+    setError,
   };
 }

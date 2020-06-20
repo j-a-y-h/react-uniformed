@@ -44,17 +44,27 @@ export function useErrors(): UseErrorsHook {
     resetValues: resetErrors,
     hasValue: hasErrors,
   } = useGenericValues<validErrorValues>();
-  const setError = useCallback((name: string, error: validErrorValues): void => {
-    assertErrorType(name, error);
-    setValue(name, error);
-  }, [setValue]);
-  const setErrors = useCallback((newErrors: Errors): void => {
-    Object.keys(newErrors).forEach((name): void => {
-      assertErrorType(name, newErrors[name]);
-    });
-    setValues(newErrors);
-  }, [setValues]);
+  const setError = useCallback(
+    (name: string, error: validErrorValues): void => {
+      assertErrorType(name, error);
+      setValue(name, error);
+    },
+    [setValue],
+  );
+  const setErrors = useCallback(
+    (newErrors: Errors): void => {
+      Object.keys(newErrors).forEach((name): void => {
+        assertErrorType(name, newErrors[name]);
+      });
+      setValues(newErrors);
+    },
+    [setValues],
+  );
   return {
-    errors, setError, resetErrors, hasErrors, setErrors,
+    errors,
+    setError,
+    resetErrors,
+    hasErrors,
+    setErrors,
   };
 }

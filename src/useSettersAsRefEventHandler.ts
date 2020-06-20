@@ -1,6 +1,4 @@
-import {
-  useCallback, Ref,
-} from 'react';
+import { useCallback, Ref } from 'react';
 import { eventLikeHandlers } from './useHandlers';
 import { assert, LoggingTypes } from './utils';
 import { Fields } from './useFields';
@@ -24,9 +22,7 @@ type useEventHandlersWithRefProps<T, V> = T extends [UseEventHandlersWithRefProp
 export function useSettersAsRefEventHandler<
   T extends HTMLElement = HTMLInputElement,
   V extends Fields = Fields
->(
-  props: UseEventHandlersWithRefProps<V>
-): Ref<T>;
+>(props: UseEventHandlersWithRefProps<V>): Ref<T>;
 
 /**
  * @example
@@ -61,7 +57,8 @@ export function useSettersAsRefEventHandler<T extends HTMLElement = HTMLInputEle
  * @returns returns a React ref function.
  */
 export function useSettersAsRefEventHandler<
-  T extends HTMLElement = HTMLInputElement, V extends Fields = Fields
+  T extends HTMLElement = HTMLInputElement,
+  V extends Fields = Fields
 >(
   ...args: useEventHandlersWithRefProps<[UseEventHandlersWithRefProps<V>] | eventLikeHandlers[], V>
 ): Ref<T> {
@@ -81,20 +78,23 @@ export function useSettersAsRefEventHandler<
     event = options.event || event;
   }
   const eventHandler = useSettersAsEventHandler(...handlers);
-  const ref = useCallback((input: T | null): void => {
-    // note: React will call input with null when the component is unmounting
-    if (input) {
-      const { name } = input as unknown as HTMLInputElement;
-      // TODO: solve potential memory leak, in the else block removeEventListener,
-      // and when this function
-      // is called with new eventHandler
-      input.addEventListener(event, eventHandler);
-      if (mountedValues && name && mountedValues[name]) {
-        // need to set the mounted values
-        // eslint-disable-next-line no-param-reassign
-        (input as unknown as HTMLInputElement).value = String(mountedValues[name]);
+  const ref = useCallback(
+    (input: T | null): void => {
+      // note: React will call input with null when the component is unmounting
+      if (input) {
+        const { name } = (input as unknown) as HTMLInputElement;
+        // TODO: solve potential memory leak, in the else block removeEventListener,
+        // and when this function
+        // is called with new eventHandler
+        input.addEventListener(event, eventHandler);
+        if (mountedValues && name && mountedValues[name]) {
+          // need to set the mounted values
+          // eslint-disable-next-line no-param-reassign
+          ((input as unknown) as HTMLInputElement).value = String(mountedValues[name]);
+        }
       }
-    }
-  }, [event, eventHandler, mountedValues]);
+    },
+    [event, eventHandler, mountedValues],
+  );
   return ref;
 }

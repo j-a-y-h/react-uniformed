@@ -1,15 +1,14 @@
-import {
-  Constraints, supportedConstraints, constraintValues, RequiredConstraint,
-} from './types';
+import { Constraints, supportedConstraints, constraintValues, RequiredConstraint } from './types';
 
 function getRuleValueAndMessage(
-  rules: Constraints, name: supportedConstraints,
+  rules: Constraints,
+  name: supportedConstraints,
 ): [constraintValues, string] {
   const rule = rules[name];
   let message = '';
   let value: constraintValues;
   if (Array.isArray(rule)) {
-    ([value, message] = rule);
+    [value, message] = rule;
   } else {
     value = rule || '';
   }
@@ -30,7 +29,8 @@ export function getRuleMessage(rules: Constraints, name: supportedConstraints): 
   return message;
 }
 export function hasRule<T extends supportedConstraints>(
-  rules: Constraints, name: T,
+  rules: Constraints,
+  name: T,
 ): rules is RequiredConstraint<T> {
-  return ({}).hasOwnProperty.call(rules, name);
+  return {}.hasOwnProperty.call(rules, name);
 }

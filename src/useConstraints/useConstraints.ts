@@ -51,7 +51,7 @@ import { mapConstraintsToValidators } from './validators';
  * accepts only one argument that is the value to validate when invoked.
  */
 export function useConstraints<T extends ConstraintValidators>(
-  rules: T
+  rules: T,
 ): ConstantValues<T, Validator>;
 
 /**
@@ -94,7 +94,7 @@ export function useConstraints<T extends ConstraintValidators>(
 export function useConstraints(syncedConstraint: SyncedConstraint): SingleValidator<FieldValue>;
 
 export function useConstraints<T extends ConstraintValidators>(
-  rules: SyncedConstraint | T
+  rules: SyncedConstraint | T,
 ): ConstantValues<T, Validator> | SingleValidator<FieldValue>;
 
 /**
@@ -106,17 +106,19 @@ export function useConstraints<T extends ConstraintValidators>(
 export function useConstraints(
   rules: ConstraintValidators | SyncedConstraint,
 ): Validators | SingleValidator<FieldValue> {
-  return useMemo((): Validators | SingleValidator<FieldValue> => {
-    if (typeof rules === 'function') {
-      return (values: Fields): Promise<Errors> => {
-        const constraints = rules(values);
-        const validators = mapConstraintsToValidators(constraints);
-        const names = Object.keys(constraints);
-        return validateValidators(names, validators, values);
-      };
-    }
-    return mapConstraintsToValidators(rules);
-  },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  []);
+  return useMemo(
+    (): Validators | SingleValidator<FieldValue> => {
+      if (typeof rules === 'function') {
+        return (values: Fields): Promise<Errors> => {
+          const constraints = rules(values);
+          const validators = mapConstraintsToValidators(constraints);
+          const names = Object.keys(constraints);
+          return validateValidators(names, validators, values);
+        };
+      }
+      return mapConstraintsToValidators(rules);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 }

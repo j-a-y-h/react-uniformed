@@ -104,9 +104,14 @@ export function useTouch(): UseTouchHook {
     setValues: setTouches,
     hasValue: isDirty,
   } = useGenericValues<boolean>();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const touchField = useCallback((name: string): void => setTouch(name, true), []);
   return {
-    touches, setTouch, resetTouches, touchField, setTouches, isDirty,
+    touches,
+    setTouch,
+    resetTouches,
+    touchField,
+    setTouches,
+    isDirty,
   };
 }

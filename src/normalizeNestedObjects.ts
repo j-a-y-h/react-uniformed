@@ -1,5 +1,9 @@
 import {
-  NormalizerHandler, NormalizeSetValue, FieldValue, Fields, MutableFields,
+  NormalizerHandler,
+  NormalizeSetValue,
+  FieldValue,
+  Fields,
+  MutableFields,
 } from './useFields';
 
 type createNestedObjectProps = Readonly<{
@@ -12,7 +16,10 @@ type createNestedObjectProps = Readonly<{
 }>;
 
 function createNestedObject({
-  currentValue, value, path, shadowCopy,
+  currentValue,
+  value,
+  path,
+  shadowCopy,
 }: createNestedObjectProps): FieldValue {
   /*
         ex: user[0][name]
@@ -48,7 +55,6 @@ function createNestedObject({
   });
   return mergedValue;
 }
-
 
 /**
  * Used to add nested object support to useFields or useForms. Nested objects
@@ -89,9 +95,7 @@ function createNestedObject({
  * ```
  */
 export function normalizeNestedObjects(): NormalizerHandler {
-  return ({
-    name, value, currentValues, normalizeName,
-  }: NormalizeSetValue): FieldValue => {
+  return ({ name, value, currentValues, normalizeName }: NormalizeSetValue): FieldValue => {
     const nestedKeys = name.match(/(\w+|\[\w+\]|\['[^']+'\]|\["[^"]+"\])/gy);
     const path = nestedKeys ? Array.from(nestedKeys) : [name];
     if (path.length === 1) {

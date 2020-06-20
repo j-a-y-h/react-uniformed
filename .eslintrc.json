@@ -1,54 +1,58 @@
 {
-	"env": {
-		"browser": true,
-		"es6": true
-	},
-	"extends":  [
-		"eslint:recommended",
-		"airbnb",
-		"plugin:import/errors",
-		"plugin:import/warnings",
-		"plugin:import/typescript",
-		"plugin:@typescript-eslint/eslint-recommended",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:@typescript-eslint/recommended-requiring-type-checking"
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "airbnb",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended"
   ],
-	"globals": {
-		"Atomics": "readonly",
-		"SharedArrayBuffer": "readonly"
-	},
-	"parser": "@typescript-eslint/parser",
-	"parserOptions": {
-		"ecmaFeatures": {
-			"jsx": true
-		},
-		"ecmaVersion": 2018,
-		"sourceType": "module",
-		"project": "./tsconfig.json"
-	},
-	"plugins": [
-		"react",
-		"react-hooks",
-		"@typescript-eslint",
-		"eslint-plugin-tsdoc"
-	],
-	"rules": {
-		"indent": ["error", 2],
-		"import/prefer-default-export": "off",
-		"react-hooks/rules-of-hooks": "error",
-		"react-hooks/exhaustive-deps": "error",
-		"no-unused-expressions": "off",
-		"@typescript-eslint/explicit-function-return-type": "error",
-		"@typescript-eslint/no-explicit-any": "error",
-		"@typescript-eslint/no-unused-expressions": "error",
-		"quotes": ["error", "single", {
-			"avoidEscape": true
-		}],
-		"no-shadow": ["error", {
-			"builtinGlobals": false,
-			"hoist": "never",
-			"allow": []
-		}],
-		"tsdoc/syntax": "error"
-	}
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["react", "react-hooks", "@typescript-eslint", "eslint-plugin-tsdoc"],
+  "rules": {
+    "prettier/prettier": "error",
+    "indent": "off",
+    "import/prefer-default-export": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "no-unused-expressions": "off",
+    "@typescript-eslint/explicit-function-return-type": "error",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unused-expressions": "error",
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "no-shadow": [
+      "error",
+      {
+        "builtinGlobals": false,
+        "hoist": "never",
+        "allow": []
+      }
+    ],
+    "tsdoc/syntax": "error"
+  }
 }
