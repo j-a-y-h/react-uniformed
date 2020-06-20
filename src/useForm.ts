@@ -156,9 +156,9 @@ export function useForm({
       typeof constraints === 'function' ||
       isMapWithValues(validators) ||
       isMapWithValues(constraints)
-        ? // eslint-disable-next-line react-hooks/exhaustive-deps
-          submissionValidator
+        ? submissionValidator
         : undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [submissionValidator],
   );
 
