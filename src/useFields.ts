@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react';
 import { useGenericValues, UseResetableValuesHook } from './useGenericValues';
 
-// TODO: switch to generic so that we don't get annoyed by ts when using this in an input.
+// Could switch to a generic but that's a can of worms
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FieldValue = string | number | boolean | undefined | null | MutableFields | any[];
+export type FieldValue = any;
 
 export type MutableFields = Partial<{
   [key: string]: FieldValue;
@@ -85,7 +85,7 @@ export function useFields(initialValues?: Fields, normalizer?: NormalizerHandler
   }, []);
   const resetValues = useCallback((): void => {
     setValues(
-      (currentState): Fields => {
+      (currentState: Fields): Fields => {
         const nonNullInitialValues: MutableFields = { ...initialValues };
         return Object.keys(currentState).reduce((newState, key) => {
           // if no initial value then set it to the default reset value
