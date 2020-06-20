@@ -85,7 +85,7 @@ export function useFields(initialValues?: Fields, normalizer?: NormalizerHandler
   }, []);
   const resetValues = useCallback((): void => {
     setValues(
-      (currentState): Fields => {
+      (currentState: Fields): Fields => {
         const nonNullInitialValues: MutableFields = { ...initialValues };
         return Object.keys(currentState).reduce((newState, key) => {
           // if no initial value then set it to the default reset value
