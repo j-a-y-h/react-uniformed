@@ -106,7 +106,8 @@
   ],
   "husky": {
     "hooks": {
-      "pre-push": "yarn test:stability"
+      "pre-push": "yarn test:stability",
+      "pre-commit": "pretty-quick --staged"
     }
   }
 }
