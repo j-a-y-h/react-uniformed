@@ -66,7 +66,6 @@ export function useValidateByName({
         error = (await handler(value)) || '';
       }
       setError(name, error);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [setError, validator],
   );
@@ -92,7 +91,6 @@ export function useValidate({
         localErrors = await validateValidators(names, validator, values);
       }
       setErrors(localErrors);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [setErrors, fieldsToUseInValidateAll, validator],
   );
