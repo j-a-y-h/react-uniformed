@@ -16,7 +16,7 @@ export function useSubmit({
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
 
   // memoize the validator function
-  const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
+  const validationFnc = useMemo(() => validator ?? ((): void => undefined), [validator]);
 
   const { fnc: validate, isRunning: isValidating } = useFunctionStats(validationFnc);
 

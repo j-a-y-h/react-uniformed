@@ -10,7 +10,7 @@ function getRuleValueAndMessage(
   if (Array.isArray(rule)) {
     [value, message] = rule;
   } else {
-    value = rule || '';
+    value = rule ?? '';
   }
   if (name === 'required') {
     message = !message && typeof value === 'string' ? value : message;
