@@ -39,7 +39,7 @@
     "import/no-internal-modules": "error",
     "import/no-mutable-exports": "error",
     "import/no-namespace": "error",
-    "import/no-unused-modules": ["error", { "unusedExports": true, "missingExports": true }],
+    "import/no-unused-modules": ["error", { "unusedExports": true }],
     "import/order": "error",
     "import/prefer-default-export": "off",
     "react-hooks/rules-of-hooks": "error",

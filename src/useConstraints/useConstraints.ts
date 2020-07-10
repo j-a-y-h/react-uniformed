@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { ConstantValues } from '../useGenericValues';
-import { validateValidators } from '../useValidation/validators';
-import { Validator, Validators, SingleValidator } from '../useValidation/types';
+import { validateValidators, Validator, Validators, SingleValidator } from '../useValidation';
 import { Errors } from '../useErrors';
 import { FieldValue, Fields } from '../useFields';
 import { ConstraintValidators, SyncedConstraint } from './types';
