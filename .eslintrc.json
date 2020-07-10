@@ -35,21 +35,21 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
     "no-unused-expressions": "off",
+    "dot-notation": "off",
     "@typescript-eslint/explicit-function-return-type": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-unused-expressions": "error",
-    "quotes": [
-      "error",
-      "single",
-      {
-        "avoidEscape": true
-      }
-    ],
+    "@typescript-eslint/prefer-for-of": "error",
+    "@typescript-eslint/prefer-optional-chain": "error",
+    "@typescript-eslint/prefer-nullish-coalescing": "error",
+    "@typescript-eslint/prefer-reduce-type-parameter": "error",
+    "@typescript-eslint/prefer-ts-expect-error": "error",
+    "@typescript-eslint/dot-notation": "error",
     "no-shadow": [
       "error",
       {
         "builtinGlobals": false,
-        "hoist": "never",
+        "hoist": "all",
         "allow": []
       }
     ],
