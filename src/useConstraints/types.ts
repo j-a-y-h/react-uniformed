@@ -1,5 +1,5 @@
 import { Values } from '../useGenericValues';
-import { Validator } from '../useValidation';
+import { Validator } from '../useValidation/types';
 import { Fields } from '../useFields';
 
 export type supportedTypes = 'email' | 'text' | 'url' | 'number' | 'date';
