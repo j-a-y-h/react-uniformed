@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback, SyntheticEvent } from 'react';
 import { useFunctionStats } from '../useFunctionStats';
 import { UseSubmit, UseSubmitProps } from './types';
+import { safePromise } from '../utils';
 
 export function useSubmit({
   submitEvent,
@@ -40,7 +41,7 @@ export function useSubmit({
       }
       setIsReadyToSubmit(true);
       if (validator) {
-        validate();
+        safePromise(validate());
       }
     },
     [validator, validate, setIsReadyToSubmit, setSubmitEvent],
