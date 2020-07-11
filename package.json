@@ -26,7 +26,7 @@
     "test:coverage": "rimraf ./coverage && yarn test --coverage --silent || true",
     "test:coveralls": "yarn test --coverage --coverageReporters=text-lcov | coveralls",
     "test:stability": "yarn test && yarn lint",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint src --color",
     "size": "yarn bundle:prod --silent && bundlesize",
     "clean": "rimraf ./dist",
     "start:examples": "yarn build:examples && webpack-dev-server --mode development --config=webpack.examples.config.js",
