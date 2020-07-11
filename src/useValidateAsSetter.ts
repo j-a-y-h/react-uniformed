@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { ValidateAllHandler } from './useValidation/types';
 import { FieldValue, Fields } from './useFields';
 import { eventLikeHandlers } from './useHandlers';
+import { safePromise } from './utils';
 
 /**
  * Creates a function that accepts a name and value as parameters.
@@ -33,13 +34,15 @@ export function useValidateAsSetter(
 ): eventLikeHandlers {
   return useCallback(
     (name, value) => {
-      validate(
-        !name
-          ? values
-          : {
-              ...values,
-              [name]: value,
-            },
+      safePromise(
+        validate(
+          !name
+            ? values
+            : {
+                ...values,
+                [name]: value,
+              },
+        ),
       );
     },
     [values, validate],

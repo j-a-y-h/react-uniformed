@@ -20,7 +20,7 @@ import {
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint } from './useConstraints/types';
 import { useConstraints } from './useConstraints';
-import { resetForm } from './utils';
+import { resetForm, safePromise } from './utils';
 
 // TODO: document the UseFormsHook
 
@@ -144,7 +144,7 @@ export function useForm({
       },
       {},
     );
-    validate(values);
+    safePromise(validate(values));
     setTouches(newTouches);
   }, [validate, values, setTouches]);
   // note: useSubmission will skip validation if no function was passed.

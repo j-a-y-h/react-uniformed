@@ -11,6 +11,14 @@ interface Logger {
   (message?: string, ...optionalParams: string[]): void;
 }
 
+/**
+ * Safely catches errors from promises and allows functions to continue returning void
+ * @param promise - specified promise
+ */
+export function safePromise(promise: Promise<void>): void {
+  promise.catch(console.error);
+}
+
 export function resetForm(event?: SyntheticEvent): void {
   if (event?.target instanceof HTMLElement) {
     event.target.closest('form')?.reset();
