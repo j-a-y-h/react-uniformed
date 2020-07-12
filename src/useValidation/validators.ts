@@ -7,6 +7,7 @@ import {
   ValidateAllHandler,
   UseValidateByNameProps,
   UseValidateProps,
+  Validator,
 } from './types';
 import { Fields, FieldValue } from '../useFields';
 import { Errors, validErrorValues } from '../useErrors';
@@ -17,7 +18,7 @@ function defaultValidator(): validValidatorReturnTypes {
   return '';
 }
 
-function assertValidator(functionName: string, name: string, validator: Function): void {
+function assertValidator(functionName: string, name: string, validator: Validator): void {
   assert.error(
     typeof validator === 'function',
     LoggingTypes.typeError,

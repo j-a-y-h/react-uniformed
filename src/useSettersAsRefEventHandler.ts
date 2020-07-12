@@ -75,7 +75,7 @@ export function useSettersAsRefEventHandler<
       `(expected: {event?: string, handlers: function[], mountedValues?: {}}, received: typeof ${typeof options}, ${options})`,
     );
     ({ handlers, mountedValues } = options);
-    event = options.event || event;
+    event = options.event ?? event;
   }
   const eventHandler = useSettersAsEventHandler(...handlers);
   const ref = useCallback(
