@@ -66,7 +66,7 @@ const handleChange = useSettersAsEventHandler(setValue);
   <input name='name' value={values.name} onChange={handleChange} />
 
   <button>Submit</button>
-</form>;
+</form>
 ```
 
 ## Validation

@@ -40,7 +40,7 @@ const handleChange = useSettersAsEventHandler(setValue);
 // jsx
 <form onSubmit={submit}>
   <input name='name' value={values.name} onChange={handleChange} />
-</form>;
+</form>
 ```
 
 **`example`** <caption>Using `validate` in change events</caption>
@@ -58,7 +58,7 @@ const handleChange = useSettersAsEventHandler(setValue, validateAllOnChange);
 // jsx
 <form onSubmit={submit}>
   <input name='name' value={values.name} onChange={handleChange} />
-</form>;
+</form>
 ```
 
 **`example`** <caption>Setting feedback on submit, see [useSubmission](_usesubmission_usesubmission_.md#usesubmission)</caption>
