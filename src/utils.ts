@@ -24,7 +24,7 @@ export function resetForm(event?: SyntheticEvent): void {
  */
 export function safePromise(promise: void | Promise<void>): void {
   if (promise instanceof Promise) {
-    promise.catch?.(console.error);
+    promise.catch(console.error);
   }
 }
 
