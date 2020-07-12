@@ -6,108 +6,114 @@
 
 ### Interfaces
 
-* [Constraints](../interfaces/_useconstraints_types_.constraints.md)
-* [SyncedConstraint](../interfaces/_useconstraints_types_.syncedconstraint.md)
+- [Constraints](../interfaces/_useconstraints_types_.constraints.md)
+- [SyncedConstraint](../interfaces/_useconstraints_types_.syncedconstraint.md)
 
 ### Type aliases
 
-* [ConstraintValidators](_useconstraints_types_.md#constraintvalidators)
-* [RequiredConstraint](_useconstraints_types_.md#requiredconstraint)
-* [constraintValues](_useconstraints_types_.md#constraintvalues)
-* [supportedConstraints](_useconstraints_types_.md#supportedconstraints)
-* [supportedTypes](_useconstraints_types_.md#supportedtypes)
+- [ConstraintValidators](_useconstraints_types_.md#constraintvalidators)
+- [RequiredConstraint](_useconstraints_types_.md#requiredconstraint)
+- [constraintValues](_useconstraints_types_.md#constraintvalues)
+- [supportedConstraints](_useconstraints_types_.md#supportedconstraints)
+- [supportedTypes](_useconstraints_types_.md#supportedtypes)
 
 ### Variables
 
-* [supportedProperties](_useconstraints_types_.md#const-supportedproperties)
-* [supportedTypesSet](_useconstraints_types_.md#const-supportedtypesset)
+- [supportedProperties](_useconstraints_types_.md#const-supportedproperties)
+- [supportedTypesSet](_useconstraints_types_.md#const-supportedtypesset)
 
 ### Object literals
 
-* [defaultMessage](_useconstraints_types_.md#const-defaultmessage)
+- [defaultMessage](_useconstraints_types_.md#const-defaultmessage)
 
 ## Type aliases
 
-###  ConstraintValidators
+### ConstraintValidators
 
-Ƭ **ConstraintValidators**: *Values‹[Constraints](../interfaces/_useconstraints_types_.constraints.md) | [Validator](../interfaces/_usevalidation_types_.validator.md)›*
+Ƭ **ConstraintValidators**: _Values‹[Constraints](../interfaces/_useconstraints_types_.constraints.md) | [Validator](../interfaces/_usevalidation_types_.validator.md)›_
 
-___
+---
 
-###  RequiredConstraint
+### RequiredConstraint
 
-Ƭ **RequiredConstraint**: *object*
+Ƭ **RequiredConstraint**: _object_
 
 #### Type declaration:
 
-___
+---
 
-###  constraintValues
+### constraintValues
 
-Ƭ **constraintValues**: *boolean | number | RegExp | string | Date*
+Ƭ **constraintValues**: _boolean | number | RegExp | string | Date_
 
-___
+---
 
-###  supportedConstraints
+### supportedConstraints
 
-Ƭ **supportedConstraints**: *keyof Constraints*
+Ƭ **supportedConstraints**: _keyof Constraints_
 
-___
+---
 
-###  supportedTypes
+### supportedTypes
 
-Ƭ **supportedTypes**: *"email" | "text" | "url" | "number" | "date"*
+Ƭ **supportedTypes**: _"email" | "text" | "url" | "number" | "date"_
 
 ## Variables
 
 ### `Const` supportedProperties
 
-• **supportedProperties**: *[supportedConstraints](_useconstraints_types_.md#supportedconstraints)[]* = [
-  'required',
-  'type',
-  'pattern',
-  'maxLength',
-  'minLength',
-  'max',
-  'min',
+• **supportedProperties**: _[supportedConstraints](_useconstraints_types_.md#supportedconstraints)[]_ = [
+'required',
+'type',
+'pattern',
+'maxLength',
+'minLength',
+'max',
+'min',
 ]
 
-___
+---
 
 ### `Const` supportedTypesSet
 
-• **supportedTypesSet**: *Set‹"number" | "email" | "text" | "url" | "date"›* = new Set<supportedTypes>(['text', 'email', 'url', 'number', 'date'])
+• **supportedTypesSet**: _Set‹"number" | "email" | "text" | "url" | "date"›_ = new Set<supportedTypes>([
+'text',
+'email',
+'url',
+'number',
+'date',
+])
 
 ## Object literals
 
 ### `Const` defaultMessage
 
-### ▪ **defaultMessage**: *object*
+### ▪ **defaultMessage**: _object_
 
-###  max
+### max
 
-• **max**: *string* = "The value is too large."
+• **max**: _string_ = "The value is too large."
 
-###  maxLength
+### maxLength
 
-• **maxLength**: *string* = "The number of characters is too long."
+• **maxLength**: _string_ = "The number of characters is too long."
 
-###  min
+### min
 
-• **min**: *string* = "The value is too small."
+• **min**: _string_ = "The value is too small."
 
-###  minLength
+### minLength
 
-• **minLength**: *string* = "The number of characters is too short."
+• **minLength**: _string_ = "The number of characters is too short."
 
-###  pattern
+### pattern
 
-• **pattern**: *string* = "The value must match the pattern."
+• **pattern**: _string_ = "The value must match the pattern."
 
-###  required
+### required
 
-• **required**: *string* = "There must be a value (if set)."
+• **required**: _string_ = "There must be a value (if set)."
 
-###  type
+### type
 
-• **type**: *string* = "The value must match the type."
+• **type**: _string_ = "The value must match the type."
