@@ -106,7 +106,7 @@ import { useSubmit } from './useSubmit'; /* eslint-enable max-len */
   const submitEvent = useRef<SyntheticEvent | undefined>();
 
   const setSubmitEvent = useCallback(
-    (event) => {
+    (event: SyntheticEvent) => {
       submitEvent.current = event;
     },
     [submitEvent],

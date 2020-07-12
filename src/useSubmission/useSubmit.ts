@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback, SyntheticEvent } from 'react';
 import { useFunctionStats } from '../useFunctionStats';
 import { UseSubmit, UseSubmitProps } from './types';
+import { safePromise } from '../utils';
 
 export function useSubmit({
   submitEvent,
@@ -16,7 +17,7 @@ export function useSubmit({
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
 
   // memoize the validator function
-  const validationFnc = useMemo(() => validator || ((): void => undefined), [validator]);
+  const validationFnc = useMemo(() => validator ?? ((): void => undefined), [validator]);
 
   const { fnc: validate, isRunning: isValidating } = useFunctionStats(validationFnc);
 
@@ -40,7 +41,7 @@ export function useSubmit({
       }
       setIsReadyToSubmit(true);
       if (validator) {
-        validate();
+        safePromise(validate());
       }
     },
     [validator, validate, setIsReadyToSubmit, setSubmitEvent],

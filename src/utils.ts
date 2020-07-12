@@ -17,8 +17,17 @@ export function resetForm(event?: SyntheticEvent): void {
   }
 }
 
-// eslint-disable-next-line import/prefer-default-export
 /* eslint-disable no-console */
+/**
+ * Safely catches errors from promises and allows functions to continue returning void
+ * @param promise - specified promise
+ */
+export function safePromise(promise: void | Promise<void>): void {
+  if (promise instanceof Promise) {
+    promise.catch(console.error);
+  }
+}
+
 function assertion(condition: boolean, type: LoggingTypes, message: string, logger: Logger): void {
   if (!condition) {
     logger(`${projectName}: [${type}] ${message}`);

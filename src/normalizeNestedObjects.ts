@@ -10,9 +10,7 @@ type createNestedObjectProps = Readonly<{
   currentValue: Fields;
   value: FieldValue;
   path: string[];
-  // TODO: find a better solution than any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  shadowCopy?: any;
+  shadowCopy?: Fields;
 }>;
 
 function createNestedObject({
