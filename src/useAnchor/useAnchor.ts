@@ -1,12 +1,10 @@
 import { Ref } from 'react';
-import { Fields } from '../useFields';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { useAnchorInputs } from './useAnchorInputs';
 import { useFormAnchor } from './useFormAnchor';
 import { useHandlers } from '../useHandlers';
 
 type Props = Readonly<{
-  values?: Fields;
   handleChange?: ReactOrNativeEventListener;
   handleBlur?: ReactOrNativeEventListener;
   handleSubmit?: ReactOrNativeEventListener;

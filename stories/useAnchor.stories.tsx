@@ -18,7 +18,7 @@ export function Form() {
   });
   const handleChange = useSettersAsEventHandler(setValue);
   const handleBlur = useSettersAsEventHandler(validateByName);
-  const { anchor } = useAnchor({ handleBlur, handleChange, values, handleSubmit: submit });
+  const { anchor } = useAnchor({ handleBlur, handleChange, handleSubmit: submit });
   return (
     <ValuesErrorsTable values={values} errors={errors}>
       <form ref={anchor}>
