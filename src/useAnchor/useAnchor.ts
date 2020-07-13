@@ -12,7 +12,7 @@ type Props = Readonly<{
 }>;
 
 interface UseAnchor {
-  anchor: Ref<HTMLFormElement>;
+  readonly anchor: Ref<HTMLFormElement>;
 }
 
 export function useAnchor({ handleChange, handleBlur, handleSubmit }: Props): UseAnchor {

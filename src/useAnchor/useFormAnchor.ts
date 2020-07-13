@@ -14,6 +14,11 @@ interface UseFormAnchorInputs {
   (props: CallbackProps): void;
 }
 
+type FormEventState = Readonly<{
+  form: HTMLFormElement | null;
+  handleSubmit?: ReactOrNativeEventListener;
+}>;
+
 function mountForm(form: HTMLFormElement, handleSubmit?: ReactOrNativeEventListener): void {
   if (handleSubmit) {
     mountEventHandler({ input: form, event: 'submit', eventHandler: handleSubmit });
@@ -21,10 +26,6 @@ function mountForm(form: HTMLFormElement, handleSubmit?: ReactOrNativeEventListe
 }
 
 export function useFormAnchor({ handleSubmit }: Props): UseFormAnchorInputs {
-  type FormEventState = {
-    form: HTMLFormElement | null;
-    handleSubmit?: ReactOrNativeEventListener;
-  };
   const lastForm = useRef<FormEventState>();
   return useCallback(
     ({ form }) => {
