@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import { render, fireEvent } from '@testing-library/react';
 import { useAnchor } from '../src';
@@ -26,7 +26,9 @@ describe('useAnchor', () => {
   });
   it('sets submit event handler on the form', async () => {
     const props = {
-      handleSubmit: jest.fn(),
+      handleSubmit: jest.fn().mockImplementation((e: SyntheticEvent) => {
+        e.preventDefault();
+      }),
     };
     const { result } = renderHook(() => useAnchor(props));
 
@@ -42,7 +44,7 @@ describe('useAnchor', () => {
     // try by click submit
     expect(props.handleSubmit).toBeCalledTimes(1);
     // now try with the form
-    (mount.container as HTMLFormElement).submit();
+    (mount.container.firstElementChild as HTMLFormElement).submit();
     expect(props.handleSubmit).toBeCalledTimes(2);
   });
 });
