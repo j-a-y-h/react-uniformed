@@ -49,7 +49,6 @@ describe('useRefEventHandlers', () => {
     const trigger = async () => {
       const name = await mount.findByTitle('name');
       fireEvent(name, new Event(event));
-      fireEvent(name, new Event(event));
     };
     await trigger();
     props.handlers.forEach((handler) => {
