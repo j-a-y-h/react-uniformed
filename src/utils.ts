@@ -22,7 +22,7 @@ export function resetForm(event?: SyntheticEvent): void {
 type MountEventHandlerArgs = Readonly<{
   event: string;
   eventHandler: ReactOrNativeEventListener;
-  input: HTMLInputElement;
+  input: Pick<HTMLInputElement, 'addEventListener' | 'value'>;
   mountedValue?: FieldValue;
 }>;
 
