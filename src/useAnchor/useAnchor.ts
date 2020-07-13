@@ -1,7 +1,7 @@
 import { Ref, useCallback, useRef } from 'react';
-import { Fields } from './useFields';
-import { ReactOrNativeEventListener } from './useSettersAsEventHandler';
-import { mountEventHandler } from './utils';
+import { Fields } from '../useFields';
+import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
+import { mountEventHandler } from '../utils';
 
 type Props = Readonly<{
   values?: Fields;
