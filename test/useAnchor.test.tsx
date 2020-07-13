@@ -104,31 +104,38 @@ describe('useAnchor', () => {
     (mount.container.firstElementChild as HTMLFormElement)[type]();
     expect(props[handler]).toBeCalledTimes(2);
   });
-  it('removes submit event handler on the form when unmounting', async () => {
-    const props = createMockSubmit();
-    const props2 = createMockSubmit();
-    const { result, rerender } = renderHook((props) => useAnchor(props), {
-      initialProps: props,
-    });
+  it.each([
+    ['submit', 'handleSubmit', createMockSubmit],
+    ['reset', 'handleReset', createMockReset],
+    // @ts-expect-error
+  ])(
+    'removes %s event handler on the form when unmounting',
+    async (type: 'submit' | 'reset', handler, mocker) => {
+      const props = mocker();
+      const props2 = mocker();
+      const { result, rerender } = renderHook((props) => useAnchor(props), {
+        initialProps: props,
+      });
 
-    const Component = ({ anchor }) => (
-      <form ref={anchor}>
-        <button title='name' type='submit'>
-          Submit
-        </button>
-      </form>
-    );
+      const Component = ({ anchor }) => (
+        <form ref={anchor}>
+          <button title='name' type={type}>
+            {type}
+          </button>
+        </form>
+      );
 
-    const mount = render(<Component anchor={result.current.anchor} />);
-    const name = await mount.findByTitle('name');
-    name.click();
-    expect(props.handleSubmit).toBeCalledTimes(1);
-    expect(props2.handleSubmit).toBeCalledTimes(0);
+      const mount = render(<Component anchor={result.current.anchor} />);
+      const name = await mount.findByTitle('name');
+      name.click();
+      expect(props[handler]).toBeCalledTimes(1);
+      expect(props2[handler]).toBeCalledTimes(0);
 
-    rerender(props2);
-    mount.rerender(<Component anchor={result.current.anchor} />);
-    name.click();
-    expect(props.handleSubmit).toBeCalledTimes(1);
-    expect(props2.handleSubmit).toBeCalledTimes(1);
-  });
+      rerender(props2);
+      mount.rerender(<Component anchor={result.current.anchor} />);
+      name.click();
+      expect(props[handler]).toBeCalledTimes(1);
+      expect(props2[handler]).toBeCalledTimes(1);
+    },
+  );
 });
