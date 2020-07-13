@@ -1,16 +1,18 @@
-import {} from 'react';
+import { Ref, useCallback } from 'react';
 import { Fields } from './useFields';
-import { Errors, validErrorValues } from './useErrors';
-import { PartialValues } from './useGenericValues';
 import { ReactOrNativeEventListener } from './useSettersAsEventHandler';
 
 type Props = Readonly<{
-  values: Fields;
-  handleChange: ReactOrNativeEventListener;
-  handleBlur: ReactOrNativeEventListener;
-  errors: Errors | PartialValues<Errors, validErrorValues>;
+  values?: Fields;
+  handleChange?: ReactOrNativeEventListener;
+  handleBlur?: ReactOrNativeEventListener;
 }>;
 
-interface UseAnchor {}
+interface UseAnchor {
+  anchor: Ref<HTMLFormElement>;
+}
 
-export function useAnchor({}: Props): UseAnchor {}
+export function useAnchor({}: Props): UseAnchor {
+  const anchor = useCallback((form: HTMLFormElement | null): void => {}, []);
+  return { anchor };
+}
