@@ -2,6 +2,7 @@ import { Ref, useCallback, useRef } from 'react';
 import { Fields } from '../useFields';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { mountEventHandler } from '../utils';
+import { useAnchorInputs } from './useAnchorInputs';
 
 type Props = Readonly<{
   values?: Fields;
@@ -10,42 +11,8 @@ type Props = Readonly<{
   handleSubmit?: ReactOrNativeEventListener;
 }>;
 
-type ValidFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-
 interface UseAnchor {
   anchor: Ref<HTMLFormElement>;
-}
-
-function mountInputs(
-  { elements }: HTMLFormElement,
-  handleChange?: ReactOrNativeEventListener,
-  handleBlur?: ReactOrNativeEventListener,
-): void {
-  // filter for input, select, and textarea elements only
-  const validElements = Array.from(elements).filter((element) => {
-    return (
-      element instanceof HTMLInputElement ||
-      element instanceof HTMLSelectElement ||
-      element instanceof HTMLTextAreaElement
-    );
-  });
-  // add event handlers
-  validElements.forEach((input) => {
-    const handlers: [string, ReactOrNativeEventListener | undefined][] = [
-      ['change', handleChange],
-      ['blur', handleBlur],
-    ];
-    // add each event handler
-    handlers.forEach(([event, eventHandler]) => {
-      if (eventHandler) {
-        mountEventHandler({
-          input: (input as unknown) as ValidFormElements,
-          event,
-          eventHandler,
-        });
-      }
-    });
-  });
 }
 
 function mountForm(form: HTMLFormElement, handleSubmit?: ReactOrNativeEventListener): void {
@@ -60,17 +27,18 @@ export function useAnchor({ handleChange, handleBlur, handleSubmit }: Props): Us
     handleSubmit?: ReactOrNativeEventListener;
   };
   const lastForm = useRef<FormEventState>();
+  const manageInputs = useAnchorInputs({ handleBlur, handleChange });
   const anchor = useCallback(
     (form: HTMLFormElement | null): void => {
+      manageInputs({ form });
       if (form) {
-        mountInputs(form, handleChange, handleBlur);
         mountForm(form, handleSubmit);
       } else if (lastForm.current?.handleSubmit) {
         lastForm.current?.form?.removeEventListener('submit', lastForm.current.handleSubmit);
       }
       lastForm.current = { form, handleSubmit };
     },
-    [handleChange, handleBlur, handleSubmit],
+    [handleSubmit, manageInputs],
   );
   return { anchor };
 }
