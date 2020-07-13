@@ -10,20 +10,16 @@ describe('useRefEventHandlers', () => {
       event,
     };
   }
-  it.each(['change', 'blur'])('sets %s event handlers on form elements', async (event) => {
+  it.each(['click', 'focus'])('sets %s event handlers using a ref', async (event) => {
     const props = createMockHandlers(event);
-    const { result } = renderHook(() => useRefEventHandlers<HTMLFormElement>(props));
+    const { result } = renderHook(() => useRefEventHandlers<HTMLButtonElement>(props));
 
     const mount = render(
-      <form ref={result.current}>
-        <div>
-          <label>Name </label>
-          <input type='text' name='name' title='name' />
-        </div>
-      </form>,
+      <button ref={result.current} title='name'>
+        Clicker
+      </button>,
     );
     const name = await mount.findByTitle('name');
-
     fireEvent(name, new Event(event));
     props.handlers.forEach((handler) => {
       expect(handler).toBeCalledTimes(1);

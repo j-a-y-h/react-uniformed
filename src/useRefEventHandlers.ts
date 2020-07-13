@@ -3,11 +3,14 @@ import { ReactOrNativeEventListener } from './useSettersAsEventHandler';
 import { useHandlers } from './useHandlers';
 
 type Props = Readonly<{
-  event: keyof GlobalEventHandlersEventMap;
+  event: string;
   handlers: ReactOrNativeEventListener[];
 }>;
 
-export function useRefEventHandlers<T extends EventTarget>({ event, handlers }: Props): Ref<T> {
+export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
+  event,
+  handlers,
+}: Props): Ref<T> {
   const eventHandler = useHandlers(...handlers);
   const ref = useCallback(
     (input: T | null): void => {
