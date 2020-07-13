@@ -1,8 +1,9 @@
-import { useCallback, Ref } from 'react';
+import { Ref } from 'react';
 import { eventLikeHandlers } from './useHandlers';
-import { assert, LoggingTypes, mountEventHandler } from './utils';
+import { assert, LoggingTypes } from './utils';
 import { Fields } from './useFields';
 import { useSettersAsEventHandler } from './useSettersAsEventHandler';
+import { useRefEventHandlers } from './useRefEventHandlers';
 
 interface UseEventHandlersWithRefProps<V> {
   readonly event?: keyof HTMLElementEventMap;
@@ -78,23 +79,6 @@ export function useSettersAsRefEventHandler<
     event = options.event ?? event;
   }
   const eventHandler = useSettersAsEventHandler(...handlers);
-  const ref = useCallback(
-    (input: T | null): void => {
-      // note: React will call input with null when the component is unmounting
-      if (input) {
-        const castedInput = (input as unknown) as HTMLInputElement;
-        const { name } = castedInput;
-        const mountedValue =
-          mountedValues && name && mountedValues[name] && String(mountedValues[name]);
-        mountEventHandler({
-          input: castedInput,
-          eventHandler,
-          event,
-          mountedValue,
-        });
-      }
-    },
-    [event, eventHandler, mountedValues],
-  );
+  const ref = useRefEventHandlers<T>({ handlers: [eventHandler], event });
   return ref;
 }
