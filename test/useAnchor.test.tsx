@@ -11,11 +11,14 @@ describe('useAnchor', () => {
       }),
     };
   }
-  it.each(['change', 'blur'])('sets %s event handlers on form elements', async (event) => {
-    const props = {
+  function createMockHandlers() {
+    return {
       handleChange: jest.fn(),
       handleBlur: jest.fn(),
     };
+  }
+  it.each(['change', 'blur'])('sets %s event handlers on form elements', async (event) => {
+    const props = createMockHandlers();
     const { result } = renderHook(() => useAnchor(props));
 
     const mount = render(
@@ -30,6 +33,46 @@ describe('useAnchor', () => {
 
     fireEvent(name, new Event(event));
     expect(event === 'change' ? props.handleChange : props.handleBlur).toBeCalledTimes(1);
+  });
+  it.each([
+    ['change', 'handleChange'],
+    ['blur', 'handleBlur'],
+  ])('removes %s event handlers on form unmount', async ([event, handler]) => {
+    const props = createMockHandlers();
+    const props2 = createMockHandlers();
+    const { result, rerender } = renderHook(
+      (props) => {
+        return useAnchor(props);
+      },
+      {
+        initialProps: props,
+      },
+    );
+
+    const Component = ({ anchor }) => (
+      <form ref={anchor}>
+        <div>
+          <label>Name </label>
+          <input type='text' name='name' title='name' />
+        </div>
+      </form>
+    );
+
+    const mount = render(<Component anchor={result.current.anchor} />);
+    const trigger = async () => {
+      const name = await mount.findByTitle('name');
+      fireEvent(name, new Event(event));
+      fireEvent(name, new Event(event));
+    };
+    await trigger();
+    expect(props[handler]).toBeCalledTimes(1);
+    expect(props2[handler]).toBeCalledTimes(0);
+
+    rerender(props2);
+    mount.rerender(<Component anchor={result.current.anchor} />);
+    await trigger();
+    expect(props[handler]).toBeCalledTimes(1);
+    expect(props2[handler]).toBeCalledTimes(1);
   });
   it('sets submit event handler on the form', async () => {
     const props = createMockSubmit();
@@ -53,17 +96,9 @@ describe('useAnchor', () => {
   it('removes submit event handler on the form when unmounting', async () => {
     const props = createMockSubmit();
     const props2 = createMockSubmit();
-    const { result, rerender } = renderHook(
-      (props) => {
-        return useAnchor({
-          ...props,
-          handleChange: jest.fn(),
-        });
-      },
-      {
-        initialProps: props,
-      },
-    );
+    const { result, rerender } = renderHook((props) => useAnchor(props), {
+      initialProps: props,
+    });
 
     const Component = ({ anchor }) => (
       <form ref={anchor}>
