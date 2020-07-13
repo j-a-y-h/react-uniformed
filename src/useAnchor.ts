@@ -1,4 +1,4 @@
-import { Ref, useCallback } from 'react';
+import { Ref, useCallback, useRef } from 'react';
 import { Fields } from './useFields';
 import { ReactOrNativeEventListener } from './useSettersAsEventHandler';
 import { mountEventHandler } from './utils';
@@ -55,12 +55,20 @@ function mountForm(form: HTMLFormElement, handleSubmit?: ReactOrNativeEventListe
 }
 
 export function useAnchor({ handleChange, handleBlur, handleSubmit }: Props): UseAnchor {
+  type FormEventState = {
+    form: HTMLFormElement | null;
+    handleSubmit?: ReactOrNativeEventListener;
+  };
+  const lastForm = useRef<FormEventState>();
   const anchor = useCallback(
     (form: HTMLFormElement | null): void => {
       if (form) {
         mountInputs(form, handleChange, handleBlur);
         mountForm(form, handleSubmit);
+      } else if (lastForm.current?.handleSubmit) {
+        lastForm.current?.form?.removeEventListener('submit', lastForm.current.handleSubmit);
       }
+      lastForm.current = { form, handleSubmit };
     },
     [handleChange, handleBlur, handleSubmit],
   );
