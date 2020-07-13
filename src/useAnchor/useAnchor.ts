@@ -9,6 +9,7 @@ type Props = Readonly<{
   handleChange?: ReactOrNativeEventListener;
   handleBlur?: ReactOrNativeEventListener;
   handleSubmit?: ReactOrNativeEventListener;
+  handleReset?: ReactOrNativeEventListener;
 }>;
 
 interface UseAnchor {
@@ -17,7 +18,7 @@ interface UseAnchor {
 
 export function useAnchor({ handleChange, handleBlur, handleSubmit }: Props): UseAnchor {
   const manageInputs = useAnchorInputs({ handleBlur, handleChange });
-  const manageForm = useFormAnchor({ handleSubmit });
+  const manageForm = useFormAnchor({ handler: handleSubmit, type: 'submit' });
   const anchor = useCallback(
     (form: HTMLFormElement | null): void => {
       manageInputs({ form });

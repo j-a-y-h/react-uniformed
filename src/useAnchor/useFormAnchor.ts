@@ -3,7 +3,8 @@ import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { mountEventHandler } from '../utils';
 
 type Props = Readonly<{
-  handleSubmit?: ReactOrNativeEventListener;
+  handler?: ReactOrNativeEventListener;
+  type: 'submit' | 'reset';
 }>;
 
 type CallbackProps = Readonly<{
@@ -16,26 +17,30 @@ interface UseFormAnchorInputs {
 
 type FormEventState = Readonly<{
   form: HTMLFormElement | null;
-  handleSubmit?: ReactOrNativeEventListener;
+  handler?: ReactOrNativeEventListener;
 }>;
 
-function mountForm(form: HTMLFormElement, handleSubmit?: ReactOrNativeEventListener): void {
-  if (handleSubmit) {
-    mountEventHandler({ input: form, event: 'submit', eventHandler: handleSubmit });
+function mountForm(
+  form: HTMLFormElement,
+  event: string,
+  handler?: ReactOrNativeEventListener,
+): void {
+  if (handler) {
+    mountEventHandler({ input: form, event, eventHandler: handler });
   }
 }
 
-export function useFormAnchor({ handleSubmit }: Props): UseFormAnchorInputs {
+export function useFormAnchor({ handler, type }: Props): UseFormAnchorInputs {
   const lastForm = useRef<FormEventState>();
   return useCallback(
     ({ form }) => {
       if (form) {
-        mountForm(form, handleSubmit);
-      } else if (lastForm.current?.handleSubmit) {
-        lastForm.current?.form?.removeEventListener('submit', lastForm.current.handleSubmit);
+        mountForm(form, type, handler);
+      } else if (lastForm.current?.handler) {
+        lastForm.current?.form?.removeEventListener(type, lastForm.current.handler);
       }
-      lastForm.current = { form, handleSubmit };
+      lastForm.current = { form, handler };
     },
-    [handleSubmit],
+    [handler, type],
   );
 }
