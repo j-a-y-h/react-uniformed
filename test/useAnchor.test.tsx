@@ -4,7 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { useAnchor } from '../src';
 
 describe('useAnchor', () => {
-  it('sets change event handlers on form elements', async () => {
+  it.each(['change', 'blur'])('sets %s event handlers on form elements', async (event) => {
     const props = {
       handleChange: jest.fn(),
     };
@@ -20,7 +20,7 @@ describe('useAnchor', () => {
     );
     const name = await mount.findByTitle('name');
 
-    fireEvent(name, new Event('change'));
+    fireEvent(name, new Event(event));
     expect(props.handleChange).toBeCalledTimes(1);
   });
 });
