@@ -48,14 +48,21 @@ function mountInputs(
   });
 }
 
-export function useAnchor({ handleChange, handleBlur }: Props): UseAnchor {
+function mountForm(form: HTMLFormElement, handleSubmit?: ReactOrNativeEventListener): void {
+  if (handleSubmit) {
+    mountEventHandler({ input: form, event: 'submit', eventHandler: handleSubmit });
+  }
+}
+
+export function useAnchor({ handleChange, handleBlur, handleSubmit }: Props): UseAnchor {
   const anchor = useCallback(
     (form: HTMLFormElement | null): void => {
       if (form) {
         mountInputs(form, handleChange, handleBlur);
+        mountForm(form, handleSubmit);
       }
     },
-    [handleChange, handleBlur],
+    [handleChange, handleBlur, handleSubmit],
   );
   return { anchor };
 }
