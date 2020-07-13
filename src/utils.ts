@@ -44,11 +44,9 @@ export function mountEventHandler({
   // and when this function
   // is called with new eventHandler
   input.addEventListener(event, eventHandler);
-  if (mountedValue && input.value) {
-    // need to set the mounted values
-    // eslint-disable-next-line no-param-reassign
-    input.value = mountedValue;
-  }
+  // need to set the mounted values
+  // eslint-disable-next-line no-param-reassign
+  input.value = mountedValue ?? '';
 }
 
 /* eslint-disable no-console */
