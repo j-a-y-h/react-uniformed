@@ -12,10 +12,10 @@ describe('useRefEventHandlers', () => {
   }
   it.each(['change', 'blur'])('sets %s event handlers on form elements', async (event) => {
     const props = createMockHandlers(event);
-    const { result } = renderHook(() => useRefEventHandlers(props));
+    const { result } = renderHook(() => useRefEventHandlers<HTMLFormElement>(props));
 
     const mount = render(
-      <form ref={result.current.anchor}>
+      <form ref={result.current}>
         <div>
           <label>Name </label>
           <input type='text' name='name' title='name' />
@@ -28,6 +28,5 @@ describe('useRefEventHandlers', () => {
     props.handlers.forEach((handler) => {
       expect(handler).toBeCalledTimes(1);
     });
-    expect(props.handlers[0]).toBeCalledTimes(1);
   });
 });
