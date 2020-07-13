@@ -1,6 +1,6 @@
 import { useCallback, Ref } from 'react';
 import { eventLikeHandlers } from './useHandlers';
-import { assert, LoggingTypes } from './utils';
+import { assert, LoggingTypes, mountEventHandler } from './utils';
 import { Fields } from './useFields';
 import { useSettersAsEventHandler } from './useSettersAsEventHandler';
 
@@ -82,16 +82,16 @@ export function useSettersAsRefEventHandler<
     (input: T | null): void => {
       // note: React will call input with null when the component is unmounting
       if (input) {
-        const { name } = (input as unknown) as HTMLInputElement;
-        // TODO: solve potential memory leak, in the else block removeEventListener,
-        // and when this function
-        // is called with new eventHandler
-        input.addEventListener(event, eventHandler);
-        if (mountedValues && name && mountedValues[name]) {
-          // need to set the mounted values
-          // eslint-disable-next-line no-param-reassign
-          ((input as unknown) as HTMLInputElement).value = String(mountedValues[name]);
-        }
+        const castedInput = (input as unknown) as HTMLInputElement;
+        const { name } = castedInput;
+        const mountedValue =
+          mountedValues && name && mountedValues[name] && String(mountedValues[name]);
+        mountEventHandler({
+          input: castedInput,
+          eventHandler,
+          event,
+          mountedValue,
+        });
       }
     },
     [event, eventHandler, mountedValues],
