@@ -11,6 +11,13 @@ describe('useAnchor', () => {
       }),
     };
   }
+  function createMockReset() {
+    return {
+      handleReset: jest.fn().mockImplementation((e: SyntheticEvent) => {
+        e.preventDefault();
+      }),
+    };
+  }
   function createMockHandlers() {
     return {
       handleChange: jest.fn(),
@@ -119,5 +126,24 @@ describe('useAnchor', () => {
     name.click();
     expect(props.handleSubmit).toBeCalledTimes(1);
     expect(props2.handleSubmit).toBeCalledTimes(1);
+  });
+  it('sets reset event handler on the form', async () => {
+    const props = createMockReset();
+    const { result } = renderHook(() => useAnchor(props));
+
+    const mount = render(
+      <form ref={result.current.anchor}>
+        <button title='name' type='reset'>
+          Submit
+        </button>
+      </form>,
+    );
+    const name = await mount.findByTitle('name');
+    name.click();
+    // try by click submit
+    expect(props.handleReset).toBeCalledTimes(1);
+    // now try with the form
+    (mount.container.firstElementChild as HTMLFormElement).reset();
+    expect(props.handleReset).toBeCalledTimes(2);
   });
 });
