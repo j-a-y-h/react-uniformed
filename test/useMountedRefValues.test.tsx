@@ -33,6 +33,7 @@ describe('useMountedRefValues', () => {
   });
   describe('ref element name does NOT match a mounted value key', () => {
     it('will not set the ref elements value on mount', () => {});
+    it('will not overwrite the ref elements value on mount', () => {});
     it('will not set the ref elements value on re-mount', () => {});
   });
 });
