@@ -7,16 +7,17 @@ type Props = Readonly<{
   handlers: ReactOrNativeEventListener[];
 }>;
 
-interface LastRef<T> {
+type LastRef<T> = Readonly<{
   input: T | null;
   eventHandler?: ReactOrNativeEventListener;
   event: string;
-}
+}>;
 
 export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
   event,
   handlers,
 }: Props): Ref<T> {
+  // track the lastRef so we can remove event handlers
   const lastRef = useRef<LastRef<T>>();
   const eventHandler = useHandlers(...handlers);
   const ref = useCallback(
