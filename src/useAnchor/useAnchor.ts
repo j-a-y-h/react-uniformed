@@ -16,15 +16,22 @@ interface UseAnchor {
   readonly anchor: Ref<HTMLFormElement>;
 }
 
-export function useAnchor({ handleChange, handleBlur, handleSubmit }: Props): UseAnchor {
+export function useAnchor({
+  handleChange,
+  handleBlur,
+  handleSubmit,
+  handleReset,
+}: Props): UseAnchor {
   const manageInputs = useAnchorInputs({ handleBlur, handleChange });
-  const manageForm = useFormAnchor({ handler: handleSubmit, type: 'submit' });
+  const handleFormSubmit = useFormAnchor({ handler: handleSubmit, type: 'submit' });
+  const handleFormReset = useFormAnchor({ handler: handleReset, type: 'reset' });
   const anchor = useCallback(
     (form: HTMLFormElement | null): void => {
       manageInputs({ form });
-      manageForm({ form });
+      handleFormSubmit({ form });
+      handleFormReset({ form });
     },
-    [manageForm, manageInputs],
+    [handleFormSubmit, manageInputs, handleFormReset],
   );
   return { anchor };
 }
