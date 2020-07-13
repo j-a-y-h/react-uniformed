@@ -1,5 +1,6 @@
 import React from 'react';
 import { useForm, useSettersAsRefEventHandler } from '../src';
+import { ValuesErrorsTable } from './utils';
 
 export default {
   title: 'Performance',
@@ -18,34 +19,22 @@ function Form({ values, errors, submit, changeRef, emails }) {
     <div>
       <h1>Performance Test (Input Count: {emails.length})</h1>
       <br />
-      <table>
-        <tr>
-          <td style={{ verticalAlign: 'top', width: '25%' }}>
-            <form onSubmit={submit}>
-              <button type='submit'>Submit</button>
+      <ValuesErrorsTable values={values} errors={errors}>
+        <form onSubmit={submit}>
+          <button type='submit'>Submit</button>
+          <br />
+          {emails.map((key) => (
+            <React.Fragment key={key}>
+              <label>{key}:</label>
+              <input name={key} ref={changeRef} />
+              <span style={{ color: 'red' }}>{errors[key] && <div>{errors[key]}</div>}</span>
               <br />
-              {emails.map((key) => (
-                <React.Fragment key={key}>
-                  <label>{key}:</label>
-                  <input name={key} ref={changeRef} />
-                  <span style={{ color: 'red' }}>{errors[key] && <div>{errors[key]}</div>}</span>
-                  <br />
-                </React.Fragment>
-              ))}
-              <input name='username' ref={changeRef} />
-              {errors.username && <div>{errors.username}</div>}
-            </form>
-          </td>
-          <td style={{ verticalAlign: 'top', width: '25%' }}>
-            <p>Errors</p>
-            <pre>{JSON.stringify(errors, null, 2)}</pre>
-          </td>
-          <td style={{ verticalAlign: 'top', width: '25%' }}>
-            <p>Values</p>
-            <pre>{JSON.stringify(values, null, 2)}</pre>
-          </td>
-        </tr>
-      </table>
+            </React.Fragment>
+          ))}
+          <input name='username' ref={changeRef} />
+          {errors.username && <div>{errors.username}</div>}
+        </form>
+      </ValuesErrorsTable>
     </div>
   );
 }
