@@ -8,6 +8,6 @@ type Props = Readonly<{
 export function useMountedRefValues<T extends HTMLElement = HTMLElement>({
   values,
 }: Props): Ref<T> {
-  const ref = useCallback((input: T | null): void => {}, [event]);
+  const ref = useCallback((input: T | null): void => {}, []);
   return ref;
 }
