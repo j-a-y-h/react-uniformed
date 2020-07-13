@@ -107,9 +107,9 @@ describe('useAnchor', () => {
   it.each([
     ['submit', 'handleSubmit', createMockSubmit],
     ['reset', 'handleReset', createMockReset],
-    // @ts-expect-error
   ])(
     'removes %s event handler on the form when unmounting',
+    // @ts-expect-error
     async (type: 'submit' | 'reset', handler, mocker) => {
       const props = mocker();
       const props2 = mocker();
@@ -138,4 +138,7 @@ describe('useAnchor', () => {
       expect(props2[handler]).toBeCalledTimes(1);
     },
   );
+  it.todo('only adds event handler to input, textarea, and select elements');
+  it.todo('will not add event handler to submit type input');
+  it.todo('handles dynamically added input elements');
 });
