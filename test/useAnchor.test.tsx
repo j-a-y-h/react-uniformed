@@ -53,30 +53,34 @@ describe('useAnchor', () => {
   it('removes submit event handler on the form when unmounting', async () => {
     const props = createMockSubmit();
     const props2 = createMockSubmit();
-    const { result, rerender } = renderHook((p) =>
-      useAnchor({
-        ...props,
-        // @ts-expect-error
-        ...p,
-        handleChange: jest.fn(),
-      }),
+    const { result, rerender } = renderHook(
+      (props) => {
+        return useAnchor({
+          ...props,
+          handleChange: jest.fn(),
+        });
+      },
+      {
+        initialProps: props,
+      },
     );
 
-    const Component = () => (
-      <form ref={result.current.anchor}>
+    const Component = ({ anchor }) => (
+      <form ref={anchor}>
         <button title='name' type='submit'>
           Submit
         </button>
       </form>
     );
 
-    const mount = render(<Component />);
+    const mount = render(<Component anchor={result.current.anchor} />);
     const name = await mount.findByTitle('name');
     name.click();
     expect(props.handleSubmit).toBeCalledTimes(1);
     expect(props2.handleSubmit).toBeCalledTimes(0);
 
     rerender(props2);
+    mount.rerender(<Component anchor={result.current.anchor} />);
     name.click();
     expect(props.handleSubmit).toBeCalledTimes(1);
     expect(props2.handleSubmit).toBeCalledTimes(1);
