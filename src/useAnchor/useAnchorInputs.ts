@@ -1,19 +1,12 @@
 import { useCallback, useRef } from 'react';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { mountEventHandler } from '../utils';
+import { UseSubAnchor } from './types';
 
 type Props = Readonly<{
   handleChange?: ReactOrNativeEventListener;
   handleBlur?: ReactOrNativeEventListener;
 }>;
-
-type CallbackProps = Readonly<{
-  form?: HTMLFormElement | null;
-}>;
-
-interface UseAnchorInputs {
-  (props: CallbackProps): void;
-}
 
 type ValidFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -48,7 +41,7 @@ function mountInputs(
     });
   });
 }
-export function useAnchorInputs({ handleBlur, handleChange }: Props): UseAnchorInputs {
+export function useAnchorInputs({ handleBlur, handleChange }: Props): UseSubAnchor {
   return useCallback(
     ({ form }) => {
       if (form) {

@@ -1,19 +1,12 @@
 import { useCallback, useRef } from 'react';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { mountEventHandler } from '../utils';
+import { UseSubAnchor } from './types';
 
 type Props = Readonly<{
   handler?: ReactOrNativeEventListener;
   type: 'submit' | 'reset';
 }>;
-
-type CallbackProps = Readonly<{
-  form: HTMLFormElement | null;
-}>;
-
-interface UseFormAnchorInputs {
-  (props: CallbackProps): void;
-}
 
 type FormEventState = Readonly<{
   form: HTMLFormElement | null;
@@ -30,7 +23,7 @@ function mountForm(
   }
 }
 
-export function useFormAnchor({ handler, type }: Props): UseFormAnchorInputs {
+export function useFormAnchor({ handler, type }: Props): UseSubAnchor {
   const lastForm = useRef<FormEventState>();
   return useCallback(
     ({ form }) => {
