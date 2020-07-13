@@ -9,11 +9,13 @@ type Props = Readonly<{
   handleBlur?: ReactOrNativeEventListener;
 }>;
 
+type ValidFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
 interface UseAnchor {
   anchor: Ref<HTMLFormElement>;
 }
 
-export function useAnchor({ handleChange }: Props): UseAnchor {
+export function useAnchor({ handleChange, handleBlur }: Props): UseAnchor {
   const anchor = useCallback(
     (form: HTMLFormElement | null): void => {
       if (form) {
@@ -28,18 +30,24 @@ export function useAnchor({ handleChange }: Props): UseAnchor {
         });
         // add event handlers
         validElements.forEach((input) => {
-          if (handleChange) {
-            mountEventHandler({
-              // TODO: support of types here too
-              input: (input as unknown) as HTMLInputElement,
-              event: 'change',
-              eventHandler: handleChange,
-            });
-          }
+          const handlers: [string, ReactOrNativeEventListener | undefined][] = [
+            ['change', handleChange],
+            ['blur', handleBlur],
+          ];
+          // add each event handler
+          handlers.forEach(([event, eventHandler]) => {
+            if (eventHandler) {
+              mountEventHandler({
+                input: (input as unknown) as ValidFormElements,
+                event,
+                eventHandler,
+              });
+            }
+          });
         });
       }
     },
-    [handleChange],
+    [handleChange, handleBlur],
   );
   return { anchor };
 }

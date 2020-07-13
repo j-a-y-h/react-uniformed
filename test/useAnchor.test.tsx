@@ -7,6 +7,7 @@ describe('useAnchor', () => {
   it.each(['change', 'blur'])('sets %s event handlers on form elements', async (event) => {
     const props = {
       handleChange: jest.fn(),
+      handleBlur: jest.fn(),
     };
     const { result } = renderHook(() => useAnchor(props));
 
@@ -21,6 +22,6 @@ describe('useAnchor', () => {
     const name = await mount.findByTitle('name');
 
     fireEvent(name, new Event(event));
-    expect(props.handleChange).toBeCalledTimes(1);
+    expect(event === 'change' ? props.handleChange : props.handleBlur).toBeCalledTimes(1);
   });
 });
