@@ -81,24 +81,28 @@ describe('useAnchor', () => {
     expect(props[handler]).toBeCalledTimes(1);
     expect(props2[handler]).toBeCalledTimes(1);
   });
-  it('sets submit event handler on the form', async () => {
-    const props = createMockSubmit();
+  it.each([
+    ['submit', 'handleSubmit', createMockSubmit],
+    ['reset', 'handleReset', createMockReset],
+    // @ts-expect-error
+  ])('sets %s event handler on the form', async (type: 'submit' | 'reset', handler, mocker) => {
+    const props = mocker();
     const { result } = renderHook(() => useAnchor(props));
 
     const mount = render(
       <form ref={result.current.anchor}>
-        <button title='name' type='submit'>
-          Submit
+        <button title='name' type={type}>
+          {type}
         </button>
       </form>,
     );
     const name = await mount.findByTitle('name');
     name.click();
     // try by click submit
-    expect(props.handleSubmit).toBeCalledTimes(1);
+    expect(props[handler]).toBeCalledTimes(1);
     // now try with the form
-    (mount.container.firstElementChild as HTMLFormElement).submit();
-    expect(props.handleSubmit).toBeCalledTimes(2);
+    (mount.container.firstElementChild as HTMLFormElement)[type]();
+    expect(props[handler]).toBeCalledTimes(2);
   });
   it('removes submit event handler on the form when unmounting', async () => {
     const props = createMockSubmit();
@@ -126,24 +130,5 @@ describe('useAnchor', () => {
     name.click();
     expect(props.handleSubmit).toBeCalledTimes(1);
     expect(props2.handleSubmit).toBeCalledTimes(1);
-  });
-  it('sets reset event handler on the form', async () => {
-    const props = createMockReset();
-    const { result } = renderHook(() => useAnchor(props));
-
-    const mount = render(
-      <form ref={result.current.anchor}>
-        <button title='name' type='reset'>
-          Submit
-        </button>
-      </form>,
-    );
-    const name = await mount.findByTitle('name');
-    name.click();
-    // try by click submit
-    expect(props.handleReset).toBeCalledTimes(1);
-    // now try with the form
-    (mount.container.firstElementChild as HTMLFormElement).reset();
-    expect(props.handleReset).toBeCalledTimes(2);
   });
 });
