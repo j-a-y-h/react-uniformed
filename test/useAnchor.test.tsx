@@ -37,7 +37,7 @@ describe('useAnchor', () => {
   it.each([
     ['change', 'handleChange'],
     ['blur', 'handleBlur'],
-  ])('removes %s event handlers on form unmount', async ([event, handler]) => {
+  ])('removes %s event handlers on form unmount', async (event, handler) => {
     const props = createMockHandlers();
     const props2 = createMockHandlers();
     const { result, rerender } = renderHook(
