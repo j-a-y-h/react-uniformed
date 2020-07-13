@@ -29,6 +29,19 @@ describe('useMountedRefValues', () => {
       const button = mount.container.firstElementChild as HTMLInputElement;
       expect(button.value).toBe(5);
     });
+    it('warns before overwriting the ref elements value on mount', () => {
+      const { result } = renderHook(() =>
+        useMountedRefValues<HTMLInputElement>({
+          values: {
+            test: 5,
+          },
+        }),
+      );
+      const warnMock = jest.spyOn(console, 'warn');
+      expect(warnMock).toBeCalledTimes(0);
+      render(<input ref={result.current} title='name' value='99' />);
+      expect(warnMock).toBeCalledTimes(1);
+    });
     it('sets the ref elements value on re-mount', () => {});
   });
   describe('ref element name does NOT match a mounted value key', () => {
