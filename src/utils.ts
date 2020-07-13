@@ -22,7 +22,7 @@ export function resetForm(event?: SyntheticEvent): void {
 type MountEventHandlerArgs = Readonly<{
   event: string;
   eventHandler: ReactOrNativeEventListener;
-  input: Pick<HTMLInputElement, 'addEventListener' | 'value'>;
+  input: Pick<HTMLInputElement, 'addEventListener'> & Partial<Pick<HTMLInputElement, 'value'>>;
   mountedValue?: FieldValue;
 }>;
 
@@ -44,10 +44,10 @@ export function mountEventHandler({
   // and when this function
   // is called with new eventHandler
   input.addEventListener(event, eventHandler);
-  if (mountedValue) {
+  if (mountedValue && input.value) {
     // need to set the mounted values
     // eslint-disable-next-line no-param-reassign
-    ((input as unknown) as HTMLInputElement).value = mountedValue;
+    input.value = mountedValue;
   }
 }
 
