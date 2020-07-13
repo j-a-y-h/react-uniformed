@@ -44,9 +44,12 @@ export function mountEventHandler({
   // and when this function
   // is called with new eventHandler
   input.addEventListener(event, eventHandler);
-  // need to set the mounted values
-  // eslint-disable-next-line no-param-reassign
-  input.value = mountedValue ?? '';
+  // TODO: test that only sets value if value is defined as number or string
+  if (['string', 'number'].includes(typeof mountedValue)) {
+    // need to set the mounted values
+    // eslint-disable-next-line no-param-reassign
+    input.value = mountedValue;
+  }
 }
 
 /* eslint-disable no-console */
