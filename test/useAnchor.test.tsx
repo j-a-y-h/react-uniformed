@@ -24,4 +24,25 @@ describe('useAnchor', () => {
     fireEvent(name, new Event(event));
     expect(event === 'change' ? props.handleChange : props.handleBlur).toBeCalledTimes(1);
   });
+  it('sets submit event handler on the form', async () => {
+    const props = {
+      handleSubmit: jest.fn(),
+    };
+    const { result } = renderHook(() => useAnchor(props));
+
+    const mount = render(
+      <form ref={result.current.anchor}>
+        <button title='name' type='submit'>
+          Submit
+        </button>
+      </form>,
+    );
+    const name = await mount.findByTitle('name');
+    name.click();
+    // try by click submit
+    expect(props.handleSubmit).toBeCalledTimes(1);
+    // now try with the form
+    (mount.container as HTMLFormElement).submit();
+    expect(props.handleSubmit).toBeCalledTimes(2);
+  });
 });
