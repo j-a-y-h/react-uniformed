@@ -1,8 +1,9 @@
-import { Ref, useCallback } from 'react';
+import { Ref } from 'react';
 import { Fields } from '../useFields';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { useAnchorInputs } from './useAnchorInputs';
 import { useFormAnchor } from './useFormAnchor';
+import { useHandlers } from '../useHandlers';
 
 type Props = Readonly<{
   values?: Fields;
@@ -22,16 +23,9 @@ export function useAnchor({
   handleSubmit,
   handleReset,
 }: Props): UseAnchor {
-  const manageInputs = useAnchorInputs({ handleBlur, handleChange });
+  const handleInputs = useAnchorInputs({ handleBlur, handleChange });
   const handleFormSubmit = useFormAnchor({ handler: handleSubmit, type: 'submit' });
   const handleFormReset = useFormAnchor({ handler: handleReset, type: 'reset' });
-  const anchor = useCallback(
-    (form: HTMLFormElement | null): void => {
-      manageInputs({ form });
-      handleFormSubmit({ form });
-      handleFormReset({ form });
-    },
-    [handleFormSubmit, manageInputs, handleFormReset],
-  );
+  const anchor = useHandlers(handleInputs, handleFormSubmit, handleFormReset);
   return { anchor };
 }

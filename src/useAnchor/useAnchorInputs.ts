@@ -43,7 +43,7 @@ function mountInputs(
 }
 export function useAnchorInputs({ handleBlur, handleChange }: Props): UseSubAnchor {
   return useCallback(
-    ({ form }) => {
+    (form) => {
       if (form) {
         mountInputs(form, handleChange, handleBlur);
       } else {

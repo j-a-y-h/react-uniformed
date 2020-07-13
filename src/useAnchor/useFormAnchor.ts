@@ -26,7 +26,7 @@ function mountForm(
 export function useFormAnchor({ handler, type }: Props): UseSubAnchor {
   const lastForm = useRef<FormEventState>();
   return useCallback(
-    ({ form }) => {
+    (form) => {
       if (form) {
         mountForm(form, type, handler);
       } else if (lastForm.current?.handler) {
