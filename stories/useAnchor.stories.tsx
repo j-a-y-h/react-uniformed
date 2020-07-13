@@ -1,8 +1,9 @@
 import React from 'react';
 import { useForm, useSettersAsEventHandler, useAnchor } from '../src';
+import { ValuesErrorsTable } from './utils';
 
 export default {
-  title: 'useConstraints',
+  title: 'useAnchor',
 };
 
 export function Form() {
@@ -19,24 +20,26 @@ export function Form() {
   const handleBlur = useSettersAsEventHandler(validateByName);
   const { anchor } = useAnchor({ handleBlur, handleChange, values });
   return (
-    <form ref={anchor}>
-      <div>
-        <label>Name </label>
-        <input type='text' name='name' />
-      </div>
-      <div>
-        <label>Email</label>
-        <input type='text' name='email' />
-      </div>
-      <div>
-        <label>Mobile number</label>
-        <input type='tel' name='phone' />
-      </div>
-      <div>
-        <label>Website</label>
-        <input type='text' name='website' />
-      </div>
-      <input type='submit' />
-    </form>
+    <ValuesErrorsTable values={values} errors={errors}>
+      <form ref={anchor}>
+        <div>
+          <label>Name </label>
+          <input type='text' name='name' />
+        </div>
+        <div>
+          <label>Email</label>
+          <input type='text' name='email' />
+        </div>
+        <div>
+          <label>Mobile number</label>
+          <input type='tel' name='phone' />
+        </div>
+        <div>
+          <label>Website</label>
+          <input type='text' name='website' />
+        </div>
+        <input type='submit' />
+      </form>
+    </ValuesErrorsTable>
   );
 }
