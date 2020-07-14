@@ -3,6 +3,7 @@ import { useRefEventHandlers } from '../src/useRefEventHandlers';
 import { renderHook } from '@testing-library/react-hooks';
 import { render, fireEvent } from '@testing-library/react';
 
+// TODO: for each .tsx file make them integration test instead of unit tests
 describe('useRefEventHandlers', () => {
   function createMockHandlers(event = 'change') {
     return {
@@ -27,6 +28,17 @@ describe('useRefEventHandlers', () => {
     props.handlers.forEach((handler) => {
       expect(handler).toBeCalledTimes(1);
     });
+  });
+  it('will not set event handlers if event handler is not specified', async () => {
+    const props = { event: 'click' };
+    const { result } = renderHook(() => useRefEventHandlers<HTMLButtonElement>(props));
+    const mockEventListener = {
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    };
+    result.current((mockEventListener as unknown) as HTMLInputElement);
+    expect(mockEventListener.addEventListener).toBeCalledTimes(0);
+    expect(mockEventListener.removeEventListener).toBeCalledTimes(0);
   });
   it.each([['click'], ['blur']])('removes %s event handlers on unmount', async (event) => {
     const props = createMockHandlers(event);
