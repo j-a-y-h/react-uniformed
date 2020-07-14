@@ -1,9 +1,9 @@
 import React from 'react';
-import { useForm, useSettersAsEventHandler, useAnchor } from '../src';
+import { useForm, useSettersAsEventHandler, useFormRef } from '../src';
 import { ValuesErrorsTable } from './utils';
 
 export default {
-  title: 'useAnchor',
+  title: 'useFormRef',
 };
 
 export function Form() {
@@ -18,7 +18,7 @@ export function Form() {
   });
   const handleChange = useSettersAsEventHandler(setValue);
   const handleBlur = useSettersAsEventHandler(validateByName);
-  const { anchor } = useAnchor({ handleBlur, handleChange, handleSubmit: submit });
+  const { anchor } = useFormRef({ handleBlur, handleChange, handleSubmit: submit });
   return (
     <ValuesErrorsTable values={values} errors={errors}>
       <form ref={anchor}>
