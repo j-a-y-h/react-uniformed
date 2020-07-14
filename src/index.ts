@@ -11,4 +11,4 @@ export { useValidation } from './useValidation';
 export { useConstraints } from './useConstraints';
 export { useNormalizers } from './useNormalizers';
 export { normalizeNestedObjects } from './normalizeNestedObjects';
-export { useAnchor } from './useFormRef';
+export { useFormRef } from './useFormRef';

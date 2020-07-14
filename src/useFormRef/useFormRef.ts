@@ -3,7 +3,6 @@ import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { useAnchorInputs } from './useFormInputsRef';
 import { useFormAnchor } from './useFormAnchor';
 import { useHandlers } from '../useHandlers';
-import { useSettersAsRefEventHandler } from '../useSettersAsRefEventHandler';
 
 type Props = Readonly<{
   handleChange?: ReactOrNativeEventListener;
@@ -17,7 +16,7 @@ interface UseAnchor {
 }
 // TODO: change name to useFormRef, ref, useFormInputRefs, useFormRefHandler
 // TODO: use closets to find form
-export function useAnchor({
+export function useFormRef({
   handleChange,
   handleBlur,
   handleSubmit,
