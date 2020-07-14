@@ -1,15 +1,10 @@
-import { Ref, useCallback } from 'react';
+import { useCallback, RefCallback } from 'react';
 import { Fields } from './useFields';
 import { log } from './utils';
 
-type ValueLikeElement =
-  | Pick<HTMLInputElement, 'value' | 'name'>
-  | Pick<HTMLSelectElement, 'value' | 'name'>
-  | Pick<HTMLTextAreaElement, 'value' | 'name'>;
-
-export function useMountedRefValues<T extends ValueLikeElement = HTMLInputElement>(
-  values: Fields,
-): Ref<T> {
+export function useMountedRefValues<
+  T extends HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement = HTMLInputElement
+>(values: Fields): RefCallback<T> {
   const ref = useCallback(
     (input: T | null): void => {
       if (input) {

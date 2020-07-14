@@ -1,4 +1,4 @@
-import { Ref, useCallback, useRef } from 'react';
+import { Ref, useCallback, useRef, RefCallback } from 'react';
 import { ReactOrNativeEventListener } from './useSettersAsEventHandler';
 import { useHandlers } from './useHandlers';
 
@@ -16,7 +16,7 @@ type LastRef<T> = Readonly<{
 export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
   event,
   handlers,
-}: Props): Ref<T> {
+}: Props): RefCallback<T> {
   // track the lastRef so we can remove event handlers
   const lastRef = useRef<LastRef<T>>();
   const eventHandler = useHandlers(...handlers);

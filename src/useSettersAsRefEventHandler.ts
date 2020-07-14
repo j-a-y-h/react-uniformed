@@ -1,9 +1,10 @@
-import { Ref } from 'react';
-import { eventLikeHandlers } from './useHandlers';
+import { Ref, RefCallback } from 'react';
+import { eventLikeHandlers, useHandlers } from './useHandlers';
 import { assert, LoggingTypes } from './utils';
 import { Fields } from './useFields';
 import { useSettersAsEventHandler } from './useSettersAsEventHandler';
 import { useRefEventHandlers } from './useRefEventHandlers';
+import { useMountedRefValues } from './useMountedRefValues';
 
 interface UseEventHandlersWithRefProps<V> {
   readonly event?: keyof HTMLElementEventMap;
@@ -79,6 +80,11 @@ export function useSettersAsRefEventHandler<
     event = options.event ?? event;
   }
   const eventHandler = useSettersAsEventHandler(...handlers);
-  const ref = useRefEventHandlers<T>({ handlers: [eventHandler], event });
+  const mountedRefValues = useMountedRefValues<HTMLInputElement>(mountedValues) as RefCallback<T>;
+  const refEventHandlers = useRefEventHandlers<T>({
+    handlers: [eventHandler],
+    event,
+  });
+  const ref = useHandlers(mountedRefValues, refEventHandlers);
   return ref;
 }
