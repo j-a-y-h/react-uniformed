@@ -29,7 +29,7 @@ describe('useFormRef', () => {
     const { result } = renderHook(() => useFormRef(props));
 
     const mount = render(
-      <form ref={result.current.anchor}>
+      <form ref={result.current.ref}>
         <div>
           <label>Name </label>
           <input type='text' name='name' title='name' />
@@ -65,7 +65,7 @@ describe('useFormRef', () => {
       </form>
     );
 
-    const mount = render(<Component anchor={result.current.anchor} />);
+    const mount = render(<Component anchor={result.current.ref} />);
     const trigger = async () => {
       const name = await mount.findByTitle('name');
       fireEvent(name, new Event(event));
@@ -76,7 +76,7 @@ describe('useFormRef', () => {
     expect(props2[handler]).toBeCalledTimes(0);
 
     rerender(props2);
-    mount.rerender(<Component anchor={result.current.anchor} />);
+    mount.rerender(<Component anchor={result.current.ref} />);
     await trigger();
     expect(props[handler]).toBeCalledTimes(1);
     expect(props2[handler]).toBeCalledTimes(1);
@@ -90,7 +90,7 @@ describe('useFormRef', () => {
     const { result } = renderHook(() => useFormRef(props));
 
     const mount = render(
-      <form ref={result.current.anchor}>
+      <form ref={result.current.ref}>
         <button title='name' type={type}>
           {type}
         </button>
@@ -125,14 +125,14 @@ describe('useFormRef', () => {
         </form>
       );
 
-      const mount = render(<Component anchor={result.current.anchor} />);
+      const mount = render(<Component anchor={result.current.ref} />);
       const name = await mount.findByTitle('name');
       name.click();
       expect(props[handler]).toBeCalledTimes(1);
       expect(props2[handler]).toBeCalledTimes(0);
 
       rerender(props2);
-      mount.rerender(<Component anchor={result.current.anchor} />);
+      mount.rerender(<Component anchor={result.current.ref} />);
       name.click();
       expect(props[handler]).toBeCalledTimes(1);
       expect(props2[handler]).toBeCalledTimes(1);

@@ -12,9 +12,9 @@ type Props = Readonly<{
 }>;
 
 interface UseAnchor {
-  readonly anchor: Ref<HTMLFormElement>;
+  readonly ref: Ref<HTMLFormElement>;
 }
-// TODO: change name to useFormRef, ref, useFormInputRefs, useFormRefHandler
+
 // TODO: use closets to find form
 export function useFormRef({
   handleChange,
@@ -23,9 +23,8 @@ export function useFormRef({
   handleReset,
 }: Props): UseAnchor {
   const handleInputs = useFormInputsRef({ handleBlur, handleChange });
-  // TODO: make a useRefEventHandler hook for this, formsRef, inputsRet and useSettersAsRefEventHandler
   const handleFormSubmit = useRefEventHandlers({ handlers: [handleSubmit], event: 'submit' });
   const handleFormReset = useRefEventHandlers({ handlers: [handleReset], event: 'reset' });
-  const anchor = useHandlers(handleInputs, handleFormSubmit, handleFormReset);
-  return { anchor };
+  const ref = useHandlers(handleInputs, handleFormSubmit, handleFormReset);
+  return { ref };
 }

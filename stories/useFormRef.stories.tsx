@@ -18,10 +18,10 @@ export function Form() {
   });
   const handleChange = useSettersAsEventHandler(setValue);
   const handleBlur = useSettersAsEventHandler(validateByName);
-  const { anchor } = useFormRef({ handleBlur, handleChange, handleSubmit: submit });
+  const { ref } = useFormRef({ handleBlur, handleChange, handleSubmit: submit });
   return (
     <ValuesErrorsTable values={values} errors={errors}>
-      <form ref={anchor}>
+      <form ref={ref}>
         <div>
           <label>Name </label>
           <input type='text' name='name' />
