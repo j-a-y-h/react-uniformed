@@ -22,8 +22,8 @@ export function useFormRef({
   handleReset,
 }: Props): UseAnchor {
   const handleInputs = useFormInputsRef({ handleBlur, handleChange });
-  const handleFormSubmit = useRefEventHandlers({ handlers: [handleSubmit], event: 'submit' });
-  const handleFormReset = useRefEventHandlers({ handlers: [handleReset], event: 'reset' });
+  const handleFormSubmit = useRefEventHandlers({ handlers: handleSubmit, event: 'submit' });
+  const handleFormReset = useRefEventHandlers({ handlers: handleReset, event: 'reset' });
   const ref = useHandlers(handleInputs, handleFormSubmit, handleFormReset);
   return { ref };
 }

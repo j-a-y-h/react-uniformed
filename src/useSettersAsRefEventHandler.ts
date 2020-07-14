@@ -82,7 +82,7 @@ export function useSettersAsRefEventHandler<
   const eventHandler = useSettersAsEventHandler(...handlers);
   const mountedRefValues = useMountedRefValues<HTMLInputElement>(mountedValues) as RefCallback<T>;
   const refEventHandlers = useRefEventHandlers<T>({
-    handlers: [eventHandler],
+    handlers: eventHandler,
     event,
   });
   const ref = useHandlers(mountedRefValues, refEventHandlers);

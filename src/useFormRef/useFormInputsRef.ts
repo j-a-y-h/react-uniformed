@@ -12,8 +12,8 @@ type Props = Readonly<{
 type ValidFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 export function useFormInputsRef({ handleBlur, handleChange }: Props): UseSubAnchor {
-  const onChange = useRefEventHandlers({ handlers: [handleChange], event: 'change' });
-  const onBlur = useRefEventHandlers({ handlers: [handleBlur], event: 'blur' });
+  const onChange = useRefEventHandlers({ handlers: handleChange, event: 'change' });
+  const onBlur = useRefEventHandlers({ handlers: handleBlur, event: 'blur' });
   const ref = useHandlers(onChange, onBlur);
   return useCallback(
     (form) => {
