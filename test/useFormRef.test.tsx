@@ -1,9 +1,9 @@
 import React, { SyntheticEvent } from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import { render, fireEvent } from '@testing-library/react';
-import { useAnchor } from '../src';
+import { useFormRef } from '../src';
 
-describe('useAnchor', () => {
+describe('useFormRef', () => {
   function createMockSubmit() {
     return {
       handleSubmit: jest.fn().mockImplementation((e: SyntheticEvent) => {
@@ -26,7 +26,7 @@ describe('useAnchor', () => {
   }
   it.each(['change', 'blur'])('sets %s event handlers on form elements', async (event) => {
     const props = createMockHandlers();
-    const { result } = renderHook(() => useAnchor(props));
+    const { result } = renderHook(() => useFormRef(props));
 
     const mount = render(
       <form ref={result.current.anchor}>
@@ -49,7 +49,7 @@ describe('useAnchor', () => {
     const props2 = createMockHandlers();
     const { result, rerender } = renderHook(
       (props) => {
-        return useAnchor(props);
+        return useFormRef(props);
       },
       {
         initialProps: props,
@@ -87,7 +87,7 @@ describe('useAnchor', () => {
     // @ts-expect-error
   ])('sets %s event handler on the form', async (type: 'submit' | 'reset', handler, mocker) => {
     const props = mocker();
-    const { result } = renderHook(() => useAnchor(props));
+    const { result } = renderHook(() => useFormRef(props));
 
     const mount = render(
       <form ref={result.current.anchor}>
@@ -113,7 +113,7 @@ describe('useAnchor', () => {
     async (type: 'submit' | 'reset', handler, mocker) => {
       const props = mocker();
       const props2 = mocker();
-      const { result, rerender } = renderHook((props) => useAnchor(props), {
+      const { result, rerender } = renderHook((props) => useFormRef(props), {
         initialProps: props,
       });
 
