@@ -13,7 +13,7 @@ describe('useMountedRefValues', () => {
           },
         }),
       );
-      const mount = render(<input ref={result.current} title='name' />);
+      const mount = render(<input ref={result.current} title='name' name='test' />);
       const button = mount.container.firstElementChild as HTMLInputElement;
       expect(button.value).toBe(5);
     });
@@ -25,7 +25,7 @@ describe('useMountedRefValues', () => {
           },
         }),
       );
-      const mount = render(<input ref={result.current} title='name' value='99' />);
+      const mount = render(<input ref={result.current} title='name' value='99' name='test' />);
       const button = mount.container.firstElementChild as HTMLInputElement;
       expect(button.value).toBe(5);
     });
@@ -39,14 +39,24 @@ describe('useMountedRefValues', () => {
       );
       const warnMock = jest.spyOn(console, 'warn');
       expect(warnMock).toBeCalledTimes(0);
-      render(<input ref={result.current} title='name' value='99' />);
+      render(<input ref={result.current} title='name' value='99' name='test' />);
       expect(warnMock).toBeCalledTimes(1);
     });
     it('sets the ref elements value on re-mount', () => {});
   });
   describe('ref element name does NOT match a mounted value key', () => {
-    it('will not set the ref elements value on mount', () => {});
-    it('will not overwrite the ref elements value on mount', () => {});
+    it('will not set the ref elements value on mount', () => {
+      const { result } = renderHook(() =>
+        useMountedRefValues<HTMLInputElement>({
+          values: {
+            test: 5,
+          },
+        }),
+      );
+      const mount = render(<input ref={result.current} title='name' name='not-test' />);
+      const button = mount.container.firstElementChild as HTMLInputElement;
+      expect(button.value).toBeFalsy();
+    });
     it('will not set the ref elements value on re-mount', () => {});
   });
 });
