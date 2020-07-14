@@ -2,6 +2,8 @@ import { useCallback, useRef } from 'react';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { mountEventHandler } from '../utils';
 import { UseSubAnchor } from './types';
+import { useRefEventHandlers } from '../useRefEventHandlers';
+import { useHandlers } from '../useHandlers';
 
 type Props = Readonly<{
   handleChange?: ReactOrNativeEventListener;
@@ -42,14 +44,29 @@ function mountInputs(
   });
 }
 export function useFormInputsRef({ handleBlur, handleChange }: Props): UseSubAnchor {
+  const onChange = useRefEventHandlers({ handlers: [handleChange], event: 'change' });
+  const onBlur = useRefEventHandlers({ handlers: [handleBlur], event: 'blur' });
+  // const mountedRefValues = useMountedRefValues<HTMLInputElement>(mountedValues) as RefCallback<T>;
+  const ref = useHandlers(onChange, onBlur);
   return useCallback(
     (form) => {
+      //  mounts
       if (form) {
-        mountInputs(form, handleChange, handleBlur);
+        // filter for input, select, and textarea elements only
+        const validElements = Array.from(form.elements).filter((element) => {
+          return (
+            element instanceof HTMLInputElement ||
+            element instanceof HTMLSelectElement ||
+            element instanceof HTMLTextAreaElement
+          );
+        }) as ValidFormElements[];
+        // add event handlers
+        validElements.forEach((element) => ref(element));
       } else {
-        // TODO: unmount
+        // unmount
+        ref(null);
       }
     },
-    [handleChange, handleBlur],
+    [ref],
   );
 }
