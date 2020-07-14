@@ -15,7 +15,6 @@ interface UseAnchor {
   readonly ref: Ref<HTMLFormElement>;
 }
 
-// TODO: use closets to find form
 export function useFormRef({
   handleChange,
   handleBlur,

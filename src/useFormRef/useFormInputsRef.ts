@@ -19,8 +19,10 @@ export function useFormInputsRef({ handleBlur, handleChange }: Props): UseSubAnc
     (form) => {
       //  mounts
       if (form) {
+        // looks for closest
+        const { elements } = form.closest('form') ?? form;
         // filter for input, select, and textarea elements only
-        const validElements = Array.from(form.elements).filter((element) => {
+        const validElements = Array.from(elements).filter((element) => {
           return (
             element instanceof HTMLInputElement ||
             element instanceof HTMLSelectElement ||
