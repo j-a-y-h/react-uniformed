@@ -41,7 +41,7 @@ function mountInputs(
     });
   });
 }
-export function useAnchorInputs({ handleBlur, handleChange }: Props): UseSubAnchor {
+export function useFormInputsRef({ handleBlur, handleChange }: Props): UseSubAnchor {
   return useCallback(
     (form) => {
       if (form) {

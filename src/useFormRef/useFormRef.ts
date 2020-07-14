@@ -1,6 +1,6 @@
 import { Ref } from 'react';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
-import { useAnchorInputs } from './useFormInputsRef';
+import { useFormInputsRef } from './useFormInputsRef';
 import { useHandlers } from '../useHandlers';
 import { useRefEventHandlers } from '../useRefEventHandlers';
 
@@ -22,7 +22,7 @@ export function useFormRef({
   handleSubmit,
   handleReset,
 }: Props): UseAnchor {
-  const handleInputs = useAnchorInputs({ handleBlur, handleChange });
+  const handleInputs = useFormInputsRef({ handleBlur, handleChange });
   // TODO: make a useRefEventHandler hook for this, formsRef, inputsRet and useSettersAsRefEventHandler
   const handleFormSubmit = useRefEventHandlers({ handlers: [handleSubmit], event: 'submit' });
   const handleFormReset = useRefEventHandlers({ handlers: [handleReset], event: 'reset' });
