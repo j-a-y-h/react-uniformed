@@ -42,7 +42,6 @@ describe('useMountedRefValues', () => {
       render(<input ref={result.current} title='name' value='99' name='test' />);
       expect(warnMock).toBeCalledTimes(1);
     });
-    it('sets the ref elements value on re-mount', () => {});
   });
   describe('ref element name does NOT match a mounted value key', () => {
     it('will not set the ref elements value on mount', () => {
@@ -57,6 +56,5 @@ describe('useMountedRefValues', () => {
       const button = mount.container.firstElementChild as HTMLInputElement;
       expect(button.value).toBeFalsy();
     });
-    it('will not set the ref elements value on re-mount', () => {});
   });
 });
