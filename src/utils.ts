@@ -1,6 +1,4 @@
 import { SyntheticEvent } from 'react';
-import { ReactOrNativeEventListener } from './useSettersAsEventHandler';
-import { FieldValue } from './useFields';
 
 const projectName = 'react-uniformed';
 
@@ -16,39 +14,6 @@ interface Logger {
 export function resetForm(event?: SyntheticEvent): void {
   if (event?.target instanceof HTMLElement) {
     event.target.closest('form')?.reset();
-  }
-}
-
-type MountEventHandlerArgs = Readonly<{
-  event: string;
-  eventHandler: ReactOrNativeEventListener;
-  input: Pick<HTMLInputElement, 'addEventListener'> & Partial<Pick<HTMLInputElement, 'value'>>;
-  mountedValue?: FieldValue;
-}>;
-
-/**
- * Mounts the specified event handler to the specified input. If mountedValue
- * is passed, then the value of the specified input is set to that as well.
- * @param input - TODO
- * @param event - TODO
- * @param eventHandler - TODO
- * @param mountedValue - TODO
- */
-export function mountEventHandler({
-  input,
-  event,
-  eventHandler,
-  mountedValue,
-}: MountEventHandlerArgs): void {
-  // TODO: solve potential memory leak, in the else block removeEventListener,
-  // and when this function
-  // is called with new eventHandler
-  input.addEventListener(event, eventHandler);
-  // TODO: test that only sets value if value is defined as number or string
-  if (['string', 'number'].includes(typeof mountedValue)) {
-    // need to set the mounted values
-    // eslint-disable-next-line no-param-reassign
-    input.value = mountedValue;
   }
 }
 
