@@ -22,9 +22,9 @@ export function useFormRef({
   handleSubmit,
   handleReset,
 }: Props): UseAnchor {
-  const handleInputs = useFormInputsRef({ handleBlur, handleChange });
-  const handleFormSubmit = useRefEventHandlers({ handlers: handleSubmit, event: 'submit' });
-  const handleFormReset = useRefEventHandlers({ handlers: handleReset, event: 'reset' });
-  const ref = useHandlers(handleInputs, handleFormSubmit, handleFormReset);
+  const setupInputsRef = useFormInputsRef({ handleBlur, handleChange });
+  const submitRef = useRefEventHandlers({ handlers: handleSubmit, event: 'submit' });
+  const resetRef = useRefEventHandlers({ handlers: handleReset, event: 'reset' });
+  const ref = useHandlers(setupInputsRef, submitRef, resetRef);
   return { ref };
 }
