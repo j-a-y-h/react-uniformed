@@ -2,18 +2,14 @@ import { Ref, useCallback } from 'react';
 import { Fields } from './useFields';
 import { log } from './utils';
 
-type Props = Readonly<{
-  values: Fields;
-}>;
-
 type ValueLikeElement =
   | Pick<HTMLInputElement, 'value' | 'name'>
   | Pick<HTMLSelectElement, 'value' | 'name'>
   | Pick<HTMLTextAreaElement, 'value' | 'name'>;
 
-export function useMountedRefValues<T extends ValueLikeElement = HTMLInputElement>({
-  values,
-}: Props): Ref<T> {
+export function useMountedRefValues<T extends ValueLikeElement = HTMLInputElement>(
+  values: Fields,
+): Ref<T> {
   const ref = useCallback(
     (input: T | null): void => {
       if (input) {

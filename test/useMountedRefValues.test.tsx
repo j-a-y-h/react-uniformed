@@ -8,9 +8,7 @@ describe('useMountedRefValues', () => {
     it('sets the ref elements value on mount', () => {
       const { result } = renderHook(() =>
         useMountedRefValues<HTMLInputElement>({
-          values: {
-            test: 5,
-          },
+          test: 5,
         }),
       );
       const mount = render(<input ref={result.current} title='name' name='test' />);
@@ -20,9 +18,7 @@ describe('useMountedRefValues', () => {
     it('overwrites the ref elements value on mount', () => {
       const { result } = renderHook(() =>
         useMountedRefValues<HTMLInputElement>({
-          values: {
-            test: 5,
-          },
+          test: 5,
         }),
       );
       jest.spyOn(console, 'warn').mockImplementationOnce(() => {});
@@ -35,9 +31,7 @@ describe('useMountedRefValues', () => {
     it('warns before overwriting the ref elements value on mount', () => {
       const { result } = renderHook(() =>
         useMountedRefValues<HTMLInputElement>({
-          values: {
-            test: 5,
-          },
+          test: 5,
         }),
       );
       const warnMock = jest.spyOn(console, 'warn').mockImplementationOnce(() => {});
@@ -50,9 +44,7 @@ describe('useMountedRefValues', () => {
     it('will not set the ref elements value on mount', () => {
       const { result } = renderHook(() =>
         useMountedRefValues<HTMLInputElement>({
-          values: {
-            test: 5,
-          },
+          test: 5,
         }),
       );
       const mount = render(<input ref={result.current} title='name' name='not-test' />);
