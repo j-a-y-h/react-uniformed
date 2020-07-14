@@ -15,7 +15,7 @@ describe('useMountedRefValues', () => {
       );
       const mount = render(<input ref={result.current} title='name' name='test' />);
       const button = mount.container.firstElementChild as HTMLInputElement;
-      expect(button.value).toBe(5);
+      expect(button.value).toBe('5');
     });
     it('overwrites the ref elements value on mount', () => {
       const { result } = renderHook(() =>
@@ -29,7 +29,7 @@ describe('useMountedRefValues', () => {
         <input ref={result.current} title='name' defaultValue='99' name='test' />,
       );
       const button = mount.container.firstElementChild as HTMLInputElement;
-      expect(button.value).toBe(5);
+      expect(button.value).toBe('5');
     });
     it('warns before overwriting the ref elements value on mount', () => {
       const { result } = renderHook(() =>
