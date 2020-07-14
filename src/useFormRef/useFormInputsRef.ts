@@ -22,6 +22,7 @@ export function useFormInputsRef({
       //  mounts
       if (form) {
         // looks for closest
+        // TODO: add unit tests and test for usage of .closest
         const { elements } = form.closest('form') ?? form;
         // filter for input, select, and textarea elements only
         const validElements = Array.from(elements).filter((element) => {
