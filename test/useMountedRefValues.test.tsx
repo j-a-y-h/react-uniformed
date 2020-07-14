@@ -25,6 +25,7 @@ describe('useMountedRefValues', () => {
           },
         }),
       );
+      jest.spyOn(console, 'warn').mockImplementationOnce(() => {});
       const mount = render(
         <input ref={result.current} title='name' defaultValue='99' name='test' />,
       );
@@ -39,7 +40,7 @@ describe('useMountedRefValues', () => {
           },
         }),
       );
-      const warnMock = jest.spyOn(console, 'warn');
+      const warnMock = jest.spyOn(console, 'warn').mockImplementationOnce(() => {});
       expect(warnMock).toBeCalledTimes(0);
       render(<input ref={result.current} title='name' defaultValue='99' name='test' />);
       expect(warnMock).toBeCalledTimes(1);
