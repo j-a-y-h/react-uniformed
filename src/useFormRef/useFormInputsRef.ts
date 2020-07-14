@@ -1,6 +1,5 @@
-import { useCallback } from 'react';
+import { useCallback, RefCallback } from 'react';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
-import { UseSubAnchor } from './types';
 import { useRefEventHandlers } from '../useRefEventHandlers';
 import { useHandlers } from '../useHandlers';
 
@@ -11,7 +10,10 @@ type Props = Readonly<{
 
 type ValidFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
-export function useFormInputsRef({ handleBlur, handleChange }: Props): UseSubAnchor {
+export function useFormInputsRef({
+  handleBlur,
+  handleChange,
+}: Props): RefCallback<HTMLFormElement> {
   const onChange = useRefEventHandlers({ handlers: handleChange, event: 'change' });
   const onBlur = useRefEventHandlers({ handlers: handleBlur, event: 'blur' });
   const ref = useHandlers(onChange, onBlur);
