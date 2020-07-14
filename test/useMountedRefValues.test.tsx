@@ -25,7 +25,9 @@ describe('useMountedRefValues', () => {
           },
         }),
       );
-      const mount = render(<input ref={result.current} title='name' value='99' name='test' />);
+      const mount = render(
+        <input ref={result.current} title='name' defaultValue='99' name='test' />,
+      );
       const button = mount.container.firstElementChild as HTMLInputElement;
       expect(button.value).toBe(5);
     });
@@ -39,7 +41,7 @@ describe('useMountedRefValues', () => {
       );
       const warnMock = jest.spyOn(console, 'warn');
       expect(warnMock).toBeCalledTimes(0);
-      render(<input ref={result.current} title='name' value='99' name='test' />);
+      render(<input ref={result.current} title='name' defaultValue='99' name='test' />);
       expect(warnMock).toBeCalledTimes(1);
     });
   });
