@@ -4,11 +4,11 @@ import { log } from './utils';
 
 export function useMountedRefValues<
   T extends HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement = HTMLInputElement
->(values: Fields): RefCallback<T> {
+>(values?: Fields): RefCallback<T> {
   const ref = useCallback(
     (input: T | null): void => {
       if (input) {
-        const value = values[input.name];
+        const value = values?.[input.name];
         if (['string', 'number'].includes(typeof value)) {
           if (input.value) {
             // warn if there is a value present
