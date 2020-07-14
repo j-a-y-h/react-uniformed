@@ -14,9 +14,9 @@ export function useFormInputsRef({
   handleBlur,
   handleChange,
 }: Props): RefCallback<HTMLFormElement> {
-  const onChange = useRefEventHandlers({ handlers: handleChange, event: 'change' });
-  const onBlur = useRefEventHandlers({ handlers: handleBlur, event: 'blur' });
-  const ref = useHandlers(onChange, onBlur);
+  const changeRef = useRefEventHandlers({ handlers: handleChange, event: 'change' });
+  const blurRef = useRefEventHandlers({ handlers: handleBlur, event: 'blur' });
+  const ref = useHandlers(changeRef, blurRef);
   return useCallback(
     (form) => {
       //  mounts
