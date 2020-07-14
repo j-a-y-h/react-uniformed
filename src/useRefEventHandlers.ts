@@ -29,6 +29,9 @@ export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
   const eventHandler = useHandlers(...handlersList);
   const ref = useCallback(
     (input: T | null): void => {
+      if (!hasHandlers) {
+        return;
+      }
       // note: React will call input with null when the component is unmounting
       if (input) {
         // adds event listener on mount
@@ -40,7 +43,7 @@ export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
       }
       lastRef.current = { event, eventHandler, input };
     },
-    [event, eventHandler],
+    [event, eventHandler, hasHandlers],
   );
   return ref;
 }
