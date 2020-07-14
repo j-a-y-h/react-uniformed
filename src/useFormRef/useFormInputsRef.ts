@@ -14,7 +14,6 @@ type ValidFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElem
 export function useFormInputsRef({ handleBlur, handleChange }: Props): UseSubAnchor {
   const onChange = useRefEventHandlers({ handlers: [handleChange], event: 'change' });
   const onBlur = useRefEventHandlers({ handlers: [handleBlur], event: 'blur' });
-  // const mountedRefValues = useMountedRefValues<HTMLInputElement>(mountedValues) as RefCallback<T>;
   const ref = useHandlers(onChange, onBlur);
   return useCallback(
     (form) => {
