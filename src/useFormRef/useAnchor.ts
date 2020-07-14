@@ -3,6 +3,7 @@ import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { useAnchorInputs } from './useAnchorInputs';
 import { useFormAnchor } from './useFormAnchor';
 import { useHandlers } from '../useHandlers';
+import { useSettersAsRefEventHandler } from '../useSettersAsRefEventHandler';
 
 type Props = Readonly<{
   handleChange?: ReactOrNativeEventListener;
@@ -14,7 +15,8 @@ type Props = Readonly<{
 interface UseAnchor {
   readonly anchor: Ref<HTMLFormElement>;
 }
-
+// TODO: change name to useFormRef, ref, useFormInputRefs, useFormRefHandler
+// TODO: use closets to find form
 export function useAnchor({
   handleChange,
   handleBlur,
@@ -22,6 +24,7 @@ export function useAnchor({
   handleReset,
 }: Props): UseAnchor {
   const handleInputs = useAnchorInputs({ handleBlur, handleChange });
+  // TODO: make a useRefEventHandler hook for this, formsRef, inputsRet and useSettersAsRefEventHandler
   const handleFormSubmit = useFormAnchor({ handler: handleSubmit, type: 'submit' });
   const handleFormReset = useFormAnchor({ handler: handleReset, type: 'reset' });
   const anchor = useHandlers(handleInputs, handleFormSubmit, handleFormReset);
