@@ -28,7 +28,7 @@ export function useFormInputsRef({ handleBlur, handleChange }: Props): UseSubAnc
           );
         }) as ValidFormElements[];
         // add event handlers
-        validElements.forEach((element) => ref(element));
+        validElements.forEach(ref);
       } else {
         // unmount
         ref(null);
