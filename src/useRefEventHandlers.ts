@@ -1,10 +1,10 @@
-import { Ref, useCallback, useRef, RefCallback } from 'react';
+import { useCallback, useRef, RefCallback } from 'react';
 import { ReactOrNativeEventListener } from './useSettersAsEventHandler';
 import { useHandlers } from './useHandlers';
 
 type Props = Readonly<{
   event: string;
-  handlers: ReactOrNativeEventListener[];
+  handlers?: ReactOrNativeEventListener[] | ReactOrNativeEventListener;
 }>;
 
 type LastRef<T> = Readonly<{
@@ -19,7 +19,14 @@ export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
 }: Props): RefCallback<T> {
   // track the lastRef so we can remove event handlers
   const lastRef = useRef<LastRef<T>>();
-  const eventHandler = useHandlers(...handlers);
+  let handlersList: ReactOrNativeEventListener[] = [];
+  if (handlers instanceof Array) {
+    handlersList = handlers;
+  } else if (handlers) {
+    handlersList = [handlers];
+  }
+  const hasHandlers = handlersList.length;
+  const eventHandler = useHandlers(...handlersList);
   const ref = useCallback(
     (input: T | null): void => {
       // note: React will call input with null when the component is unmounting
