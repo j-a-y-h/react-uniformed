@@ -4,6 +4,7 @@ import { useFormInputsRef } from './useFormInputsRef';
 import { useHandlers } from '../useHandlers';
 import { useRefEventHandlers } from '../useRefEventHandlers';
 
+// TODO: support mounting values
 type Props = Readonly<{
   handleChange?: ReactOrNativeEventListener;
   handleBlur?: ReactOrNativeEventListener;
