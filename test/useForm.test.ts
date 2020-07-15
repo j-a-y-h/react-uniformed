@@ -5,6 +5,20 @@ const SUCCESS = '';
 
 describe('useForm', () => {
   describe('no validation', () => {
+    it('will not set touch on inputs', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          initialValues: { test: 'hello' },
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate({ timeout: 100 });
+      expect(result.current.touches.test).toBeFalsy();
+    });
     it('sets isDirty to true after submission', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
@@ -33,6 +47,25 @@ describe('useForm', () => {
     });
   });
   describe('with non-constraint validation', () => {
+    it('will not set touch on inputs', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          validators: {
+            email: () => '',
+          },
+          initialValues: {
+            test: 'hello',
+          },
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate();
+      expect(result.current.touches.test).toBeFalsy();
+    });
     it('sets isDirty to true after submission of an optional form', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
@@ -99,6 +132,25 @@ describe('useForm', () => {
     });
   });
   describe('with constraints', () => {
+    it('will not set touch on inputs', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          constraints: {
+            email: { type: 'email', required: true },
+          },
+          initialValues: {
+            test: 'hello',
+          },
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate();
+      expect(result.current.touches.test).toBeFalsy();
+    });
     it('sets isDirty to true after submission of an optional form', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
