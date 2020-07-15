@@ -5,6 +5,19 @@ const SUCCESS = '';
 
 describe('useForm', () => {
   describe('no validation', () => {
+    it('sets isDirty to true after submission', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate({ timeout: 100 });
+      expect(result.current.isDirty).toBe(true);
+    });
     it('will call onSubmit when the form is submitted', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
@@ -20,6 +33,22 @@ describe('useForm', () => {
     });
   });
   describe('with non-constraint validation', () => {
+    it('sets isDirty to true after submission of an optional form', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          validators: {
+            email: () => '',
+          },
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate();
+      expect(result.current.isDirty).toBe(true);
+    });
     it('will call onSubmit when the form is optional', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
@@ -54,6 +83,22 @@ describe('useForm', () => {
     });
   });
   describe('with constraints', () => {
+    it('sets isDirty to true after submission of an optional form', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          constraints: {
+            email: { type: 'email', required: false },
+          },
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate();
+      expect(result.current.isDirty).toBe(true);
+    });
     it('will call onSubmit when the form is optional', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
