@@ -4,7 +4,20 @@ import { useForm } from '../src';
 const SUCCESS = '';
 
 describe('useForm', () => {
-  describe('when submit is clicked with validation', () => {
+  describe('when submit is clicked', () => {
+    it('will call onSubmit when the form does not have validation', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate({ timeout: 100 });
+      expect(onSubmit).toBeCalledTimes(1);
+    });
     it('will only call onSubmit when the form is valid', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
