@@ -9,7 +9,7 @@ type Props = Readonly<{
 
 type LastRef<T> = Readonly<{
   inputs: Set<T>;
-  eventHandler?: ReactOrNativeEventListener;
+  eventHandler: ReactOrNativeEventListener;
   event: string;
 }>;
 
@@ -39,20 +39,16 @@ export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
       const { current } = lastRef;
       // note: React will call input with null when the component is unmounting
       if (input) {
-        current?.inputs.add(input);
+        current.inputs.add(input);
         // adds event listener on mount
-        current?.inputs.forEach((currentInput) => {
+        current.inputs.forEach((currentInput) => {
           currentInput.addEventListener(event, eventHandler);
         });
         lastRef.current = { ...current, event, eventHandler };
-      } else if (current?.eventHandler) {
+      } else {
         // removes the event listener
         current.inputs.forEach((currentInput) => {
-          currentInput.removeEventListener(
-            current.event,
-            // note: type cast is due to if statement above
-            current.eventHandler as ReactOrNativeEventListener,
-          );
+          currentInput.removeEventListener(current.event, current.eventHandler);
         });
         lastRef.current = { event, eventHandler, inputs: new Set() };
       }
