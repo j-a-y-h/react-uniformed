@@ -114,7 +114,7 @@ describe('useRefEventHandlers', () => {
       };
       await trigger();
       props.handlers.forEach((handler) => {
-        expect(handler).toBeCalledTimes(1);
+        expect(handler).toBeCalledTimes(2);
       });
       props2.handlers.forEach((handler) => {
         expect(handler).toBeCalledTimes(0);
@@ -124,11 +124,12 @@ describe('useRefEventHandlers', () => {
       mount.rerender(<Component ref={result.current} />);
       await trigger();
       props.handlers.forEach((handler) => {
-        expect(handler).toBeCalledTimes(1);
+        expect(handler).toBeCalledTimes(2);
       });
       props2.handlers.forEach((handler) => {
-        expect(handler).toBeCalledTimes(1);
+        expect(handler).toBeCalledTimes(2);
       });
     });
   });
 });
+// TODO: it removes event handlers when a new one is given
