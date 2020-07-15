@@ -30,8 +30,6 @@ const FormHeader = React.forwardRef(({ children, errors, values, emails, ...prop
   );
 });
 
-const FormHeaderRef = (props, ref) => <FormHeader {...props} ref={ref} />;
-
 function Form({ values, errors, submit, changeRef, emails }) {
   return (
     <FormHeader emails={emails} errors={errors} values={values} onSubmit={submit}>
