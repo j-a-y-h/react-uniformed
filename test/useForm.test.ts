@@ -1,10 +1,27 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useForm } from '../src';
 
-const ERROR = '__required__';
 const SUCCESS = '';
 
 describe('useForm', () => {
+  describe('when submit is clicked with validation', () => {
+    it('will only call onSubmit when the form is valid', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          constraints: {
+            email: { type: 'email' },
+          },
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate();
+      expect(onSubmit).toBeCalledTimes(0);
+    });
+  });
   describe('with constraints', () => {
     it('supports email types', async () => {
       const { result, waitForNextUpdate } = renderHook(() =>
