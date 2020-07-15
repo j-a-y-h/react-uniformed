@@ -118,9 +118,19 @@ export function useForm({
   validators = {},
   constraints = {},
 }: UseFormParameters): UseFormsHook {
+  // this is only set when user submits
+  const [isFormDirty, setIsFormDirty] = useState(false);
   const { values, setValue, resetValues } = useFields(initialValues, normalizer);
   const constraintsHook = useConstraints(constraints);
-  const { touches, resetTouches, setTouch, touchField, setTouches, isDirty } = useTouch();
+  const {
+    touches,
+    resetTouches,
+    setTouch,
+    touchField,
+    setTouches,
+    isDirty: isDirtyViaTouch,
+  } = useTouch();
+  const isDirty = isDirtyViaTouch || isFormDirty;
   // picks between constraints or validators
   const validatorsInput = useMemo(
     () =>
@@ -134,7 +144,6 @@ export function useForm({
   const { validate, validateByName, errors, resetErrors, setError, hasErrors } = useValidation(
     validatorsInput,
   );
-  const [isFormDirty, setIsFormDirty] = useState(false);
   // create a submission validator handler
   const submissionValidator = useCallback(async (): Promise<void> => {
     const newTouches = Object.keys(values).reduce(
@@ -171,7 +180,7 @@ export function useForm({
   const { isSubmitting, submit, submitCount, submitFeedback } = useSubmission({
     onSubmit,
     validator,
-    disabled: hasErrors || (!isFormDirty && Boolean(validator)),
+    disabled: hasErrors || (!isDirty && Boolean(validator)),
     setError,
     values,
     reset,
