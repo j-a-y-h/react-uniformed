@@ -8,7 +8,7 @@ type Props = Readonly<{
 }>;
 
 type LastRef<T> = Readonly<{
-  input: T | null;
+  inputs: Set<T>;
   eventHandler?: ReactOrNativeEventListener;
   event: string;
 }>;
@@ -17,8 +17,6 @@ export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
   event,
   handlers,
 }: Props): RefCallback<T> {
-  // track the lastRef so we can remove event handlers
-  const lastRef = useRef<LastRef<T>>();
   let handlersList: ReactOrNativeEventListener[] = [];
   if (handlers instanceof Array) {
     handlersList = handlers;
@@ -27,21 +25,37 @@ export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
   }
   const hasHandlers = handlersList.length;
   const eventHandler = useHandlers(...handlersList);
+  // track the lastRef so we can remove event handlers
+  const lastRef = useRef<LastRef<T>>({
+    event,
+    eventHandler,
+    inputs: new Set(),
+  });
   const ref = useCallback(
     (input: T | null): void => {
       if (!hasHandlers) {
         return;
       }
+      const { current } = lastRef;
       // note: React will call input with null when the component is unmounting
       if (input) {
+        current?.inputs.add(input);
         // adds event listener on mount
-        input.addEventListener(event, eventHandler);
-      } else if (lastRef.current?.eventHandler) {
+        current?.inputs.forEach((currentInput) => {
+          currentInput.addEventListener(event, eventHandler);
+        });
+        lastRef.current = { ...current, event, eventHandler };
+      } else if (current?.eventHandler) {
         // removes the event listener
-        const { current } = lastRef;
-        current?.input?.removeEventListener(current.event, lastRef.current.eventHandler);
+        current.inputs.forEach((currentInput) => {
+          currentInput.removeEventListener(
+            current.event,
+            // note: type cast is due to if statement above
+            current.eventHandler as ReactOrNativeEventListener,
+          );
+        });
+        lastRef.current = { event, eventHandler, inputs: new Set() };
       }
-      lastRef.current = { event, eventHandler, input };
     },
     [event, eventHandler, hasHandlers],
   );
