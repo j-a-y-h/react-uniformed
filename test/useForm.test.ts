@@ -19,7 +19,24 @@ describe('useForm', () => {
       expect(onSubmit).toBeCalledTimes(1);
     });
   });
-  describe('with non-constraint validation', () => {});
+  describe('with non-constraint validation', () => {
+    it('will only call onSubmit when the form is valid', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          validators: {
+            email: () => 'false',
+          },
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate();
+      expect(onSubmit).toBeCalledTimes(0);
+    });
+  });
   describe('with constraints', () => {
     it('will only call onSubmit when the form is valid', async () => {
       const onSubmit = jest.fn();
