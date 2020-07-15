@@ -12,12 +12,7 @@ import {
   ValidateAllHandler,
   SingleValidator,
 } from './useValidation/types';
-import {
-  SetValueCallback,
-  MutableValues,
-  PartialValues,
-  isMapWithValues,
-} from './useGenericValues';
+import { SetValueCallback, PartialValues, isMapWithValues } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint } from './useConstraints/types';
 import { useConstraints } from './useConstraints';
 import { resetForm } from './utils';
@@ -122,14 +117,7 @@ export function useForm({
   const [isFormDirty, setIsFormDirty] = useState(false);
   const { values, setValue, resetValues } = useFields(initialValues, normalizer);
   const constraintsHook = useConstraints(constraints);
-  const {
-    touches,
-    resetTouches,
-    setTouch,
-    touchField,
-    setTouches,
-    isDirty: isDirtyViaTouch,
-  } = useTouch();
+  const { touches, resetTouches, setTouch, touchField, isDirty: isDirtyViaTouch } = useTouch();
   const isDirty = isDirtyViaTouch || isFormDirty;
   const toggleOnIsFormDirty = useCallback(() => setIsFormDirty(true), [setIsFormDirty]);
   const onSubmit = useHandlers(rawOnSubmit, toggleOnIsFormDirty);
@@ -148,18 +136,9 @@ export function useForm({
   );
   // create a submission validator handler
   const submissionValidator = useCallback(async (): Promise<void> => {
-    const newTouches = Object.keys(values).reduce(
-      (_touches: MutableValues<boolean>, name): Touches => {
-        // eslint-disable-next-line no-param-reassign
-        _touches[name] = true;
-        return _touches;
-      },
-      {},
-    );
     await validate(values);
     toggleOnIsFormDirty();
-    setTouches(newTouches);
-  }, [validate, values, setTouches, toggleOnIsFormDirty]);
+  }, [validate, values, toggleOnIsFormDirty]);
   // note: useSubmission will skip validation if no function was passed.
   //  In order to take advantage of this, we must pass undefined if useForm
   //  was invoked with a validation function
