@@ -130,6 +130,58 @@ describe('useRefEventHandlers', () => {
         expect(handler).toBeCalledTimes(2);
       });
     });
+    it.each([['click'], ['blur']])(
+      'removes %s event handlers of one unmount element but not the other',
+      async (event) => {
+        const props = createMockHandlers(event);
+        const props2 = createMockHandlers(event);
+        const { result, rerender } = renderHook(
+          (props) => {
+            return useRefEventHandlers<HTMLButtonElement>(props);
+          },
+          {
+            initialProps: props,
+          },
+        );
+
+        const Component = React.forwardRef(({ keep = true }, ref: React.Ref<HTMLButtonElement>) => (
+          <>
+            <button ref={ref} title='name'>
+              Clicker
+            </button>
+            {keep && (
+              <button ref={ref} title='name'>
+                Clicker
+              </button>
+            )}
+          </>
+        ));
+        const mount = render(<Component ref={result.current} />);
+        const trigger = async () => {
+          const names = await mount.findAllByTitle('name');
+          names.forEach((name) => {
+            fireEvent(name, new Event(event));
+          });
+        };
+        await trigger();
+        props.handlers.forEach((handler) => {
+          expect(handler).toBeCalledTimes(2);
+        });
+        props2.handlers.forEach((handler) => {
+          expect(handler).toBeCalledTimes(0);
+        });
+
+        rerender(props2);
+        mount.rerender(<Component ref={result.current} keep={false} />);
+        await trigger();
+        props.handlers.forEach((handler) => {
+          expect(handler).toBeCalledTimes(2);
+        });
+        props2.handlers.forEach((handler) => {
+          expect(handler).toBeCalledTimes(1);
+        });
+      },
+    );
   });
 });
 // TODO: it removes event handlers when a new one is given
