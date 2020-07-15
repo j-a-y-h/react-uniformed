@@ -20,7 +20,7 @@ import {
 } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint } from './useConstraints/types';
 import { useConstraints } from './useConstraints';
-import { resetForm, safePromise } from './utils';
+import { resetForm } from './utils';
 
 // TODO: document the UseFormsHook
 
