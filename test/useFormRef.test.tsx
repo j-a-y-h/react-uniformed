@@ -61,6 +61,7 @@ describe('useFormRef', () => {
         <div>
           <label>Name </label>
           <input type='text' name='name' title='name' />
+          <input type='text' name='names' title='names' />
         </div>
       </form>
     );
