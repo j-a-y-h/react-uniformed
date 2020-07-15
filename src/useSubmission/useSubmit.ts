@@ -33,7 +33,7 @@ export function useSubmit({
 
   // The submit callback that is used in the form
   return useCallback(
-    (event?: SyntheticEvent) => {
+    async (event?: SyntheticEvent) => {
       if (event) {
         event.preventDefault?.();
         event.persist?.();
@@ -41,7 +41,7 @@ export function useSubmit({
       }
       setIsReadyToSubmit(true);
       if (validator) {
-        safePromise(validate());
+        await validate();
       }
     },
     [validator, validate, setIsReadyToSubmit, setSubmitEvent],

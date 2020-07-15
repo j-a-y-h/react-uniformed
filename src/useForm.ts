@@ -1,4 +1,4 @@
-import { useCallback, useMemo, SyntheticEvent } from 'react';
+import { useCallback, useMemo, SyntheticEvent, useState } from 'react';
 import { Errors, ErrorHandler, validErrorValues } from './useErrors';
 import { useHandlers } from './useHandlers';
 import { useFields, FieldValue, Fields, NormalizerHandler } from './useFields';
@@ -134,8 +134,9 @@ export function useForm({
   const { validate, validateByName, errors, resetErrors, setError, hasErrors } = useValidation(
     validatorsInput,
   );
+  const [isFormDirty, setIsFormDirty] = useState(false);
   // create a submission validator handler
-  const submissionValidator = useCallback((): void => {
+  const submissionValidator = useCallback(async (): Promise<void> => {
     const newTouches = Object.keys(values).reduce(
       (_touches: MutableValues<boolean>, name): Touches => {
         // eslint-disable-next-line no-param-reassign
@@ -144,7 +145,8 @@ export function useForm({
       },
       {},
     );
-    safePromise(validate(values));
+    await validate(values);
+    setIsFormDirty(true);
     setTouches(newTouches);
   }, [validate, values, setTouches]);
   // note: useSubmission will skip validation if no function was passed.
@@ -169,7 +171,7 @@ export function useForm({
   const { isSubmitting, submit, submitCount, submitFeedback } = useSubmission({
     onSubmit,
     validator,
-    disabled: hasErrors || (!isDirty && Boolean(validator)),
+    disabled: hasErrors || (!isFormDirty && Boolean(validator)),
     setError,
     values,
     reset,
