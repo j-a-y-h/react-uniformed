@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useSubmission } from '../src';
-import { UseSubmissionProps, UseSubmissionHook } from '../src/useSubmission';
+import { UseSubmissionProps, UseSubmissionHook } from '../src/useSubmission/types';
 import { SyntheticEvent } from 'react';
 
 const sleep = (duration: number) => {
