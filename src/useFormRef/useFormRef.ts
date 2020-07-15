@@ -15,7 +15,9 @@ type Props = Readonly<{
 interface UseAnchor {
   readonly ref: Ref<HTMLFormElement>;
 }
-
+// TODO: evaluate useSettersAsEventRef since this basically covers that
+// TODO: update readme and make this the quick start and the other way not
+// TODO: name chagne to just submit, reset
 export function useFormRef({
   handleChange,
   handleBlur,
