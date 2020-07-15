@@ -4,8 +4,8 @@ import { useForm } from '../src';
 const SUCCESS = '';
 
 describe('useForm', () => {
-  describe('when submit is clicked', () => {
-    it('will call onSubmit when the form does not have validation', async () => {
+  describe('no validation', () => {
+    it('will call onSubmit when the form is submitted', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
         useForm({
@@ -18,6 +18,9 @@ describe('useForm', () => {
       await waitForNextUpdate({ timeout: 100 });
       expect(onSubmit).toBeCalledTimes(1);
     });
+  });
+  describe('with non-constraint validation', () => {});
+  describe('with constraints', () => {
     it('will only call onSubmit when the form is valid', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
@@ -34,8 +37,6 @@ describe('useForm', () => {
       await waitForNextUpdate();
       expect(onSubmit).toBeCalledTimes(0);
     });
-  });
-  describe('with constraints', () => {
     it('supports email types', async () => {
       const { result, waitForNextUpdate } = renderHook(() =>
         useForm({
