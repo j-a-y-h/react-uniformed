@@ -49,6 +49,22 @@ describe('useForm', () => {
       await waitForNextUpdate();
       expect(result.current.isDirty).toBe(true);
     });
+    it('sets isDirty to true after submission of a form', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          validators: {
+            email: () => 'false',
+          },
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate();
+      expect(result.current.isDirty).toBe(true);
+    });
     it('will call onSubmit when the form is optional', async () => {
       const onSubmit = jest.fn();
       const { result, waitForNextUpdate } = renderHook(() =>
@@ -90,6 +106,22 @@ describe('useForm', () => {
           onSubmit,
           constraints: {
             email: { type: 'email', required: false },
+          },
+        }),
+      );
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate();
+      expect(result.current.isDirty).toBe(true);
+    });
+    it('sets isDirty to true after submission of a form', async () => {
+      const onSubmit = jest.fn();
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          constraints: {
+            email: { type: 'email', required: true },
           },
         }),
       );
