@@ -112,7 +112,7 @@ type UseFormParameters = Readonly<{
  * @example <caption>Validation errors from the server, see {@link useSubmission}</caption>
  */
 export function useForm({
-  onSubmit,
+  onSubmit: rawOnSubmit,
   initialValues,
   normalizer,
   validators = {},
@@ -131,6 +131,8 @@ export function useForm({
     isDirty: isDirtyViaTouch,
   } = useTouch();
   const isDirty = isDirtyViaTouch || isFormDirty;
+  const toggleOnIsFormDirty = useCallback(() => setIsFormDirty(true), [setIsFormDirty]);
+  const onSubmit = useHandlers(rawOnSubmit, toggleOnIsFormDirty);
   // picks between constraints or validators
   const validatorsInput = useMemo(
     () =>
@@ -155,9 +157,9 @@ export function useForm({
       {},
     );
     await validate(values);
-    setIsFormDirty(true);
+    toggleOnIsFormDirty();
     setTouches(newTouches);
-  }, [validate, values, setTouches]);
+  }, [validate, values, setTouches, toggleOnIsFormDirty]);
   // note: useSubmission will skip validation if no function was passed.
   //  In order to take advantage of this, we must pass undefined if useForm
   //  was invoked with a validation function
