@@ -14,28 +14,36 @@ const emailKeys = {
   1000: createKeys('email', 1000),
 };
 
-function Form({ values, errors, submit, changeRef, emails }) {
+function FormHeader({ children, errors, values, emails, ...props }) {
   return (
     <div>
       <h1>Performance Test (Input Count: {emails.length})</h1>
       <br />
       <ValuesErrorsTable values={values} errors={errors}>
-        <form onSubmit={submit}>
+        <form {...props}>
           <button type='submit'>Submit</button>
           <br />
-          {emails.map((key) => (
-            <React.Fragment key={key}>
-              <label>{key}:</label>
-              <input name={key} ref={changeRef} />
-              <span style={{ color: 'red' }}>{errors[key] && <div>{errors[key]}</div>}</span>
-              <br />
-            </React.Fragment>
-          ))}
-          <input name='username' ref={changeRef} />
-          {errors.username && <div>{errors.username}</div>}
+          {children}
         </form>
       </ValuesErrorsTable>
     </div>
+  );
+}
+
+function Form({ values, errors, submit, changeRef, emails }) {
+  return (
+    <FormHeader emails={emails} errors={errors} values={values} onSubmit={submit}>
+      {emails.map((key) => (
+        <React.Fragment key={key}>
+          <label>{key}:</label>
+          <input name={key} ref={changeRef} />
+          <span style={{ color: 'red' }}>{errors[key] && <div>{errors[key]}</div>}</span>
+          <br />
+        </React.Fragment>
+      ))}
+      <input name='username' ref={changeRef} />
+      {errors.username && <div>{errors.username}</div>}
+    </FormHeader>
   );
 }
 
