@@ -169,7 +169,7 @@ export function useForm({
   const { isSubmitting, submit, submitCount, submitFeedback } = useSubmission({
     onSubmit,
     validator,
-    disabled: hasErrors,
+    disabled: hasErrors || !isDirty,
     setError,
     values,
     reset,
