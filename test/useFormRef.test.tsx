@@ -65,10 +65,11 @@ describe('useFormRef', () => {
       </form>
     );
 
+    expect(props[handler]).toBeCalledTimes(0);
+    expect(props2[handler]).toBeCalledTimes(0);
     const mount = render(<Component anchor={result.current.ref} />);
     const trigger = async () => {
       const name = await mount.findByTitle('name');
-      fireEvent(name, new Event(event));
       fireEvent(name, new Event(event));
     };
     await trigger();
