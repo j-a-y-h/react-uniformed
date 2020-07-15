@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.19] - 2020-07-15
+
+### Fixed
+
+- [`useForm`] Fixed an issue that allowed submission with invalid forms.
+
 ### Changed
 
 - [`useForm`, `useFields`] Change to values object type to `any`.

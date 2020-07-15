@@ -1,4 +1,4 @@
-import { useCallback, useMemo, SyntheticEvent } from 'react';
+import { useCallback, useMemo, SyntheticEvent, useState } from 'react';
 import { Errors, ErrorHandler, validErrorValues } from './useErrors';
 import { useHandlers } from './useHandlers';
 import { useFields, FieldValue, Fields, NormalizerHandler } from './useFields';
@@ -12,15 +12,10 @@ import {
   ValidateAllHandler,
   SingleValidator,
 } from './useValidation/types';
-import {
-  SetValueCallback,
-  MutableValues,
-  PartialValues,
-  isMapWithValues,
-} from './useGenericValues';
+import { SetValueCallback, PartialValues, isMapWithValues } from './useGenericValues';
 import { ConstraintValidators, SyncedConstraint } from './useConstraints/types';
 import { useConstraints } from './useConstraints';
-import { resetForm, safePromise } from './utils';
+import { resetForm } from './utils';
 
 // TODO: document the UseFormsHook
 
@@ -112,15 +107,20 @@ type UseFormParameters = Readonly<{
  * @example <caption>Validation errors from the server, see {@link useSubmission}</caption>
  */
 export function useForm({
-  onSubmit,
+  onSubmit: rawOnSubmit,
   initialValues,
   normalizer,
   validators = {},
   constraints = {},
 }: UseFormParameters): UseFormsHook {
+  // this is only set when user submits
+  const [isFormDirty, setIsFormDirty] = useState(false);
   const { values, setValue, resetValues } = useFields(initialValues, normalizer);
   const constraintsHook = useConstraints(constraints);
-  const { touches, resetTouches, setTouch, touchField, setTouches, isDirty } = useTouch();
+  const { touches, resetTouches, setTouch, touchField, isDirty: isDirtyViaTouch } = useTouch();
+  const isDirty = isDirtyViaTouch || isFormDirty;
+  const toggleOnIsFormDirty = useCallback(() => setIsFormDirty(true), [setIsFormDirty]);
+  const onSubmit = useHandlers(rawOnSubmit, toggleOnIsFormDirty);
   // picks between constraints or validators
   const validatorsInput = useMemo(
     () =>
@@ -135,18 +135,10 @@ export function useForm({
     validatorsInput,
   );
   // create a submission validator handler
-  const submissionValidator = useCallback((): void => {
-    const newTouches = Object.keys(values).reduce(
-      (_touches: MutableValues<boolean>, name): Touches => {
-        // eslint-disable-next-line no-param-reassign
-        _touches[name] = true;
-        return _touches;
-      },
-      {},
-    );
-    safePromise(validate(values));
-    setTouches(newTouches);
-  }, [validate, values, setTouches]);
+  const submissionValidator = useCallback(async (): Promise<void> => {
+    await validate(values);
+    toggleOnIsFormDirty();
+  }, [validate, values, toggleOnIsFormDirty]);
   // note: useSubmission will skip validation if no function was passed.
   //  In order to take advantage of this, we must pass undefined if useForm
   //  was invoked with a validation function
@@ -169,7 +161,7 @@ export function useForm({
   const { isSubmitting, submit, submitCount, submitFeedback } = useSubmission({
     onSubmit,
     validator,
-    disabled: hasErrors,
+    disabled: hasErrors || (!isDirty && Boolean(validator)),
     setError,
     values,
     reset,
