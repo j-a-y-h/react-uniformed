@@ -6,14 +6,14 @@ import { useFormRef } from '../src';
 describe('useFormRef', () => {
   function createMockSubmit() {
     return {
-      handleSubmit: jest.fn().mockImplementation((e: SyntheticEvent) => {
+      submit: jest.fn().mockImplementation((e: SyntheticEvent) => {
         e.preventDefault();
       }),
     };
   }
   function createMockReset() {
     return {
-      handleReset: jest.fn().mockImplementation((e: SyntheticEvent) => {
+      reset: jest.fn().mockImplementation((e: SyntheticEvent) => {
         e.preventDefault();
       }),
     };
@@ -84,8 +84,8 @@ describe('useFormRef', () => {
     expect(props2[handler]).toBeCalledTimes(1);
   });
   it.each([
-    ['submit', 'handleSubmit', createMockSubmit],
-    ['reset', 'handleReset', createMockReset],
+    ['submit', 'submit', createMockSubmit],
+    ['reset', 'reset', createMockReset],
     // @ts-expect-error
   ])('sets %s event handler on the form', async (type: 'submit' | 'reset', handler, mocker) => {
     const props = mocker();
@@ -107,8 +107,8 @@ describe('useFormRef', () => {
     expect(props[handler]).toBeCalledTimes(2);
   });
   it.each([
-    ['submit', 'handleSubmit', createMockSubmit],
-    ['reset', 'handleReset', createMockReset],
+    ['submit', 'submit', createMockSubmit],
+    ['reset', 'reset', createMockReset],
   ])(
     'removes %s event handler on the form when unmounting',
     // @ts-expect-error

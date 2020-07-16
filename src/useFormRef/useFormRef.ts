@@ -8,8 +8,8 @@ import { useRefEventHandlers } from '../useRefEventHandlers';
 type Props = Readonly<{
   handleChange?: ReactOrNativeEventListener;
   handleBlur?: ReactOrNativeEventListener;
-  handleSubmit?: ReactOrNativeEventListener;
-  handleReset?: ReactOrNativeEventListener;
+  submit?: ReactOrNativeEventListener;
+  reset?: ReactOrNativeEventListener;
 }>;
 
 interface UseAnchor {
@@ -17,16 +17,10 @@ interface UseAnchor {
 }
 // TODO: evaluate useSettersAsEventRef since this basically covers that
 // TODO: update readme and make this the quick start and the other way not
-// TODO: name chagne to just submit, reset
-export function useFormRef({
-  handleChange,
-  handleBlur,
-  handleSubmit,
-  handleReset,
-}: Props): UseAnchor {
+export function useFormRef({ handleChange, handleBlur, submit, reset }: Props): UseAnchor {
   const setupInputsRef = useFormInputsRef({ handleBlur, handleChange });
-  const submitRef = useRefEventHandlers({ handlers: handleSubmit, event: 'submit' });
-  const resetRef = useRefEventHandlers({ handlers: handleReset, event: 'reset' });
+  const submitRef = useRefEventHandlers({ handlers: submit, event: 'submit' });
+  const resetRef = useRefEventHandlers({ handlers: reset, event: 'reset' });
   const ref = useHandlers(setupInputsRef, submitRef, resetRef);
   return { ref };
 }

@@ -100,12 +100,12 @@ export function FormRefWith1000Inputs() {
       }, {}),
     [],
   );
-  const { setValue, submit: handleSubmit, errors, values, validateByName } = useForm({
+  const { setValue, submit, errors, values, validateByName } = useForm({
     constraints,
     onSubmit: (data) => alert(JSON.stringify(data)),
   });
   const handleChange = useSettersAsEventHandler(setValue, validateByName);
-  const { ref } = useFormRef({ handleChange, handleSubmit });
+  const { ref } = useFormRef({ handleChange, submit });
 
   return (
     <FormHeader emails={emails} values={values} errors={errors} ref={ref}>
