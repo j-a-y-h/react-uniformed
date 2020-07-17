@@ -219,5 +219,9 @@ describe('useFormInputsRef', () => {
     await trigger();
     expect(props.handleBlur).toBeCalledTimes(5);
     expect(props.handleChange).toBeCalledTimes(5);
+    toggle.click();
+    await trigger();
+    expect(props.handleBlur).toBeCalledTimes(7);
+    expect(props.handleChange).toBeCalledTimes(7);
   });
 });
