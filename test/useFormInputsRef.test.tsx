@@ -129,5 +129,43 @@ describe('useFormInputsRef', () => {
       expect(props.handleBlur).toBeCalledTimes(0);
     },
   );
-  it.todo('handles dynamically added input elements');
+  it('handles dynamically added input elements', async () => {
+    const props = createMockHandlers();
+    const { result, rerender } = renderHook(
+      (props) => {
+        return useFormInputsRef(props);
+      },
+      {
+        initialProps: props,
+      },
+    );
+
+    const Component = ({ anchor, showThird = false }) => (
+      <form ref={anchor}>
+        <input type='text' title='name' />
+        <input type='text' title='name' />
+        {showThird ? <input type='text' title='name' /> : null}
+      </form>
+    );
+
+    expect(props.handleBlur).toBeCalledTimes(0);
+    expect(props.handleChange).toBeCalledTimes(0);
+    const mount = render(<Component anchor={result.current} />);
+    const trigger = async () => {
+      const names = await mount.findAllByTitle('name');
+      names.forEach((name) => {
+        fireEvent(name, new Event('change'));
+        fireEvent(name, new Event('blur'));
+      });
+    };
+    await trigger();
+    expect(props.handleBlur).toBeCalledTimes(2);
+    expect(props.handleChange).toBeCalledTimes(2);
+
+    rerender(props);
+    mount.rerender(<Component anchor={result.current} showThird />);
+    await trigger();
+    expect(props.handleBlur).toBeCalledTimes(5);
+    expect(props.handleChange).toBeCalledTimes(5);
+  });
 });
