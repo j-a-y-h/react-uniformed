@@ -167,6 +167,12 @@ describe('useFormInputsRef', () => {
     await trigger();
     expect(props.handleBlur).toBeCalledTimes(5);
     expect(props.handleChange).toBeCalledTimes(5);
+
+    rerender(props);
+    mount.rerender(<Component anchor={result.current} />);
+    await trigger();
+    expect(props.handleBlur).toBeCalledTimes(7);
+    expect(props.handleChange).toBeCalledTimes(7);
   });
   it.todo('sets event handlers on nested form elements');
   it('handles dynamically added input elements from nested components', async () => {
