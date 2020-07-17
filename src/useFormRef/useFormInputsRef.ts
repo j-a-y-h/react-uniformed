@@ -22,17 +22,19 @@ export function useFormInputsRef({
   const ref = useHandlers(changeRef, blurRef);
   return useCallback(
     (form) => {
-      //  mounts
+      // mounts
       if (form) {
         // filter for input, select, and textarea elements only
-        const supportedElements = Array.from(form.elements).filter((element) => {
-          return (
-            // inputs must be of certain type too
-            (element instanceof HTMLInputElement && !UNSUPPORTED_INPUT_TYPES.has(element.type)) ||
-            element instanceof HTMLSelectElement ||
-            element instanceof HTMLTextAreaElement
-          );
-        }) as SupportedFormElements[];
+        const supportedElements = Array.from(form.elements).filter<SupportedFormElements>(
+          (element): element is SupportedFormElements => {
+            return (
+              // inputs must be of certain type too
+              (element instanceof HTMLInputElement && !UNSUPPORTED_INPUT_TYPES.has(element.type)) ||
+              element instanceof HTMLSelectElement ||
+              element instanceof HTMLTextAreaElement
+            );
+          },
+        );
         // add event handlers
         supportedElements.forEach(ref);
       } else {
