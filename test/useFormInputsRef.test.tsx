@@ -104,6 +104,30 @@ describe('useFormInputsRef', () => {
     expect(props.handleChange).toBeCalledTimes(3);
     expect(props.handleBlur).toBeCalledTimes(3);
   });
-  it.todo('will not add event handler to submit type input');
+  it.each(['submit', 'image', 'reset', 'hidden'])(
+    `will not add event handlers to inputs of '%s' type`,
+    async (type) => {
+      const props = createMockHandlers();
+      const { result } = renderHook(() => useFormInputsRef(props));
+
+      const mount = render(
+        <form ref={result.current}>
+          <input type={type} title='name' />
+        </form>,
+      );
+      const trigger = async (title = 'name') => {
+        const names = await mount.findAllByTitle(title);
+        names.forEach((name) => {
+          fireEvent(name, new Event('change'));
+          fireEvent(name, new Event('blur'));
+        });
+      };
+      await trigger();
+      await trigger();
+      await trigger();
+      expect(props.handleChange).toBeCalledTimes(0);
+      expect(props.handleBlur).toBeCalledTimes(0);
+    },
+  );
   it.todo('handles dynamically added input elements');
 });
