@@ -1,4 +1,4 @@
-import { useCallback, RefCallback, useEffect, useRef } from 'react';
+import { RefCallback } from 'react';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { useRefEventHandlers } from '../useRefEventHandlers';
 import { useHandlers } from '../useHandlers';
@@ -20,6 +20,7 @@ export function useFormInputsRef({
   const changeRef = useRefEventHandlers({ handlers: handleChange, event: 'change' });
   const blurRef = useRefEventHandlers({ handlers: handleBlur, event: 'blur' });
   const ref = useHandlers(changeRef, blurRef);
+  // DO NOT wrap in callback so that rerenders collect all form elements
   return (form): void => {
     // mounts
     if (form) {
