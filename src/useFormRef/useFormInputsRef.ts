@@ -8,10 +8,10 @@ type Props = Readonly<{
   handleBlur?: ReactOrNativeEventListener;
 }>;
 
-type ValidFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+type SupportedFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 // list of unsupported types for input elements
-const INVALID_INPUT_TYPES = new Set(['submit', 'image', 'reset', 'hidden']);
+const UNSUPPORTED_INPUT_TYPES = new Set(['submit', 'image', 'reset', 'hidden']);
 
 export function useFormInputsRef({
   handleBlur,
@@ -24,19 +24,17 @@ export function useFormInputsRef({
     (form) => {
       //  mounts
       if (form) {
-        // looks for closest
-        // TODO: add unit tests
         // filter for input, select, and textarea elements only
-        const validElements = Array.from(form.elements).filter((element) => {
+        const supportedElements = Array.from(form.elements).filter((element) => {
           return (
             // inputs must be of certain type too
-            (element instanceof HTMLInputElement && !INVALID_INPUT_TYPES.has(element.type)) ||
+            (element instanceof HTMLInputElement && !UNSUPPORTED_INPUT_TYPES.has(element.type)) ||
             element instanceof HTMLSelectElement ||
             element instanceof HTMLTextAreaElement
           );
-        }) as ValidFormElements[];
+        }) as SupportedFormElements[];
         // add event handlers
-        validElements.forEach(ref);
+        supportedElements.forEach(ref);
       } else {
         // unmount
         ref(null);
