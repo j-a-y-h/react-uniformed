@@ -76,7 +76,11 @@ describe('useFormInputsRef', () => {
     const mount = render(
       <form ref={result.current}>
         <label title='name'>Name </label>
-        <input type='text' title='no-apart-of-test' />
+        <input type='text' title='allowed' />
+        <textarea title='allowed'></textarea>
+        <select title='allowed'>
+          <option value='4'>4</option>
+        </select>
         <object title='name' />
         <output title='name'>60</output>
         <fieldset title='name'>
@@ -86,8 +90,8 @@ describe('useFormInputsRef', () => {
         <button title='name'>Button</button>
       </form>,
     );
-    const trigger = async () => {
-      const names = await mount.findAllByTitle('name');
+    const trigger = async (title = 'name') => {
+      const names = await mount.findAllByTitle(title);
       names.forEach((name) => {
         fireEvent(name, new Event('change'));
         fireEvent(name, new Event('blur'));
@@ -96,6 +100,9 @@ describe('useFormInputsRef', () => {
     await trigger();
     expect(props.handleChange).toBeCalledTimes(0);
     expect(props.handleBlur).toBeCalledTimes(0);
+    await trigger('allowed');
+    expect(props.handleChange).toBeCalledTimes(3);
+    expect(props.handleBlur).toBeCalledTimes(3);
   });
   it.todo('will not add event handler to submit type input');
   it.todo('handles dynamically added input elements');
