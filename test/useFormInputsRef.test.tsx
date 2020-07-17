@@ -75,29 +75,15 @@ describe('useFormInputsRef', () => {
 
     const mount = render(
       <form ref={result.current}>
-        <div>
-          <label title='name'>Name </label>
-          <input type='text' name='name' title='no-apart-of-test' />
-          <object
-            type='application/pdf'
-            data='/media/examples/In-CC0.pdf'
-            width='250'
-            height='200'
-            title='name'
-          />
-          <output name='result' htmlFor='a b' title='name'>
-            60
-          </output>
-          <fieldset title='name'>
-            <legend title='name'>Choose your favorite monster</legend>
-            <label htmlFor='mothman' title='name'>
-              Mothman
-            </label>
-          </fieldset>
-          <button type='button' title='name'>
-            Add to favorites
-          </button>
-        </div>
+        <label title='name'>Name </label>
+        <input type='text' title='no-apart-of-test' />
+        <object title='name' />
+        <output title='name'>60</output>
+        <fieldset title='name'>
+          <legend title='name'>Choose your favorite monster</legend>
+          <label title='name'>Mothman</label>
+        </fieldset>
+        <button title='name'>Button</button>
       </form>,
     );
     const trigger = async () => {
@@ -107,9 +93,9 @@ describe('useFormInputsRef', () => {
         fireEvent(name, new Event('blur'));
       });
     };
-    trigger();
-    expect(props.handleChange).toBeCalledTimes(1);
-    expect(props.handleBlur).toBeCalledTimes(1);
+    await trigger();
+    expect(props.handleChange).toBeCalledTimes(0);
+    expect(props.handleBlur).toBeCalledTimes(0);
   });
   it.todo('will not add event handler to submit type input');
   it.todo('handles dynamically added input elements');
