@@ -10,6 +10,9 @@ type Props = Readonly<{
 
 type ValidFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
+// list of unsupported types for input elements
+const INVALID_INPUT_TYPES = new Set(['submit', 'image', 'reset', 'hidden']);
+
 export function useFormInputsRef({
   handleBlur,
   handleChange,
@@ -26,7 +29,8 @@ export function useFormInputsRef({
         // filter for input, select, and textarea elements only
         const validElements = Array.from(form.elements).filter((element) => {
           return (
-            element instanceof HTMLInputElement ||
+            // inputs must be of certain type too
+            (element instanceof HTMLInputElement && !INVALID_INPUT_TYPES.has(element.type)) ||
             element instanceof HTMLSelectElement ||
             element instanceof HTMLTextAreaElement
           );
