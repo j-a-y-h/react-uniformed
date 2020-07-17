@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { renderHook } from '@testing-library/react-hooks';
 import { render, fireEvent } from '@testing-library/react';
 import { useFormInputsRef } from '../src/useFormRef/useFormInputsRef';
@@ -169,5 +169,55 @@ describe('useFormInputsRef', () => {
     expect(props.handleChange).toBeCalledTimes(5);
   });
   it.todo('sets event handlers on nested form elements');
-  it.todo('handles dynamically added input elements from nested components');
+  it('handles dynamically added input elements from nested components', async () => {
+    const props = createMockHandlers();
+    const { result } = renderHook(
+      (props) => {
+        return useFormInputsRef(props);
+      },
+      {
+        initialProps: props,
+      },
+    );
+    const NestedComponent = () => {
+      const [showThird, setShowThird] = useState(false);
+      return (
+        <>
+          <button type='button' title='toggle' onClick={() => setShowThird((i) => !i)}>
+            Toggle
+          </button>
+          {showThird ? <input type='text' title='name' /> : null}
+        </>
+      );
+    };
+
+    const Component = ({ anchor }) => (
+      <form ref={anchor}>
+        <input type='text' title='name' />
+        <input type='text' title='name' />
+        <NestedComponent />
+      </form>
+    );
+
+    expect(props.handleBlur).toBeCalledTimes(0);
+    expect(props.handleChange).toBeCalledTimes(0);
+    const mount = render(<Component anchor={result.current} />);
+    const trigger = async () => {
+      const names = await mount.findAllByTitle('name');
+      console.log(mount.container.innerHTML);
+      names.forEach((name) => {
+        fireEvent(name, new Event('change'));
+        fireEvent(name, new Event('blur'));
+      });
+    };
+    await trigger();
+    expect(props.handleBlur).toBeCalledTimes(2);
+    expect(props.handleChange).toBeCalledTimes(2);
+
+    const toggle = await mount.findByTitle('toggle');
+    toggle.click();
+    await trigger();
+    expect(props.handleBlur).toBeCalledTimes(5);
+    expect(props.handleChange).toBeCalledTimes(5);
+  });
 });
