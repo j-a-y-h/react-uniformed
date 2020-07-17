@@ -69,7 +69,48 @@ describe('useFormInputsRef', () => {
     expect(props[handler]).toBeCalledTimes(1);
     expect(props2[handler]).toBeCalledTimes(1);
   });
-  it.todo('only adds event handler to input, textarea, and select elements');
+  it('only adds event handler to input, textarea, and select elements', async () => {
+    const props = createMockHandlers();
+    const { result } = renderHook(() => useFormInputsRef(props));
+
+    const mount = render(
+      <form ref={result.current}>
+        <div>
+          <label title='name'>Name </label>
+          <input type='text' name='name' title='no-apart-of-test' />
+          <object
+            type='application/pdf'
+            data='/media/examples/In-CC0.pdf'
+            width='250'
+            height='200'
+            title='name'
+          />
+          <output name='result' htmlFor='a b' title='name'>
+            60
+          </output>
+          <fieldset title='name'>
+            <legend title='name'>Choose your favorite monster</legend>
+            <label htmlFor='mothman' title='name'>
+              Mothman
+            </label>
+          </fieldset>
+          <button type='button' title='name'>
+            Add to favorites
+          </button>
+        </div>
+      </form>,
+    );
+    const trigger = async () => {
+      const names = await mount.findAllByTitle('name');
+      names.forEach((name) => {
+        fireEvent(name, new Event('change'));
+        fireEvent(name, new Event('blur'));
+      });
+    };
+    trigger();
+    expect(props.handleChange).toBeCalledTimes(1);
+    expect(props.handleBlur).toBeCalledTimes(1);
+  });
   it.todo('will not add event handler to submit type input');
   it.todo('handles dynamically added input elements');
 });
