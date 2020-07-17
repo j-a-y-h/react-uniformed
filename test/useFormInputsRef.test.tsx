@@ -168,5 +168,6 @@ describe('useFormInputsRef', () => {
     expect(props.handleBlur).toBeCalledTimes(5);
     expect(props.handleChange).toBeCalledTimes(5);
   });
+  it.todo('sets event handlers on nested form elements');
   it.todo('handles dynamically added input elements from nested components');
 });
