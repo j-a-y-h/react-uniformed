@@ -28,7 +28,7 @@
     "test:stability": "yarn test && yarn lint",
     "lint": "eslint src --color",
     "size": "yarn bundle:prod --silent && bundlesize",
-    "clean": "rimraf ./dist",
+    "clean": "rimraf ./dist ./node_modules/.cache",
     "start:examples": "yarn build:examples && webpack-dev-server --mode development --config=webpack.examples.config.js",
     "prepublishOnly": "yarn lint && yarn test && yarn build",
     "open:report": "open-cli ./coverage/report.html -- 'google chrome'",
@@ -105,7 +105,7 @@
   "bundlesize": [
     {
       "path": "./dist/react-uniformed.min.js",
-      "maxSize": "5.00 kB"
+      "maxSize": "5.5 kB"
     }
   ],
   "husky": {

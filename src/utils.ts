@@ -34,6 +34,10 @@ function assertion(condition: boolean, type: LoggingTypes, message: string, logg
   }
 }
 
+export const log = {
+  warn: (message: string): void => console.warn(`${projectName}: ${message}`),
+};
+
 export const assert = {
   error(condition: boolean, type: LoggingTypes, message: string): void {
     assertion(condition, type, message, (...msg) => console.error(...msg));

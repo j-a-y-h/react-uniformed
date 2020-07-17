@@ -11,3 +11,4 @@ export { useValidation } from './useValidation';
 export { useConstraints } from './useConstraints';
 export { useNormalizers } from './useNormalizers';
 export { normalizeNestedObjects } from './normalizeNestedObjects';
+export { useFormRef } from './useFormRef';

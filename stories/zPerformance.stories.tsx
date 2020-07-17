@@ -1,5 +1,6 @@
-import React from 'react';
-import { useForm, useSettersAsRefEventHandler } from '../src';
+import React, { useMemo } from 'react';
+import { useForm, useSettersAsRefEventHandler, useFormRef, useSettersAsEventHandler } from '../src';
+import { ValuesErrorsTable } from './utils';
 
 export default {
   title: 'Performance',
@@ -13,40 +14,36 @@ const emailKeys = {
   1000: createKeys('email', 1000),
 };
 
-function Form({ values, errors, submit, changeRef, emails }) {
+const FormHeader = React.forwardRef(({ children, errors, values, emails, ...props }, ref) => {
   return (
     <div>
       <h1>Performance Test (Input Count: {emails.length})</h1>
       <br />
-      <table>
-        <tr>
-          <td style={{ verticalAlign: 'top', width: '25%' }}>
-            <form onSubmit={submit}>
-              <button type='submit'>Submit</button>
-              <br />
-              {emails.map((key) => (
-                <React.Fragment key={key}>
-                  <label>{key}:</label>
-                  <input name={key} ref={changeRef} />
-                  <span style={{ color: 'red' }}>{errors[key] && <div>{errors[key]}</div>}</span>
-                  <br />
-                </React.Fragment>
-              ))}
-              <input name='username' ref={changeRef} />
-              {errors.username && <div>{errors.username}</div>}
-            </form>
-          </td>
-          <td style={{ verticalAlign: 'top', width: '25%' }}>
-            <p>Errors</p>
-            <pre>{JSON.stringify(errors, null, 2)}</pre>
-          </td>
-          <td style={{ verticalAlign: 'top', width: '25%' }}>
-            <p>Values</p>
-            <pre>{JSON.stringify(values, null, 2)}</pre>
-          </td>
-        </tr>
-      </table>
+      <ValuesErrorsTable values={values} errors={errors}>
+        <form {...props} ref={ref ? ref : undefined}>
+          <button type='submit'>Submit</button>
+          <br />
+          {children}
+        </form>
+      </ValuesErrorsTable>
     </div>
+  );
+});
+
+function Form({ values, errors, submit, changeRef, emails }) {
+  return (
+    <FormHeader emails={emails} errors={errors} values={values} onSubmit={submit}>
+      {emails.map((key) => (
+        <React.Fragment key={key}>
+          <label>{key}:</label>
+          <input name={key} ref={changeRef} />
+          <span style={{ color: 'red' }}>{errors[key] && <div>{errors[key]}</div>}</span>
+          <br />
+        </React.Fragment>
+      ))}
+      <input name='username' ref={changeRef} />
+      {errors.username && <div>{errors.username}</div>}
+    </FormHeader>
   );
 }
 
@@ -91,5 +88,35 @@ export function BigFormWith1000Inputs() {
       errors={errors}
       submit={submit}
     />
+  );
+}
+
+export function FormRefWith1000Inputs() {
+  const emails = emailKeys[1000];
+  const constraints = useMemo(
+    () =>
+      emails.reduce((cur, key) => {
+        return { ...cur, [key]: { type: ['email', 'Please enter a valid email'], required: true } };
+      }, {}),
+    [],
+  );
+  const { setValue, submit, errors, values, validateByName } = useForm({
+    constraints,
+    onSubmit: (data) => alert(JSON.stringify(data)),
+  });
+  const handleChange = useSettersAsEventHandler(setValue, validateByName);
+  const { ref } = useFormRef({ handleChange, submit });
+
+  return (
+    <FormHeader emails={emails} values={values} errors={errors} ref={ref}>
+      {emails.map((key) => (
+        <React.Fragment key={key}>
+          <label>{key}:</label>
+          <input name={key} />
+          <span style={{ color: 'red' }}>{errors[key] && <div>{errors[key]}</div>}</span>
+          <br />
+        </React.Fragment>
+      ))}
+    </FormHeader>
   );
 }
