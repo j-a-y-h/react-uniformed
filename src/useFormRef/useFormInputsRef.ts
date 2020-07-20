@@ -1,4 +1,4 @@
-import { useCallback, RefCallback } from 'react';
+import { RefCallback } from 'react';
 import { ReactOrNativeEventListener } from '../useSettersAsEventHandler';
 import { useRefEventHandlers } from '../useRefEventHandlers';
 import { useHandlers } from '../useHandlers';
@@ -8,7 +8,10 @@ type Props = Readonly<{
   handleBlur?: ReactOrNativeEventListener;
 }>;
 
-type ValidFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+type SupportedFormElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
+// list of unsupported types for input elements
+const UNSUPPORTED_INPUT_TYPES = new Set(['submit', 'image', 'reset', 'hidden']);
 
 export function useFormInputsRef({
   handleBlur,
@@ -17,27 +20,26 @@ export function useFormInputsRef({
   const changeRef = useRefEventHandlers({ handlers: handleChange, event: 'change' });
   const blurRef = useRefEventHandlers({ handlers: handleBlur, event: 'blur' });
   const ref = useHandlers(changeRef, blurRef);
-  return useCallback(
-    (form) => {
-      //  mounts
-      if (form) {
-        // looks for closest
-        // TODO: add unit tests
-        // filter for input, select, and textarea elements only
-        const validElements = Array.from(form.elements).filter((element) => {
+  // DO NOT wrap in callback so that rerenders collect all form elements
+  return (form): void => {
+    // mounts
+    if (form) {
+      // filter for input, select, and textarea elements only
+      const supportedElements = Array.from(form.elements).filter<SupportedFormElements>(
+        (element): element is SupportedFormElements => {
           return (
-            element instanceof HTMLInputElement ||
+            // inputs must be of certain type too
+            (element instanceof HTMLInputElement && !UNSUPPORTED_INPUT_TYPES.has(element.type)) ||
             element instanceof HTMLSelectElement ||
             element instanceof HTMLTextAreaElement
           );
-        }) as ValidFormElements[];
-        // add event handlers
-        validElements.forEach(ref);
-      } else {
-        // unmount
-        ref(null);
-      }
-    },
-    [ref],
-  );
+        },
+      );
+      // add event handlers
+      supportedElements.forEach(ref);
+    } else {
+      // unmount
+      ref(null);
+    }
+  };
 }
