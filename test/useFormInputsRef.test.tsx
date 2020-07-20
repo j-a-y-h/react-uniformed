@@ -174,6 +174,7 @@ describe('useFormInputsRef', () => {
     expect(props.handleBlur).toBeCalledTimes(7);
     expect(props.handleChange).toBeCalledTimes(7);
   });
+  // TODO: remove x when add support for nested components
   xit('handles dynamically added input elements from nested components', async () => {
     const props = createMockHandlers();
     const { result } = renderHook(
