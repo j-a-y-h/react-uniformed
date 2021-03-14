@@ -13,9 +13,11 @@ export type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEve
  * for calling a list of functions with similar parameters. A great use case is creating
  * a reset form function from a list of reset functions (see example below). In fact, the
  * `reset` function from {@link useForm} is created using this function.
- * @param handlers - the list of specified functions
+ * @param handlers - the list of specified functions.
  * @returns A single function.  When this function is invoked, it will call each specified
  * function in the order it was passed to this hook with the same arguments from the invocation.
+ * If one of the specified handlers returns a promise, then this function will also return a promise
+ * using the Promise.allSettled strategy.
  * @example
  * ```javascript
  * // create a reset form function by merging reset functions from other form hooks.
@@ -44,7 +46,7 @@ export function useHandlers<
       },
     );
     if (hasAPromise) {
-      return (Promise.all(voidOrPromises) as unknown) as Return;
+      return (Promise.allSettled(voidOrPromises) as unknown) as Return;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, handlers);
