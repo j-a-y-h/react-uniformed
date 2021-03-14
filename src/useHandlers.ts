@@ -22,18 +22,30 @@ export type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEve
  * const reset = useHandlers(resetValues, resetErrors, resetTouches);
  * ```
  */
-export function useHandlers<T, K extends T[]>(
-  ...handlers: Handler<T, K, void>[]
-): Handler<T, K, void> {
-  return useCallback((...args: K): void => {
-    handlers.forEach((func): void => {
-      assert.error(
-        typeof func === 'function',
-        LoggingTypes.typeError,
-        `(expected: function, received: ${typeof func})`,
-      );
-      func(...args);
-    });
+export function useHandlers<
+  T,
+  K extends T[],
+  R extends Promise<void> | void,
+  Return = R extends void ? void : Promise<void>
+>(...handlers: Handler<T, K, R>[]): Handler<T, K, Return> {
+  // @ts-expect-error don't know how to fix this
+  return useCallback((...args: K): Return => {
+    let hasAPromise = false;
+    const voidOrPromises = handlers.map(
+      (func): R => {
+        assert.error(
+          typeof func === 'function',
+          LoggingTypes.typeError,
+          `(expected: function, received: ${typeof func})`,
+        );
+        const res = func(...args);
+        hasAPromise = hasAPromise || res instanceof Promise;
+        return res;
+      },
+    );
+    if (hasAPromise) {
+      return (Promise.all(voidOrPromises) as unknown) as Return;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, handlers);
 }
