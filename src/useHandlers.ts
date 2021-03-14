@@ -30,7 +30,9 @@ export function useHandlers<
   R extends Promise<void> | void,
   Return = R extends void ? void : Promise<void>
 >(...handlers: Handler<T, K, R>[]): Handler<T, K, Return> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error don't know how to fix this
+  // eslint-disable-next-line consistent-return
   return useCallback((...args: K): Return => {
     let hasAPromise = false;
     const voidOrPromises = handlers.map(
