@@ -6,44 +6,45 @@
 
 ### Type aliases
 
-* [eventLikeHandlers](_usehandlers_.md#eventlikehandlers)
-* [keyValueEvent](_usehandlers_.md#keyvalueevent)
-* [reactOrNativeEvent](_usehandlers_.md#reactornativeevent)
+- [eventLikeHandlers](_usehandlers_.md#eventlikehandlers)
+- [keyValueEvent](_usehandlers_.md#keyvalueevent)
+- [reactOrNativeEvent](_usehandlers_.md#reactornativeevent)
 
 ### Functions
 
-* [useHandlers](_usehandlers_.md#usehandlers)
+- [useHandlers](_usehandlers_.md#usehandlers)
 
 ## Type aliases
 
-###  eventLikeHandlers
+### eventLikeHandlers
 
-Ƭ **eventLikeHandlers**: *Handler‹string | EventTarget | null, [keyValueEvent](_usehandlers_.md#keyvalueevent)‹string›, void›*
+Ƭ **eventLikeHandlers**: _Handler‹string | EventTarget | null, [keyValueEvent](_usehandlers_.md#keyvalueevent)‹string›, void›_
 
-___
+---
 
-###  keyValueEvent
+### keyValueEvent
 
-Ƭ **keyValueEvent**: *[string, T, EventTarget | null]*
+Ƭ **keyValueEvent**: _[string, T, EventTarget | null]_
 
-___
+---
 
-###  reactOrNativeEvent
+### reactOrNativeEvent
 
-Ƭ **reactOrNativeEvent**: *SyntheticEvent | Event*
+Ƭ **reactOrNativeEvent**: _SyntheticEvent | Event_
 
 ## Functions
 
-###  useHandlers
+### useHandlers
 
-▸ **useHandlers**<**T**, **K**>(...`handlers`: Handler‹T, K, void›[]): *Handler‹T, K, void›*
+▸ **useHandlers**<**T**, **K**, **R**, **Return**>(...`handlers`: Handler‹T, K, R›[]): _Handler‹T, K, Return›_
 
 Consolidates the specified list of functions into one function. This is useful
 for calling a list of functions with similar parameters. A great use case is creating
 a reset form function from a list of reset functions (see example below). In fact, the
 `reset` function from [useForm](_useform_.md#useform) is created using this function.
 
-**`example`** 
+**`example`**
+
 ```javascript
 // create a reset form function by merging reset functions from other form hooks.
 const reset = useHandlers(resetValues, resetErrors, resetTouches);
@@ -53,15 +54,20 @@ const reset = useHandlers(resetValues, resetErrors, resetTouches);
 
 ▪ **T**
 
-▪ **K**: *T[]*
+▪ **K**: _T[]_
+
+▪ **R**: _Promise‹void› | void_
+
+▪ **Return**
 
 **Parameters:**
 
-Name | Type | Description |
------- | ------ | ------ |
-`...handlers` | Handler‹T, K, void›[] | the list of specified functions |
+| Name          | Type               | Description                      |
+| ------------- | ------------------ | -------------------------------- |
+| `...handlers` | Handler‹T, K, R›[] | the list of specified functions. |
 
-**Returns:** *Handler‹T, K, void›*
+**Returns:** _Handler‹T, K, Return›_
 
-A single function.  When this function is invoked, it will call each specified
+A single function. When this function is invoked, it will call each specified
 function in the order it was passed to this hook with the same arguments from the invocation.
+If one of the specified handlers returns a promise, then this function will also return a promise.
