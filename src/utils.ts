@@ -13,9 +13,7 @@ interface Logger {
 }
 
 export function resetForm(event?: SyntheticEvent): void {
-  // @ts-expect-error
   if (event?.target instanceof HTMLElement) {
-    // @ts-expect-error
     // eslint-disable-next-line
     event.target.closest('form')?.reset();
   }

@@ -27,7 +27,7 @@ export type eventLikeHandlers = Handler<string | EventTarget | null, keyValueEve
 export function useHandlers<
   T,
   K extends T[],
-  R extends Promise<void> | void,
+  R extends Promise<void> | void = void,
   Return = R extends void ? void : Promise<void>
 >(...handlers: Handler<T, K, R>[]): Handler<T, K, Return> {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

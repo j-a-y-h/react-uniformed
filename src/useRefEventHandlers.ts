@@ -44,14 +44,12 @@ export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
         current.inputs.add(input);
         // adds event listener on mount
         current.inputs.forEach((currentInput) => {
-          // @ts-expect-error
           currentInput.addEventListener(event, eventHandler);
         });
         lastRef.current = { ...current, event, eventHandler };
       } else {
         // removes the event listener
         current.inputs.forEach((currentInput) => {
-          // @ts-expect-error
           currentInput.removeEventListener(current.event, current.eventHandler);
         });
         lastRef.current = { event, eventHandler, inputs: new Set() };
