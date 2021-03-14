@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useCallback, useRef, RefCallback } from 'react';
 import { ReactOrNativeEventListener } from './useSettersAsEventHandler';
 import { useHandlers } from './useHandlers';
@@ -42,12 +44,14 @@ export function useRefEventHandlers<T extends HTMLElement = HTMLElement>({
         current.inputs.add(input);
         // adds event listener on mount
         current.inputs.forEach((currentInput) => {
+          // @ts-expect-error
           currentInput.addEventListener(event, eventHandler);
         });
         lastRef.current = { ...current, event, eventHandler };
       } else {
         // removes the event listener
         current.inputs.forEach((currentInput) => {
+          // @ts-expect-error
           currentInput.removeEventListener(current.event, current.eventHandler);
         });
         lastRef.current = { event, eventHandler, inputs: new Set() };

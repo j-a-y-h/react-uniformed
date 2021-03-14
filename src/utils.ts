@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { SyntheticEvent } from 'react';
 
 const projectName = 'react-uniformed';
@@ -12,7 +13,10 @@ interface Logger {
 }
 
 export function resetForm(event?: SyntheticEvent): void {
+  // @ts-expect-error
   if (event?.target instanceof HTMLElement) {
+    // @ts-expect-error
+    // eslint-disable-next-line
     event.target.closest('form')?.reset();
   }
 }
