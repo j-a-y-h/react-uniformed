@@ -224,7 +224,7 @@ describe('useForm', () => {
     });
     it('will not reset form inputs when submission fails', async () => {
       const onSubmit = jest.fn().mockImplementation(() => {
-        sleep(3).then(() => {
+        return sleep(1).then(() => {
           throw 'error';
         });
       });
