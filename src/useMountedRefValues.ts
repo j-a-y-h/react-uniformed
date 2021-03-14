@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { useCallback, RefCallback } from 'react';
 import { Fields } from './useFields';
 import { log } from './utils';

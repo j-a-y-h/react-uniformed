@@ -2,6 +2,13 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import { useForm } from '../src';
 
 const SUCCESS = '';
+const sleep = (duration: number) => {
+  return new Promise<void>((res) => {
+    setTimeout(() => {
+      res();
+    }, duration * 1000);
+  });
+};
 
 describe('useForm', () => {
   describe('no validation', () => {
@@ -214,6 +221,30 @@ describe('useForm', () => {
       });
       await waitForNextUpdate();
       expect(onSubmit).toBeCalledTimes(0);
+    });
+    it('will not reset form inputs when submission fails', async () => {
+      const onSubmit = jest.fn().mockImplementation(() => {
+        return sleep(1).then(() => {
+          throw 'error';
+        });
+      });
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useForm({
+          onSubmit,
+          constraints: {
+            email: { type: 'email', required: true },
+          },
+        }),
+      );
+      act(() => {
+        result.current.setValue('email', 'test@example.com');
+      });
+      act(() => {
+        result.current.submit();
+      });
+      await waitForNextUpdate();
+      expect(onSubmit).toBeCalledTimes(1);
+      expect(result.current.values.email).toEqual('test@example.com');
     });
     it('supports email types', async () => {
       const { result, waitForNextUpdate } = renderHook(() =>

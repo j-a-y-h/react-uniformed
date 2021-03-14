@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useCallback, useRef, RefCallback } from 'react';
 import { ReactOrNativeEventListener } from './useSettersAsEventHandler';
 import { useHandlers } from './useHandlers';
